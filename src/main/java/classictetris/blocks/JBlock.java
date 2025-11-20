@@ -1,4 +1,4 @@
-package classictetris;
+package classictetris.blocks;
 
 public class JBlock extends Block { // J Piece
     @Override protected void initShape() {

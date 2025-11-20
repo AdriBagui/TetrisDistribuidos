@@ -1,5 +1,7 @@
 package classictetris;
 
+import classictetris.blocks.Block;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -19,18 +21,18 @@ public class Canvas extends JPanel {
 
     public Canvas(MainFrame frame) {
         this.mainFrame = frame;
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(850, 600));
         setBackground(Color.DARK_GRAY);
 
         // Initialize Boards
-        p1Board = new Board(1, frame);
-        p2Board = new Board(2, frame);
+        p1Board = new Board(1, frame, 1);
+        p2Board = new Board(2, frame, 1);
     }
 
     public void reset() {
         gameOver = false;
-        p1Board = new Board(1, mainFrame);
-        p2Board = new Board(2, mainFrame);
+        p1Board = new Board(1, mainFrame, 1);
+        p2Board = new Board(2, mainFrame, 1);
         repaint();
     }
 
@@ -105,9 +107,13 @@ public class Canvas extends JPanel {
         g.setColor(Color.WHITE);
         g.drawRect(offsetX, offsetY, BOARD_WIDTH_PIXELS, BOARD_HEIGHT_PIXELS);
 
+        // Draw Level
+        g.setColor(Color.WHITE);
+        g.drawString("Level: " + board.getLevel(), offsetX, offsetY + BOARD_HEIGHT_PIXELS + 30);
+
         // Draw Score
         g.setColor(Color.WHITE);
-        g.drawString("Score: " + board.getScore(), offsetX, offsetY + BOARD_HEIGHT_PIXELS + 30);
+        g.drawString("Score: " + board.getScore(), offsetX + 50, offsetY + BOARD_HEIGHT_PIXELS + 30);
 
         // Draw Next Piece Preview
         g.drawString("Next:", offsetX + BOARD_WIDTH_PIXELS + 20, offsetY + 50);

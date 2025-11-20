@@ -1,4 +1,4 @@
-package classictetris;
+package classictetris.blocks;
 
 import java.awt.*;
 import java.util.ArrayList;

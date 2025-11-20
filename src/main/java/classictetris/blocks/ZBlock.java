@@ -1,4 +1,4 @@
-package classictetris;
+package classictetris.blocks;
 
 public class ZBlock extends Block { // Z Piece
     @Override protected void initShape() {

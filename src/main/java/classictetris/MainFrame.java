@@ -35,8 +35,8 @@ public class MainFrame extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
-        // Game Loop (approx 60fps for smoothness, logic updates slower)
-        gameTimer = new Timer(500, new ActionListener() {
+        // Game Loop (approx 60fps (62.5fps) for smoothness, logic updates slower)
+        gameTimer = new Timer(16, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (!gameCanvas.isGameOver()) {
@@ -64,7 +64,7 @@ public class MainFrame extends JFrame {
                     case KeyEvent.VK_A -> b1.moveLeft();
                     case KeyEvent.VK_D -> b1.moveRight();
                     case KeyEvent.VK_W -> b1.rotate();
-                    case KeyEvent.VK_S -> b1.drop();
+                    case KeyEvent.VK_S -> b1.startMoveDown();
                 }
 
                 // Player 2 Controls (Arrows)
@@ -73,7 +73,23 @@ public class MainFrame extends JFrame {
                     case KeyEvent.VK_LEFT -> b2.moveLeft();
                     case KeyEvent.VK_RIGHT -> b2.moveRight();
                     case KeyEvent.VK_UP -> b2.rotate();
-                    case KeyEvent.VK_DOWN -> b2.drop();
+                    case KeyEvent.VK_DOWN -> b2.startMoveDown();
+                }
+                gameCanvas.repaint();
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                // Player 1 Controls (WASD)
+                Board b1 = gameCanvas.getP1Board();
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_S -> b1.stopMoveDown();
+                }
+
+                // Player 2 Controls (Arrows)
+                Board b2 = gameCanvas.getP2Board();
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_DOWN -> b2.stopMoveDown();
                 }
                 gameCanvas.repaint();
             }

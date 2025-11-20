@@ -1,5 +1,7 @@
 package classictetris;
 
+import classictetris.blocks.*;
+
 import java.awt.*;
 
 // ==========================================
@@ -15,10 +17,16 @@ public class Board {
     private int playerID; // 1 or 2
     private MainFrame mainFrame;
     private int blockCounter = 0; // Which block index we are on
+    private int linesCounter;
+    private int skippedFrames = 0;
+    private int level;
+    private boolean fastMovingDown = false;
 
-    public Board(int playerID, MainFrame frame) {
+    public Board(int playerID, MainFrame frame, int level) {
         this.playerID = playerID;
         this.mainFrame = frame;
+        this.level = level;
+        this.linesCounter = (level-1) * 10;
         spawnBlock(); // Initialize first block
     }
 
@@ -45,6 +53,19 @@ public class Board {
     public void update() {
         if (!isAlive) return;
 
+        if (fastMovingDown) {
+            if (skippedFrames < Math.max(20 - level, 3)/10) {
+                skippedFrames++;
+                return;
+            }
+        }
+        else {
+            if (skippedFrames < Math.max(20 - level, 3)) {
+                skippedFrames++;
+                return;
+            }
+        }
+
         if (!checkCollision(currentBlock.getX(), currentBlock.getY() + 1, currentBlock.getShape())) {
             currentBlock.moveDown();
         } else {
@@ -52,6 +73,8 @@ public class Board {
             clearLines();
             spawnBlock();
         }
+
+        skippedFrames = 0;
     }
 
     // Controls
@@ -65,6 +88,14 @@ public class Board {
         if (isAlive && !checkCollision(currentBlock.getX() + 1, currentBlock.getY(), currentBlock.getShape())) {
             currentBlock.moveRight();
         }
+    }
+
+    public void startMoveDown() {
+        fastMovingDown = true;
+    }
+
+    public void stopMoveDown() {
+        fastMovingDown = false;
     }
 
     public void drop() {
@@ -127,6 +158,9 @@ public class Board {
             case 3 -> score += 300;
             case 4 -> score += 1200;
         }
+
+        linesCounter += linesCleared;
+        level = linesCounter / 10 + 1;
     }
 
     private boolean checkCollision(int x, int y, int[][] shape) {
@@ -148,6 +182,7 @@ public class Board {
     }
 
     public int[][] getGrid() { return grid; }
+    public int getLevel() { return level; }
     public int getScore() { return score; }
     public Block getCurrentBlock() { return currentBlock; }
     public Block getNextBlock() { return nextBlock; }

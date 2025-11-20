@@ -1,4 +1,4 @@
-package classictetris;
+package classictetris.blocks;
 
 public class LineBlock extends Block { // I Piece
     @Override protected void initShape() {
