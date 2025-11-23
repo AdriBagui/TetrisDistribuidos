@@ -1,0 +1,16 @@
+package tetris.tetrominoes;
+
+import tetris.TwoPlayerPanel;
+
+import java.awt.*;
+
+public class TetrominoCell {
+    public static void draw(Graphics2D g2, int x, int y, Color c) {
+        // Draw Cell Fill
+        g2.setColor(c);
+        g2.fillRect(x, y, TwoPlayerPanel.CELL_SIZE, TwoPlayerPanel.CELL_SIZE);
+        // Draw Cell Border
+        g2.setColor(c.darker());
+        g2.drawRect(x, y, TwoPlayerPanel.CELL_SIZE, TwoPlayerPanel.CELL_SIZE);
+    }
+}

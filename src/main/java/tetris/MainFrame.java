@@ -1,4 +1,4 @@
-package classictetris;
+package tetris;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -13,8 +13,8 @@ import java.util.Random;
 // Handles the window, game loop timer, and input
 // ==========================================
 public class MainFrame extends JFrame {
-    private Canvas gameCanvas;
-    private Timer gameTimer;
+    private TwoPlayerPanel gameTwoPlayerPanel;
+    private Timer gameLoop;
 
     // Shared sequence of blocks to ensure fairness
     private ArrayList<Integer> sharedBlockQueue;
@@ -30,28 +30,27 @@ public class MainFrame extends JFrame {
         random = new Random();
 
         // Create the view
-        gameCanvas = new Canvas(this);
-        add(gameCanvas);
+        gameTwoPlayerPanel = new TwoPlayerPanel(this);
+        add(gameTwoPlayerPanel);
         pack();
         setLocationRelativeTo(null);
 
         // Game Loop (approx 60fps (62.5fps) for smoothness, logic updates slower)
-        gameTimer = new Timer(16, new ActionListener() {
+        gameLoop = new Timer(16, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!gameCanvas.isGameOver()) {
-                    gameCanvas.updateBoards();
-                    gameCanvas.repaint();
+                if (!gameTwoPlayerPanel.isGameOver()) {
+                    gameTwoPlayerPanel.updateBoards();
+                    gameTwoPlayerPanel.repaint();
                 }
             }
         });
-        gameTimer.start();
 
         // Input Handling
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (gameCanvas.isGameOver()) {
+                if (gameTwoPlayerPanel.isGameOver()) {
                     if (e.getKeyCode() == KeyEvent.VK_R) {
                         restartGame();
                     }
@@ -59,47 +58,57 @@ public class MainFrame extends JFrame {
                 }
 
                 // Player 1 Controls (WASD)
-                Board b1 = gameCanvas.getP1Board();
+                Board b1 = gameTwoPlayerPanel.getP1Board();
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_A -> b1.moveLeft();
-                    case KeyEvent.VK_D -> b1.moveRight();
-                    case KeyEvent.VK_W -> b1.rotate();
-                    case KeyEvent.VK_S -> b1.startMoveDown();
+                    case KeyEvent.VK_A -> b1.moveLeftPressed();
+                    case KeyEvent.VK_D -> b1.moveRightPressed();
+                    case KeyEvent.VK_W -> b1.rotateRightPressed();
+                    case KeyEvent.VK_S -> b1.moveDownPressed();
+                    case KeyEvent.VK_SHIFT ->  b1.hold();
                 }
 
                 // Player 2 Controls (Arrows)
-                Board b2 = gameCanvas.getP2Board();
+                Board b2 = gameTwoPlayerPanel.getP2Board();
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_LEFT -> b2.moveLeft();
-                    case KeyEvent.VK_RIGHT -> b2.moveRight();
-                    case KeyEvent.VK_UP -> b2.rotate();
-                    case KeyEvent.VK_DOWN -> b2.startMoveDown();
+                    case KeyEvent.VK_LEFT -> b2.moveLeftPressed();
+                    case KeyEvent.VK_RIGHT -> b2.moveRightPressed();
+                    case KeyEvent.VK_UP -> b2.rotateRightPressed();
+                    case KeyEvent.VK_DOWN -> b2.moveDownPressed();
+                    case KeyEvent.VK_PERIOD ->  b2.hold();
                 }
-                gameCanvas.repaint();
+                gameTwoPlayerPanel.repaint();
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 // Player 1 Controls (WASD)
-                Board b1 = gameCanvas.getP1Board();
+                Board b1 = gameTwoPlayerPanel.getP1Board();
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_S -> b1.stopMoveDown();
+                    case KeyEvent.VK_A -> b1.moveLeftReleased();
+                    case KeyEvent.VK_D -> b1.moveRightReleased();
+                    case KeyEvent.VK_W -> b1.rotateRightReleased();
+                    case KeyEvent.VK_S -> b1.moveDownReleased();
                 }
 
                 // Player 2 Controls (Arrows)
-                Board b2 = gameCanvas.getP2Board();
+                Board b2 = gameTwoPlayerPanel.getP2Board();
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_DOWN -> b2.stopMoveDown();
+                    case KeyEvent.VK_LEFT -> b2.moveLeftReleased();
+                    case KeyEvent.VK_RIGHT -> b2.moveRightReleased();
+                    case KeyEvent.VK_UP -> b2.rotateRightReleased();
+                    case KeyEvent.VK_DOWN -> b2.moveDownReleased();
                 }
-                gameCanvas.repaint();
+                gameTwoPlayerPanel.repaint();
             }
         });
+
+        gameLoop.start();
     }
 
     public void restartGame() {
         sharedBlockQueue.clear();
-        gameCanvas.reset();
-        gameTimer.start();
+        gameTwoPlayerPanel.reset();
+        gameLoop.start();
     }
 
     // Ensures both players get the exact same sequence of blocks
