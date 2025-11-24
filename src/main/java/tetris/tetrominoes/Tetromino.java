@@ -1,6 +1,6 @@
 package tetris.tetrominoes;
 
-import tetris.TwoPlayerPanel;
+import tetris.GamePanel;
 
 import java.awt.*;
 
@@ -41,6 +41,7 @@ public abstract class Tetromino {
     public int getParentX() { return parentX; }
     public int getParentY() { return parentY; }
 
+    public void setRotationIndex(int rotationIndex) { this.rotationIndex = rotationIndex; }
     public void setX(double x) { this.x = x; }
     public void setY(double y) { this.y = y; }
     public void setXY(double x, double y) { this.x = x; this.y = y; }
@@ -67,7 +68,7 @@ public abstract class Tetromino {
     }
     public void flip()
     {
-        rotationIndex = rotationIndex + 2;
+        rotationIndex += + 2;
 
         if (rotationIndex > 3) { rotationIndex = rotationIndex - 4; }
     }
@@ -78,7 +79,7 @@ public abstract class Tetromino {
         for(int r = 0; r< shape.length; r++) {
             for(int c = 0; c< shape[r].length; c++) {
                 if(shape[r][c]) {
-                    TetrominoCell.draw(g2, (int) (parentX + (x + c) * TwoPlayerPanel.CELL_SIZE), (int) (parentY + (y + r) * TwoPlayerPanel.CELL_SIZE), color);
+                    TetrominoCell.draw(g2, (int) (parentX + (x + c) * GamePanel.CELL_SIZE), (int) (parentY + (y + r) * GamePanel.CELL_SIZE), color);
                 }
             }
         }

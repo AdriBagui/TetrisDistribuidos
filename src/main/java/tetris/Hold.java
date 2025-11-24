@@ -5,8 +5,8 @@ import tetris.tetrominoes.Tetromino;
 import java.awt.*;
 
 public class Hold {
-    public static final int WIDTH = TwoPlayerPanel.CELL_SIZE * 5;
-    public static final int HEIGHT = TwoPlayerPanel.CELL_SIZE * (3 + 2);
+    public static final int WIDTH = GamePanel.CELL_SIZE * 5;
+    public static final int HEIGHT = GamePanel.CELL_SIZE * (3 + 2);
 
     private boolean locked;
     private Tetromino heldTetromino;
@@ -37,6 +37,7 @@ public class Hold {
         heldTetromino = t;
         heldTetromino.setXY(0.5 * (5-t.getWidth()), 2);
         heldTetromino.setParentXY(x, y);
+        heldTetromino.setRotationIndex(0);
 
         return aux;
     }
@@ -46,7 +47,7 @@ public class Hold {
     public boolean isLocked() { return locked; }
 
     public void draw(Graphics2D g2) {
-        g2.drawString("Hold:", x + TwoPlayerPanel.CELL_SIZE, y + TwoPlayerPanel.CELL_SIZE);
+        g2.drawString("Hold:", x + GamePanel.CELL_SIZE, y + GamePanel.CELL_SIZE);
 
 
         if (heldTetromino != null) {

@@ -9,7 +9,7 @@ public class TetrominoShadow extends Tetromino {
     private Tetromino t;
 
     public TetrominoShadow(Tetromino t) {
-        super(t.getShapeRotations(), t.rotationIndex, t.getX(), t.getY(), new Color(t.getColor().getRGB() + TRANSPARENCY, true), t.getParentX(), t.getParentY());
+        super(t.getShapeRotations(), t.rotationIndex, t.getX(), t.getY(), new Color(t.getColor().darker().darker().getRGB() + TRANSPARENCY, true), t.getParentX(), t.getParentY());
         this.t = t;
     }
 

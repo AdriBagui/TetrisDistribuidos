@@ -1,7 +1,5 @@
 package tetris;
 
-import tetris.tetrominoes.Tetromino;
-
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,7 +7,7 @@ import java.awt.*;
 // CLASS: MainPanel
 // Handles drawing both boards and scores
 // ==========================================
-public class TwoPlayerPanel extends JPanel {
+public class GamePanel extends JPanel {
     private MainFrame mainFrame;
     private Board p1Board;
     private Board p2Board;
@@ -17,7 +15,7 @@ public class TwoPlayerPanel extends JPanel {
 
     public static final int CELL_SIZE = 25;
 
-    public TwoPlayerPanel(MainFrame mainFrame) {
+    public GamePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         setPreferredSize(new Dimension(1100, 700));
         setBackground(Color.DARK_GRAY);

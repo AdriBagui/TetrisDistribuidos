@@ -13,7 +13,7 @@ public abstract class SuperRotationSystem {
 
     public abstract void rotateRight(Tetromino t);
     public abstract void rotateLeft(Tetromino t);
-    public  abstract void flip(Tetromino t);
+    public abstract void flip(Tetromino t);
 
     protected boolean tryKick(Tetromino t, int originalX, int originalY, int offsetX, int offsetY) {
         t.setXY(originalX + offsetX, originalY + offsetY);

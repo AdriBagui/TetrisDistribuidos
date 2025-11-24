@@ -1,6 +1,5 @@
 package tetris;
 
-import tetris.generators.TetrominoFactory;
 import tetris.generators.TetrominoesGenerator;
 import tetris.tetrominoes.Tetromino;
 
@@ -33,10 +32,10 @@ public class Queue {
     }
 
     public void draw(Graphics2D g2) {
-        int queueWidth = TwoPlayerPanel.CELL_SIZE * 5;
-        int queueHeight = TwoPlayerPanel.CELL_SIZE * (tetrominoesQueue.length * 3 + 2);
+        int queueWidth = GamePanel.CELL_SIZE * 5;
+        int queueHeight = GamePanel.CELL_SIZE * (tetrominoesQueue.length * 3 + 2);
 
-        g2.drawString("Next:", x + TwoPlayerPanel.CELL_SIZE, y + TwoPlayerPanel.CELL_SIZE);
+        g2.drawString("Next:", x + GamePanel.CELL_SIZE, y + GamePanel.CELL_SIZE);
 
         for (int i = 0; i < tetrominoesQueue.length; i++) {
             tetrominoesQueue[i].draw(g2);

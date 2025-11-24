@@ -13,7 +13,9 @@ import java.util.Random;
 // Handles the window, game loop timer, and input
 // ==========================================
 public class MainFrame extends JFrame {
-    private TwoPlayerPanel gameTwoPlayerPanel;
+    public static final double FPS = 62.5;
+
+    private GamePanel gameGamePanel;
     private Timer gameLoop;
 
     // Shared sequence of blocks to ensure fairness
@@ -30,18 +32,18 @@ public class MainFrame extends JFrame {
         random = new Random();
 
         // Create the view
-        gameTwoPlayerPanel = new TwoPlayerPanel(this);
-        add(gameTwoPlayerPanel);
+        gameGamePanel = new GamePanel(this);
+        add(gameGamePanel);
         pack();
         setLocationRelativeTo(null);
 
         // Game Loop (approx 60fps (62.5fps) for smoothness, logic updates slower)
-        gameLoop = new Timer(16, new ActionListener() {
+        gameLoop = new Timer((int) (1000/FPS), new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (!gameTwoPlayerPanel.isGameOver()) {
-                    gameTwoPlayerPanel.updateBoards();
-                    gameTwoPlayerPanel.repaint();
+                if (!gameGamePanel.isGameOver()) {
+                    gameGamePanel.updateBoards();
+                    gameGamePanel.repaint();
                 }
             }
         });
@@ -50,7 +52,7 @@ public class MainFrame extends JFrame {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-                if (gameTwoPlayerPanel.isGameOver()) {
+                if (gameGamePanel.isGameOver()) {
                     if (e.getKeyCode() == KeyEvent.VK_R) {
                         restartGame();
                     }
@@ -58,17 +60,20 @@ public class MainFrame extends JFrame {
                 }
 
                 // Player 1 Controls (WASD)
-                Board b1 = gameTwoPlayerPanel.getP1Board();
+                Board b1 = gameGamePanel.getP1Board();
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_A -> b1.moveLeftPressed();
                     case KeyEvent.VK_D -> b1.moveRightPressed();
-                    case KeyEvent.VK_W -> b1.rotateRightPressed();
+                    case KeyEvent.VK_W -> b1.moveDownPressed();
                     case KeyEvent.VK_S -> b1.moveDownPressed();
+                    case KeyEvent.VK_J -> b1.rotateLeftPressed();
+                    case KeyEvent.VK_K -> b1.flipPressed();
+                    case KeyEvent.VK_L -> b1.rotateRightPressed();
                     case KeyEvent.VK_SHIFT ->  b1.hold();
                 }
 
                 // Player 2 Controls (Arrows)
-                Board b2 = gameTwoPlayerPanel.getP2Board();
+                Board b2 = gameGamePanel.getP2Board();
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_LEFT -> b2.moveLeftPressed();
                     case KeyEvent.VK_RIGHT -> b2.moveRightPressed();
@@ -76,29 +81,32 @@ public class MainFrame extends JFrame {
                     case KeyEvent.VK_DOWN -> b2.moveDownPressed();
                     case KeyEvent.VK_PERIOD ->  b2.hold();
                 }
-                gameTwoPlayerPanel.repaint();
+                gameGamePanel.repaint();
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
                 // Player 1 Controls (WASD)
-                Board b1 = gameTwoPlayerPanel.getP1Board();
+                Board b1 = gameGamePanel.getP1Board();
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_A -> b1.moveLeftReleased();
                     case KeyEvent.VK_D -> b1.moveRightReleased();
-                    case KeyEvent.VK_W -> b1.rotateRightReleased();
+                    case KeyEvent.VK_W -> b1.moveDownReleased();
                     case KeyEvent.VK_S -> b1.moveDownReleased();
+                    case KeyEvent.VK_J -> b1.rotateLeftReleased();
+                    case KeyEvent.VK_K -> b1.flipReleased();
+                    case KeyEvent.VK_L -> b1.rotateRightReleased();
                 }
 
                 // Player 2 Controls (Arrows)
-                Board b2 = gameTwoPlayerPanel.getP2Board();
+                Board b2 = gameGamePanel.getP2Board();
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_LEFT -> b2.moveLeftReleased();
                     case KeyEvent.VK_RIGHT -> b2.moveRightReleased();
                     case KeyEvent.VK_UP -> b2.rotateRightReleased();
                     case KeyEvent.VK_DOWN -> b2.moveDownReleased();
                 }
-                gameTwoPlayerPanel.repaint();
+                gameGamePanel.repaint();
             }
         });
 
@@ -107,7 +115,7 @@ public class MainFrame extends JFrame {
 
     public void restartGame() {
         sharedBlockQueue.clear();
-        gameTwoPlayerPanel.reset();
+        gameGamePanel.reset();
         gameLoop.start();
     }
 
