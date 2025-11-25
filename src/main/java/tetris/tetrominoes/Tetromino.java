@@ -76,8 +76,8 @@ public abstract class Tetromino {
     public void draw(Graphics2D g2) {
         boolean[][] shape = getShape();
 
-        for(int r = 0; r< shape.length; r++) {
-            for(int c = 0; c< shape[r].length; c++) {
+        for(int r = 0; r < shape.length; r++) {
+            for(int c = 0; c < shape[r].length; c++) {
                 if(shape[r][c]) {
                     TetrominoCell.draw(g2, (int) (parentX + (x + c) * GamePanel.CELL_SIZE), (int) (parentY + (y + r) * GamePanel.CELL_SIZE), color);
                 }

@@ -1,12 +1,7 @@
 package tetris;
 
 import tetris.generators.RandomBagTetrominoesGenerator;
-import tetris.movement.CollisionDetector;
-import tetris.movement.Gravity;
-import tetris.movement.InputMovement;
-import tetris.movement.srs.SuperRotationSystem;
-import tetris.movement.srs.SuperRotationSystemPlus;
-import tetris.movement.srs.WallKick;
+import tetris.movement.TetrominoMovement;
 import tetris.tetrominoes.Tetromino;
 import tetris.tetrominoes.TetrominoCell;
 import tetris.tetrominoes.TetrominoShadow;
@@ -26,17 +21,13 @@ public class Board {
     private int x, y;
     private boolean[][] grid;// 20 rows, 10 cols
     private Color[][] gridColor;
-    private Tetromino currentTetromino;
+    private Tetromino fallingTetromino;
     private Tetromino nextTetromino;
     private Queue queue;
     private Hold hold;
-    private CollisionDetector collisionDetector;
-    private SuperRotationSystem superRotationSystem;
-    private Gravity gravity;
-    private InputMovement inputMovement;
+    private TetrominoMovement tetrominoMovement;
     private int score, linesCleared, level;
     private boolean isAlive;
-    private int skippedFrames;
 
     public Board(int playerID, long seed, int x, int y) {
         this.playerID = playerID;
@@ -47,91 +38,67 @@ public class Board {
         gridColor = new Color[ROWS + SPAWN_ROWS][COLUMNS];
         queue = new Queue(5, new RandomBagTetrominoesGenerator(seed), x + COLUMNS * GamePanel.CELL_SIZE, y + SPAWN_ROWS * GamePanel.CELL_SIZE);
         hold = new Hold(x - Hold.WIDTH, y + SPAWN_ROWS * GamePanel.CELL_SIZE, queue);
-        collisionDetector = new CollisionDetector(grid);
-        superRotationSystem = new SuperRotationSystemPlus(collisionDetector);
-        gravity = new Gravity(grid, collisionDetector, 0.05);
-        inputMovement = new InputMovement(collisionDetector, superRotationSystem);
+        tetrominoMovement = new TetrominoMovement(grid);
         score = 0;
         linesCleared = 0;
         level = 1;
         isAlive = true;
-        skippedFrames = 0;
 
-        setCurrentTetromino(getQueuedTetromino());  // Initialize first block
-
-        for(int i = 1; i < level && i < 21; i++) {
-            gravity.increaseGravity();
-        }
+        nextTetromino = queue.getNext(); // Initialize first block
+        fallingTetromino = null;
     }
 
-    private Tetromino getQueuedTetromino() {
-        Tetromino t = queue.getNext();
-        t.setParentXY(x, y);
-        t.setXY((Board.COLUMNS - t.getWidth())/2, 0);
+    private void updateFallingTetromino() {
+        nextTetromino.setParentXY(x, y);
+        nextTetromino.setXY((Board.COLUMNS - nextTetromino.getWidth())/2, 0);
 
-        if (collisionDetector.checkCollision(t)) {
-            isAlive = false;
-        }
-
-        return  t;
-    }
-
-    private void setCurrentTetromino(Tetromino t) {
-        currentTetromino = t;
-        gravity.setFallingTetromino(currentTetromino);
-        inputMovement.setFallingTetrimonio(currentTetromino);
+        fallingTetromino = nextTetromino;
+        tetrominoMovement.setFallingTetromino(fallingTetromino);
     }
 
     public synchronized void hold() {
-        nextTetromino = hold.hold(currentTetromino);
+        nextTetromino = hold.hold(fallingTetromino);
 
         if(nextTetromino == null) return;
-
-        nextTetromino.setParentXY(x, y);
-        nextTetromino.setXY((Board.COLUMNS - nextTetromino.getWidth())/2, 0);
     }
 
     public synchronized void update() {
         if (nextTetromino != null) {
-            setCurrentTetromino(nextTetromino);
+            updateFallingTetromino();
             nextTetromino = null;
 
-            if (collisionDetector.checkCollision(currentTetromino)) {
+            if (tetrominoMovement.thereIsCollision()) {
                 isAlive = false;
             }
         }
 
         if (!isAlive) return;
 
-        inputMovement.update();
+        tetrominoMovement.update();
 
-        gravity.update();
-
-        if (gravity.locked()) {
+        if (tetrominoMovement.locked()) {
             lockTetromino();
             clearLines();
-            setCurrentTetromino(getQueuedTetromino());
+            nextTetromino = queue.getNext();;
         }
-
-        skippedFrames = 0;
     }
 
     // Controls
-    public void moveLeftPressed() { inputMovement.moveLeftPressed(); }
-    public void moveLeftReleased() { inputMovement.moveLeftReleased(); }
-    public void moveRightPressed() { inputMovement.moveRightPressed(); }
-    public void moveRightReleased() { inputMovement.moveRightReleased(); }
-    public void moveDownPressed() { inputMovement.moveDownPressed(); }
-    public void moveDownReleased() { inputMovement.moveDownReleased(); }
-    public void rotateRightPressed() { inputMovement.rotateRightPressed(); }
-    public void rotateRightReleased() { inputMovement.rotateRightReleased(); }
-    public void rotateLeftPressed() { inputMovement.rotateLeftPressed(); }
-    public void rotateLeftReleased() { inputMovement.rotateLeftReleased(); }
-    public void flipPressed() { inputMovement.flipPressed(); }
-    public void flipReleased() { inputMovement.flipReleased(); }
+    public void moveLeftPressed() { tetrominoMovement.moveLeftPressed(); }
+    public void moveLeftReleased() { tetrominoMovement.moveLeftReleased(); }
+    public void moveRightPressed() { tetrominoMovement.moveRightPressed(); }
+    public void moveRightReleased() { tetrominoMovement.moveRightReleased(); }
+    public void moveDownPressed() { tetrominoMovement.moveDownPressed(); }
+    public void moveDownReleased() { tetrominoMovement.moveDownReleased(); }
+    public void rotateRightPressed() { tetrominoMovement.rotateRightPressed(); }
+    public void rotateRightReleased() { tetrominoMovement.rotateRightReleased(); }
+    public void rotateLeftPressed() { tetrominoMovement.rotateLeftPressed(); }
+    public void rotateLeftReleased() { tetrominoMovement.rotateLeftReleased(); }
+    public void flipPressed() { tetrominoMovement.flipPressed(); }
+    public void flipReleased() { tetrominoMovement.flipReleased(); }
 
     private void drop(Tetromino t) {
-        while(!collisionDetector.checkCollision(t)) {
+        while(!tetrominoMovement.hasCollision(t)) {
             t.moveDown();
         }
 
@@ -139,15 +106,15 @@ public class Board {
     }
 
     private void lockTetromino() {
-        boolean[][] tetrominoShape = currentTetromino.getShape();
-        int x = currentTetromino.getX();
-        int y = currentTetromino.getY();
+        boolean[][] tetrominoShape = fallingTetromino.getShape();
+        int x = fallingTetromino.getX();
+        int y = fallingTetromino.getY();
 
         for (int r = 0; r < tetrominoShape.length; r++) {
             for (int c = 0; c < tetrominoShape[0].length; c++) {
                 if(tetrominoShape[r][c]) {
                     grid[y+r][x+c] = true;
-                    gridColor[y+r][x+c] = currentTetromino.getColor();
+                    gridColor[y+r][x+c] = fallingTetromino.getColor();
                 }
             }
         }
@@ -190,7 +157,7 @@ public class Board {
         this.linesCleared += linesCleared;
 
         if (level < (this.linesCleared / 10) + 1 && level < 21) {
-            gravity.increaseGravity();
+            tetrominoMovement.increaseGravity();
         }
 
         level = (this.linesCleared / 10) + 1;
@@ -198,14 +165,13 @@ public class Board {
 
     public int getLevel() { return level; }
     public int getScore() { return score; }
-    public Tetromino getCurrentBlock() { return currentTetromino; }
+    public Tetromino getFallingTetromino() { return fallingTetromino; }
     public boolean isAlive() { return isAlive; }
 
     public void draw(Graphics2D g2) {
         int boardWidth = COLUMNS * GamePanel.CELL_SIZE;
         int boardHeight = ROWS * GamePanel.CELL_SIZE;
         int spawnHeight = SPAWN_ROWS * GamePanel.CELL_SIZE;
-        int boardAndSpawnHeight = boardHeight + spawnHeight;
 
         // Draw Grid Background
         g2.setColor(Color.BLACK);
@@ -230,13 +196,15 @@ public class Board {
         }
 
         // Draw Current Falling Tetromino
-        currentTetromino.draw(g2);
+        if (fallingTetromino != null) {
+            fallingTetromino.draw(g2);
 
-        // Draw Current Falling Tetromino Shadow
-        if (isAlive) {
-            TetrominoShadow tetrominoShadow = new TetrominoShadow(currentTetromino);
-            drop(tetrominoShadow);
-            tetrominoShadow.draw(g2);
+            // Draw Current Falling Tetromino Shadow
+            if (isAlive) {
+                TetrominoShadow tetrominoShadow = new TetrominoShadow(fallingTetromino);
+                drop(tetrominoShadow);
+                tetrominoShadow.draw(g2);
+            }
         }
 
         // Draw Border
