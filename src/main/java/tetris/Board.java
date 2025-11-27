@@ -87,7 +87,7 @@ public class Board {
         tetrominoMovement.update();
         updateFallingTetrominoShadow();
 
-        if (tetrominoMovement.locked()) {
+        if (tetrominoMovement.isLocked()) {
             lockTetromino();
             clearLines();
             nextTetromino = queue.getNext();;

@@ -2,33 +2,34 @@ package tetris.movement;
 
 import tetris.MainFrame;
 import tetris.movement.rotationSystem.RotationSystem;
-import tetris.movement.rotationSystem.SuperRotationSystem;
 import tetris.tetrominoes.Tetromino;
 
 public class InputMovement {
-    private static final int BETWEEN_MOVEMENT_FRAMES = ((int) MainFrame.FPS) / 30;
-    private static final int INITIAL_INPUT_DELAY_FRAMES = ((int) MainFrame.FPS) / 6;
+    private static final int AUTOMATIC_REPEAT_RATE_FRAMES = ((int) MainFrame.FPS) / 30;
+    private static final int DELAYED_AUTO_SHIFT_FRAMES = ((int) MainFrame.FPS) / 6;
 
     private CollisionDetector collisionDetector;
     private RotationSystem superRotationSystem;
+    private Gravity gravity;
     private Tetromino fallingTetrimonio;
-    private int fastMovingDown;
+    private int softDropping;
     private int movingLeft;
     private int movingRight;
-    private int dropped;
+    private int hardDropped;
     private int rotatedLeft;
     private int rotatedRight;
     private int flipped;
 
-    public InputMovement(CollisionDetector collisionDetector, RotationSystem superRotationSystem) {
+    public InputMovement(CollisionDetector collisionDetector, RotationSystem superRotationSystem, Gravity gravity) {
         this.collisionDetector = collisionDetector;
         this.superRotationSystem = superRotationSystem;
+        this.gravity = gravity;
         this.fallingTetrimonio = null;
 
-        fastMovingDown = -1;
+        softDropping = -1;
         movingLeft = -1;
         movingRight = -1;
-        dropped = -1;
+        hardDropped = -1;
         rotatedLeft = -1;
         rotatedRight = -1;
         flipped = -1;
@@ -39,10 +40,10 @@ public class InputMovement {
     }
 
     public void update() {
-        if (dropped == 0) {
-            TetrominoMovement.drop(fallingTetrimonio, collisionDetector);
+        if (hardDropped == 0) {
+            gravity.hardDrop();
 
-            dropped = 1;
+            hardDropped = 1;
             return;
         }
 
@@ -55,21 +56,21 @@ public class InputMovement {
                 if (movingRight < movingLeft) {
                     movingRightUpdate();
 
-                    if (movingLeft < INITIAL_INPUT_DELAY_FRAMES + BETWEEN_MOVEMENT_FRAMES + 1) {
+                    if (movingLeft < DELAYED_AUTO_SHIFT_FRAMES + AUTOMATIC_REPEAT_RATE_FRAMES + 1) {
                         movingLeft++;
                     }
                 } else {
                     movingLeftUpdate();
 
-                    if (movingRight < INITIAL_INPUT_DELAY_FRAMES + BETWEEN_MOVEMENT_FRAMES + 1) {
+                    if (movingRight < DELAYED_AUTO_SHIFT_FRAMES + AUTOMATIC_REPEAT_RATE_FRAMES + 1) {
                         movingRight++;
                     }
                 }
             }
         }
 
-        if (fastMovingDown >= 0) {
-            fastMovingDownUpdate();
+        if (softDropping >= 0) {
+            gravity.softDrop();
         }
 
         if (rotatedRight == 0) {
@@ -116,24 +117,24 @@ public class InputMovement {
         movingRight = -1;
     }
 
-    public void moveDownPressed() {
-        if (fastMovingDown < 0) {
-            fastMovingDown = 0;
+    public void softDropPressed() {
+        if (softDropping < 0) {
+            softDropping = 0;
         }
     }
 
-    public void moveDownReleased() {
-        fastMovingDown = -1;
+    public void softDropReleased() {
+        softDropping = -1;
     }
 
-    public void dropPressed() {
-        if (dropped < 0) {
-            dropped = 0;
+    public void hardDropPressed() {
+        if (hardDropped < 0) {
+            hardDropped = 0;
         }
     }
 
-    public void dropReleased() {
-        dropped = -1;
+    public void hardDropReleased() {
+        hardDropped = -1;
     }
 
     public void rotateRightPressed() {
@@ -201,11 +202,11 @@ public class InputMovement {
             tryAndApplyMoveRight();
             movingRight++;
         } else if (movingRight > 0) {
-            if (movingRight < INITIAL_INPUT_DELAY_FRAMES + BETWEEN_MOVEMENT_FRAMES) {
+            if (movingRight < DELAYED_AUTO_SHIFT_FRAMES + AUTOMATIC_REPEAT_RATE_FRAMES) {
                 movingRight++;
             } else {
                 tryAndApplyMoveRight();
-                movingRight = INITIAL_INPUT_DELAY_FRAMES;
+                movingRight = DELAYED_AUTO_SHIFT_FRAMES;
             }
         }
     }
@@ -215,21 +216,21 @@ public class InputMovement {
             tryAndApplyMoveLeft();
             movingLeft++;
         } else if (movingLeft > 0) {
-            if (movingLeft < INITIAL_INPUT_DELAY_FRAMES + BETWEEN_MOVEMENT_FRAMES) {
+            if (movingLeft < DELAYED_AUTO_SHIFT_FRAMES + AUTOMATIC_REPEAT_RATE_FRAMES) {
                 movingLeft++;
             } else {
                 tryAndApplyMoveLeft();
-                movingLeft = INITIAL_INPUT_DELAY_FRAMES;
+                movingLeft = DELAYED_AUTO_SHIFT_FRAMES;
             }
         }
     }
 
     private void fastMovingDownUpdate() {
-        if (fastMovingDown < BETWEEN_MOVEMENT_FRAMES + INITIAL_INPUT_DELAY_FRAMES) {
-            fastMovingDown++;
+        if (softDropping < AUTOMATIC_REPEAT_RATE_FRAMES + DELAYED_AUTO_SHIFT_FRAMES) {
+            softDropping++;
         } else {
             tryAndApplyMoveDown();
-            fastMovingDown = INITIAL_INPUT_DELAY_FRAMES;
+            softDropping = DELAYED_AUTO_SHIFT_FRAMES;
         }
     }
 }

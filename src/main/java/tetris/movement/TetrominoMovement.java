@@ -1,6 +1,5 @@
 package tetris.movement;
 
-import tetris.GamePanel;
 import tetris.MainFrame;
 import tetris.movement.rotationSystem.RotationSystem;
 import tetris.movement.rotationSystem.SuperRotationSystemPlus;
@@ -17,7 +16,7 @@ public class TetrominoMovement {
         collisionDetector = new CollisionDetector(grid);
         rotationSystem = new SuperRotationSystemPlus(collisionDetector);
         gravity = new Gravity(grid, collisionDetector, ((1./48)*60.0988)/MainFrame.FPS);
-        inputMovement = new InputMovement(collisionDetector, rotationSystem);
+        inputMovement = new InputMovement(collisionDetector, rotationSystem, gravity);
     }
 
     public void setFallingTetromino(Tetromino fallingTetromino) {
@@ -27,13 +26,13 @@ public class TetrominoMovement {
     }
 
     public void update() {
-        inputMovement.update();
+        inputMovement.update(); // IMPORTANT: Has to be before gravity. Soft drop and Hard drop rely on it (otherwise they will be a frame delayed)
         gravity.update();
     }
 
     public boolean thereIsCollision() { return collisionDetector.checkCollision(fallingTetromino); }
     public boolean hasCollision(Tetromino t) { return collisionDetector.checkCollision(t); }
-    public boolean locked() { return gravity.locked(); }
+    public boolean isLocked() { return gravity.isLocked(); }
     public void increaseGravity() { gravity.increaseGravity(); }
     public void drop(Tetromino t) {
         int dropCells = 0;
@@ -63,10 +62,10 @@ public class TetrominoMovement {
     public void moveLeftReleased() { inputMovement.moveLeftReleased(); }
     public void moveRightPressed() { inputMovement.moveRightPressed(); }
     public void moveRightReleased() { inputMovement.moveRightReleased(); }
-    public void moveDownPressed() { inputMovement.moveDownPressed(); }
-    public void moveDownReleased() { inputMovement.moveDownReleased(); }
-    public void dropPressed() { inputMovement.dropPressed(); }
-    public void dropReleased() { inputMovement.dropReleased(); }
+    public void moveDownPressed() { inputMovement.softDropPressed(); }
+    public void moveDownReleased() { inputMovement.softDropReleased(); }
+    public void dropPressed() { inputMovement.hardDropPressed(); }
+    public void dropReleased() { inputMovement.hardDropReleased(); }
     public void rotateRightPressed() { inputMovement.rotateRightPressed(); }
     public void rotateRightReleased() { inputMovement.rotateRightReleased(); }
     public void rotateLeftPressed() { inputMovement.rotateLeftPressed(); }

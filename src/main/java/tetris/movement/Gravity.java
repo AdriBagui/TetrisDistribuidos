@@ -4,15 +4,17 @@ import tetris.MainFrame;
 import tetris.tetrominoes.Tetromino;
 
 public class Gravity {
-    private static final double LOCK_DELAY_FRAMES = MainFrame.FPS/2; // aprox 500ms
+    private static final int SOFT_DROP_FACTOR = 6;
+    private static final int SOFT_DROP_DELAY_QUOTIENT = SOFT_DROP_FACTOR/3;
 
     private boolean[][] grid;
     private Tetromino fallingTetromino;
     private double decimalY;
     private CollisionDetector collisionDetector;
     private double gravity; // cells per frame
-    private double extraInputGravity;
-    private boolean touchingFloor;
+    private double appliedGravity;
+    private double lockDelayFrames; // aprox 500ms
+    private double appliedLockDelayFrames;
     private int delayUsed;
 
     public Gravity(boolean[][] grid, CollisionDetector collisionDetector, double gravity) {
@@ -21,7 +23,9 @@ public class Gravity {
         decimalY = 0;
         this.collisionDetector = collisionDetector;
         this.gravity = gravity;
-        touchingFloor = false;
+        this.appliedGravity = gravity;
+        this.lockDelayFrames = MainFrame.FPS/2;
+        this.appliedLockDelayFrames = lockDelayFrames;
         delayUsed = 0;
     }
 
@@ -32,16 +36,14 @@ public class Gravity {
             return;
         }
 
-        decimalY += gravity;
+        decimalY += appliedGravity;
 
         while (decimalY > 1 && !isTouchingFloor()) {
             fallingTetromino.moveDown();
             decimalY -= 1;
         }
-    }
 
-    public boolean locked() {
-        return delayUsed >= LOCK_DELAY_FRAMES;
+        appliedGravity = gravity;
     }
 
     public void setFallingTetromino(Tetromino t) {
@@ -50,13 +52,17 @@ public class Gravity {
         resetLockDelay();
     }
 
-    public void resetLockDelay() {
-        delayUsed = 0;
-        touchingFloor = false;
+    public boolean isLocked() {
+        boolean isLocked = delayUsed >= appliedLockDelayFrames;
+        appliedLockDelayFrames = lockDelayFrames;
+        return isLocked;
     }
 
+    public void resetLockDelay() { delayUsed = 0; }
+
     public void increaseGravity() {
-        int framesPerCellSubstracted = 5;
+        int framesPerCellSubstracted;
+        double oldGravity = gravity;
 
         if (gravity > ((1./12.9)*60.0988)/MainFrame.FPS) {
             if (gravity > ((1./7.9)*60.0988)/MainFrame.FPS) {
@@ -70,13 +76,22 @@ public class Gravity {
             else {
                 framesPerCellSubstracted = 2;
             }
+        } else {
+            framesPerCellSubstracted = 5;
         }
 
-        System.out.println((gravity*MainFrame.FPS/60.0988));
+        gravity = 1 / ((1/gravity) - (framesPerCellSubstracted*MainFrame.FPS/60.0988));
+        lockDelayFrames *= oldGravity / gravity;
+    }
 
-        gravity *= (gravity*MainFrame.FPS/60.0988) / ((gravity*MainFrame.FPS/60.0988) - framesPerCellSubstracted);
+    public void softDrop() {
+        appliedGravity = gravity * SOFT_DROP_FACTOR;
+        appliedLockDelayFrames = lockDelayFrames / SOFT_DROP_DELAY_QUOTIENT;
+    }
 
-        System.out.println((gravity*MainFrame.FPS/60.0988));
+    public void hardDrop() {
+        appliedGravity = 20;
+        appliedLockDelayFrames = 0;
     }
 
     private boolean isTouchingFloor() {
