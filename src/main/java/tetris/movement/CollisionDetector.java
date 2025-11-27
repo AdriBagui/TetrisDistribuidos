@@ -1,6 +1,7 @@
 package tetris.movement;
-import tetris.Board;
 import tetris.tetrominoes.Tetromino;
+
+import static tetris.Config.*;
 
 public class CollisionDetector {
     private boolean[][] grid;
@@ -21,7 +22,7 @@ public class CollisionDetector {
                     boardY = t.getY() + r;
 
                     // Check boundaries
-                    if (boardX < 0 || boardX >= Board.COLUMNS || boardY >= Board.ROWS + Board.SPAWN_ROWS)
+                    if (boardX < 0 || boardX >= BOARD_COLUMNS || boardY >= BOARD_ROWS + BOARD_SPAWN_ROWS)
                         return true;
 
                     // Check grid occupied (ignore above board)

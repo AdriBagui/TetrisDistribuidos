@@ -1,13 +1,10 @@
 package tetris.movement;
 
-import tetris.MainFrame;
 import tetris.tetrominoes.Tetromino;
 
-public class Gravity {
-    private static final int SOFT_DROP_FACTOR = 6;
-    private static final int SOFT_DROP_DELAY_QUOTIENT = SOFT_DROP_FACTOR/3;
+import static tetris.Config.*;
 
-    private boolean[][] grid;
+public class Gravity {
     private Tetromino fallingTetromino;
     private double decimalY;
     private CollisionDetector collisionDetector;
@@ -17,14 +14,13 @@ public class Gravity {
     private double appliedLockDelayFrames;
     private int delayUsed;
 
-    public Gravity(boolean[][] grid, CollisionDetector collisionDetector, double gravity) {
-        this.grid = grid;
+    public Gravity(CollisionDetector collisionDetector, double gravity) {
         this.fallingTetromino = null;
         decimalY = 0;
         this.collisionDetector = collisionDetector;
         this.gravity = gravity;
         this.appliedGravity = gravity;
-        this.lockDelayFrames = MainFrame.FPS/2;
+        this.lockDelayFrames = FPS/2;
         this.appliedLockDelayFrames = lockDelayFrames;
         delayUsed = 0;
     }
@@ -64,9 +60,9 @@ public class Gravity {
         int framesPerCellSubstracted;
         double oldGravity = gravity;
 
-        if (gravity > ((1./12.9)*60.0988)/MainFrame.FPS) {
-            if (gravity > ((1./7.9)*60.0988)/MainFrame.FPS) {
-                if (gravity > ((1./1.9)*60.0988)/MainFrame.FPS) {
+        if (gravity > ((1./12.9)*NES_FPS)/FPS) {
+            if (gravity > ((1./7.9)*NES_FPS)/FPS) {
+                if (gravity > ((1./1.9)*NES_FPS)/FPS) {
                     framesPerCellSubstracted = 0;
                 }
                 else {
@@ -80,7 +76,7 @@ public class Gravity {
             framesPerCellSubstracted = 5;
         }
 
-        gravity = 1 / ((1/gravity) - (framesPerCellSubstracted*MainFrame.FPS/60.0988));
+        gravity = 1 / ((1/gravity) - (framesPerCellSubstracted*FPS/NES_FPS));
         lockDelayFrames *= oldGravity / gravity;
     }
 
@@ -90,7 +86,7 @@ public class Gravity {
     }
 
     public void hardDrop() {
-        appliedGravity = 20;
+        appliedGravity = BOARD_ROWS + BOARD_SPAWN_ROWS;
         appliedLockDelayFrames = 0;
     }
 

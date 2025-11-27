@@ -3,15 +3,9 @@ package tetris.generators;
 import tetris.Board;
 import tetris.tetrominoes.*;
 
-public class TetrominoFactory {
-    public static final int I = 0;
-    public static final int O = 1;
-    public static final int T = 2;
-    public static final int J = 3;
-    public static final int L = 4;
-    public static final int S = 5;
-    public static final int Z = 6;
+import static tetris.Config.*;
 
+public class TetrominoFactory {
     public static Tetromino createTetromino(int type, int rotationIndex, int x, int y, int containerX, int containerY) {
         Tetromino tetromino = null;
 

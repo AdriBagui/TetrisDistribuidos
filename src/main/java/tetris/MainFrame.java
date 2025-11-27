@@ -8,28 +8,20 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static tetris.Config.FPS;
+import static tetris.Config.MILIS_PER_FRAME;
+
 // ==========================================
 // CLASS: MainFrame
 // Handles the window, game loop timer, and input
 // ==========================================
 public class MainFrame extends JFrame {
-    public static final double FPS = 62.5;
-
     private GamePanel gamePanel;
-    private Timer gameLoop;
-
-    // Shared sequence of blocks to ensure fairness
-    private ArrayList<Integer> sharedBlockQueue;
-    private Random random;
 
     public MainFrame() {
         setTitle("2-Player Java Tetris");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setResizable(false);
-
-        // Initialize shared block logic
-        sharedBlockQueue = new ArrayList<>();
-        random = new Random();
 
         // Create the view
         gamePanel = new GamePanel(this);
@@ -37,24 +29,13 @@ public class MainFrame extends JFrame {
         pack();
         setLocationRelativeTo(null);
 
-        // Game Loop (approx 60fps (62.5fps) for smoothness, logic updates slower)
-        gameLoop = new Timer((int) (1000/FPS), new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!gamePanel.isGameOver()) {
-                    gamePanel.updateBoards();
-                    gamePanel.repaint();
-                }
-            }
-        });
-
         // Input Handling
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (gamePanel.isGameOver()) {
                     if (e.getKeyCode() == KeyEvent.VK_R) {
-                        restartGame();
+                        gamePanel.restartGame();
                     }
                     return;
                 }
@@ -109,21 +90,5 @@ public class MainFrame extends JFrame {
                 gamePanel.repaint();
             }
         });
-
-        gameLoop.start();
-    }
-
-    public void restartGame() {
-        sharedBlockQueue.clear();
-        gamePanel.reset();
-        gameLoop.start();
-    }
-
-    // Ensures both players get the exact same sequence of blocks
-    public int getBlockTypeForIndex(int index) {
-        while (sharedBlockQueue.size() <= index) {
-            sharedBlockQueue.add(random.nextInt(7)); // 0-6 for 7 block types
-        }
-        return sharedBlockQueue.get(index);
     }
 }

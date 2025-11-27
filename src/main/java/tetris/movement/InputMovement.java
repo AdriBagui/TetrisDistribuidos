@@ -4,10 +4,9 @@ import tetris.MainFrame;
 import tetris.movement.rotationSystem.RotationSystem;
 import tetris.tetrominoes.Tetromino;
 
-public class InputMovement {
-    private static final int AUTOMATIC_REPEAT_RATE_FRAMES = ((int) MainFrame.FPS) / 30;
-    private static final int DELAYED_AUTO_SHIFT_FRAMES = ((int) MainFrame.FPS) / 6;
+import static tetris.Config.*;
 
+public class InputMovement {
     private CollisionDetector collisionDetector;
     private RotationSystem superRotationSystem;
     private Gravity gravity;

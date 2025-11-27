@@ -4,6 +4,8 @@ import tetris.GamePanel;
 
 import java.awt.*;
 
+import static tetris.Config.*;
+
 // ==========================================
 // ABSTRACT CLASS: Tetromino
 // Base class for all Tetris shapes
@@ -104,7 +106,7 @@ public abstract class Tetromino {
         for (int r = 0; r < shape.length; r++) {
             for (int c = 0; c < shape[r].length; c++) {
                 if (shape[r][c]) {
-                    TetrominoCell.draw(g2, (int) (parentX + (x + c) * GamePanel.CELL_SIZE), (int) (parentY + (y + r) * GamePanel.CELL_SIZE), color);
+                    TetrominoCell.draw(g2, (int) (parentX + (x + c) * CELL_SIZE), (int) (parentY + (y + r) * CELL_SIZE), color);
                 }
             }
         }

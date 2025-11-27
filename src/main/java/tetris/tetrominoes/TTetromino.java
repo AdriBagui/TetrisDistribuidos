@@ -4,6 +4,8 @@ import tetris.generators.TetrominoFactory;
 
 import java.awt.*;
 
+import static tetris.Config.*;
+
 public class TTetromino extends Tetromino {
     private static final boolean[][] T_ROTATION_0 = {
             {false, true , false},
@@ -33,7 +35,7 @@ public class TTetromino extends Tetromino {
     }
 
     @Override
-    public int getType() { return TetrominoFactory.T; }
+    public int getType() { return T; }
 
     @Override
     public int getWidth() {

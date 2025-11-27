@@ -1,8 +1,8 @@
 package tetris.tetrominoes;
 
-import tetris.generators.TetrominoFactory;
-
 import java.awt.*;
+
+import static tetris.Config.*;
 
 public class JTetromino extends Tetromino {
     private static final boolean[][] J_ROTATION_0 = {
@@ -33,7 +33,7 @@ public class JTetromino extends Tetromino {
     }
 
     @Override
-    public int getType() { return TetrominoFactory.J; }
+    public int getType() { return J; }
 
     @Override
     public int getWidth() {

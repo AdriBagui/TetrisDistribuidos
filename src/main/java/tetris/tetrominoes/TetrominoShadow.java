@@ -2,14 +2,13 @@ package tetris.tetrominoes;
 
 import java.awt.*;
 
-public class TetrominoShadow extends Tetromino {
-    private static final int TRANSPARENCY_PERCENTAGE = 25;
-    private static final int TRANSPARENCY = (TRANSPARENCY_PERCENTAGE *255/100) * 33554432;
+import static tetris.Config.*;
 
+public class TetrominoShadow extends Tetromino {
     private Tetromino parent;
 
     public TetrominoShadow(Tetromino parent) {
-        super(parent.getShapeRotations(), parent.rotationIndex, parent.getX(), parent.getY(), new Color(parent.getColor().darker().darker().getRGB() + TRANSPARENCY, true), parent.getParentX(), parent.getParentY());
+        super(parent.getShapeRotations(), parent.rotationIndex, parent.getX(), parent.getY(), new Color(parent.getColor().darker().darker().getRGB() + SHADOW_TRANSPARENCY, true), parent.getParentX(), parent.getParentY());
         this.parent = parent;
     }
 

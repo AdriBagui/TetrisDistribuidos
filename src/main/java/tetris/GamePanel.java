@@ -2,6 +2,10 @@ package tetris;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import static tetris.Config.*;
 
 // ==========================================
 // CLASS: MainPanel
@@ -9,26 +13,38 @@ import java.awt.*;
 // ==========================================
 public class GamePanel extends JPanel {
     private MainFrame mainFrame;
+    private Timer gameLoop;
     private Board p1Board;
     private Board p2Board;
     private boolean gameOver;
 
-    public static final int CELL_SIZE = 25;
-
     public GamePanel(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
-        setPreferredSize(new Dimension(1100, 700));
+        setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setBackground(Color.DARK_GRAY);
+
+        // Game Loop (approx 60fps (62.5fps) for smoothness, logic updates slower)
+        gameLoop = new Timer(MILIS_PER_FRAME, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!isGameOver()) {
+                    updateBoards();
+                    repaint();
+                }
+            }
+        });
 
         // Initialize Boards
         reset();
+
+        gameLoop.start();
     }
 
     public void reset() {
         gameOver = false;
         long seed = System.currentTimeMillis();
-        p1Board = new Board(1, seed, 150, 50);
-        p2Board = new Board(2, seed, 700, 50);
+        p1Board = new Board(1, seed, BOARD1_X, BOARD1_Y);
+        p2Board = new Board(2, seed, BOARD2_X, BOARD2_Y);
         repaint();
     }
 
@@ -57,10 +73,10 @@ public class GamePanel extends JPanel {
         p2Board.draw(g2);
 
         // Draw Controls/Info
-        g2.setColor(Color.WHITE);
-        g2.setFont(new Font("Arial", Font.BOLD, 16));
-        g2.drawString("Player 1 (WASD)", 150, 40);
-        g2.drawString("Player 2 (Arrows)", 700, 40);
+        //g2.setColor(Color.WHITE);
+        //g2.setFont(new Font("Arial", Font.BOLD, 16));
+        //g2.drawString("Player 1 (WASD)", BOARD1_X, FRAME_PADDING - 16);
+        //g2.drawString("Player 2 (Arrows)", BOARD2_X, FRAME_PADDING - 16);
 
         if (gameOver) {
             g2.setColor(Color.RED);
@@ -76,5 +92,10 @@ public class GamePanel extends JPanel {
             g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.drawString("Press 'R' to Restart", 310, 350);
         }
+    }
+
+    public void restartGame() {
+        reset();
+        gameLoop.start();
     }
 }

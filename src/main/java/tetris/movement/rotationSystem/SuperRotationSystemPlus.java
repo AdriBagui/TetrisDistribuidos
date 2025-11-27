@@ -4,6 +4,8 @@ import tetris.movement.CollisionDetector;
 import tetris.generators.TetrominoFactory;
 import tetris.tetrominoes.Tetromino;
 
+import static tetris.Config.*;
+
 public class SuperRotationSystemPlus extends SuperRotationSystem {
     // I Tetromino Wall Kick Data (Updated for TETR.IO SRS+)
     private static final int[][][] I_ROTATE_RIGHT_KICK_DATA = {
@@ -36,7 +38,7 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
         boolean success;
         Tetromino aux;
 
-        if (tetromino.getType() != TetrominoFactory.I) {
+        if (tetromino.getType() != I) {
             super.rotateRight(tetromino);
         } else  {
             aux = tetromino.createCopy();
@@ -56,7 +58,7 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
         Tetromino aux;
 
 
-        if (tetromino.getType() != TetrominoFactory.I) {
+        if (tetromino.getType() != I) {
             super.rotateLeft(tetromino);
         } else  {
             aux = tetromino.createCopy();

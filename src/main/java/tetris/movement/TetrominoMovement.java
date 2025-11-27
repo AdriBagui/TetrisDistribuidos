@@ -5,6 +5,8 @@ import tetris.movement.rotationSystem.RotationSystem;
 import tetris.movement.rotationSystem.SuperRotationSystemPlus;
 import tetris.tetrominoes.Tetromino;
 
+import static tetris.Config.*;
+
 public class TetrominoMovement {
     private CollisionDetector collisionDetector;
     private RotationSystem rotationSystem;
@@ -15,7 +17,7 @@ public class TetrominoMovement {
     public TetrominoMovement(boolean[][] grid) {
         collisionDetector = new CollisionDetector(grid);
         rotationSystem = new SuperRotationSystemPlus(collisionDetector);
-        gravity = new Gravity(grid, collisionDetector, ((1./48)*60.0988)/MainFrame.FPS);
+        gravity = new Gravity(collisionDetector, INITIAL_GRAVITY);
         inputMovement = new InputMovement(collisionDetector, rotationSystem, gravity);
     }
 

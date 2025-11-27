@@ -2,6 +2,8 @@ package tetris.generators;
 
 import tetris.tetrominoes.Tetromino;
 
+import static tetris.Config.NUMBER_TETROMINOES;
+
 public class RandomBagTetrominoesGenerator extends TetrominoesGenerator {
     private Tetromino[] bag;
     private int used;
@@ -9,13 +11,13 @@ public class RandomBagTetrominoesGenerator extends TetrominoesGenerator {
     public RandomBagTetrominoesGenerator(long seed) {
         super(seed);
 
-        bag = new Tetromino[7];
-        used = 7;
+        bag = new Tetromino[NUMBER_TETROMINOES];
+        used = NUMBER_TETROMINOES;
     }
 
     @Override
     public Tetromino getNext(int containerX, int containerY) {
-        if(used > 6) {
+        if(used >= NUMBER_TETROMINOES) {
             fillBag(containerX, containerY);
         }
 
@@ -25,7 +27,7 @@ public class RandomBagTetrominoesGenerator extends TetrominoesGenerator {
     }
 
     private void fillBag(int containerX, int containerY) {
-        for(int i = 0; i < 7; i++) {
+        for(int i = 0; i < NUMBER_TETROMINOES; i++) {
             bag[i] = TetrominoFactory.createTetromino(i, 0, 0, 0, containerX, containerY);
         }
 
@@ -35,8 +37,8 @@ public class RandomBagTetrominoesGenerator extends TetrominoesGenerator {
     }
 
     private void shuffleBag() {
-        for(int i = 0; i < 7; i++) {
-            swap(i, random.nextInt(7));
+        for(int i = 0; i < NUMBER_TETROMINOES; i++) {
+            swap(i, random.nextInt(NUMBER_TETROMINOES));
         }
     }
 

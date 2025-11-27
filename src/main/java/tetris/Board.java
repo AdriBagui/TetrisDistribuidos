@@ -8,15 +8,13 @@ import tetris.tetrominoes.TetrominoShadow;
 
 import java.awt.*;
 
+import static tetris.Config.*;
+
 // ==========================================
 // CLASS: Board
 // Logic for a single player's 10x20 grid
 // ==========================================
 public class Board {
-    public static final int ROWS = 20;
-    public static final int COLUMNS = 10;
-    public static final int SPAWN_ROWS = 3;
-
     private int playerID;
     private int x, y;
     private boolean[][] grid;// 20 rows, 10 cols
@@ -35,10 +33,10 @@ public class Board {
         this.x = x;
         this.y = y;
 
-        grid = new boolean[ROWS + SPAWN_ROWS][COLUMNS];
-        gridColor = new Color[ROWS + SPAWN_ROWS][COLUMNS];
-        queue = new Queue(5, new RandomBagTetrominoesGenerator(seed), x + COLUMNS * GamePanel.CELL_SIZE, y + SPAWN_ROWS * GamePanel.CELL_SIZE);
-        hold = new Hold(x - Hold.WIDTH, y + SPAWN_ROWS * GamePanel.CELL_SIZE, queue);
+        grid = new boolean[BOARD_ROWS + BOARD_SPAWN_ROWS][BOARD_COLUMNS];
+        gridColor = new Color[BOARD_ROWS + BOARD_SPAWN_ROWS][BOARD_COLUMNS];
+        queue = new Queue(5, new RandomBagTetrominoesGenerator(seed), x + BOARD_COLUMNS * CELL_SIZE, y + BOARD_SPAWN_ROWS * CELL_SIZE);
+        hold = new Hold(x - HOLD_WIDTH, y + BOARD_SPAWN_ROWS * CELL_SIZE, queue);
         tetrominoMovement = new TetrominoMovement(grid);
         score = 0;
         linesCleared = 0;
@@ -94,28 +92,24 @@ public class Board {
         }
     }
     public void draw(Graphics2D g2) {
-        int boardWidth = COLUMNS * GamePanel.CELL_SIZE;
-        int boardHeight = ROWS * GamePanel.CELL_SIZE;
-        int spawnHeight = SPAWN_ROWS * GamePanel.CELL_SIZE;
-
         // Draw Grid Background
         g2.setColor(Color.BLACK);
-        g2.fillRect(x, y + spawnHeight, boardWidth, boardHeight);
+        g2.fillRect(x, y + BOARD_SPAWN_HEIGHT, BOARD_WIDTH, BOARD_HEIGHT);
 
         // Draw Grid Lines
         g2.setColor(new Color(255, 255, 255, 64));
-        for (int r = GamePanel.CELL_SIZE; r < boardHeight; r += GamePanel.CELL_SIZE) {
-            g2.drawLine(x, y + spawnHeight + r, x + boardWidth, y + spawnHeight + r);
+        for (int r = CELL_SIZE; r < BOARD_HEIGHT; r += CELL_SIZE) {
+            g2.drawLine(x, y + BOARD_SPAWN_HEIGHT + r, x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT + r);
         }
-        for (int c = GamePanel.CELL_SIZE; c < boardWidth; c += GamePanel.CELL_SIZE) {
-            g2.drawLine(x + c, y + spawnHeight, x + c, y + spawnHeight + boardHeight);
+        for (int c = CELL_SIZE; c < BOARD_WIDTH; c += CELL_SIZE) {
+            g2.drawLine(x + c, y + BOARD_SPAWN_HEIGHT, x + c, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
         }
 
         // Draw Static Blocks
-        for (int r = 0; r < ROWS + SPAWN_ROWS; r++) {
-            for (int c = 0; c < COLUMNS; c++) {
+        for (int r = 0; r < BOARD_ROWS + BOARD_SPAWN_ROWS; r++) {
+            for (int c = 0; c < BOARD_COLUMNS; c++) {
                 if (grid[r][c]) {
-                    TetrominoCell.draw(g2, x + c * GamePanel.CELL_SIZE, y + r * GamePanel.CELL_SIZE, gridColor[r][c]);
+                    TetrominoCell.draw(g2, x + c * CELL_SIZE, y + r * CELL_SIZE, gridColor[r][c]);
                 }
             }
         }
@@ -128,17 +122,17 @@ public class Board {
 
         // Draw Border
         g2.setColor(Color.WHITE);
-        g2.drawLine(x, y + spawnHeight, x, y + spawnHeight + boardHeight);
-        g2.drawLine(x + boardWidth, y + spawnHeight, x + boardWidth, y + spawnHeight + boardHeight);
-        g2.drawLine(x, y + spawnHeight + boardHeight, x + boardWidth, y + spawnHeight + boardHeight);
+        g2.drawLine(x, y + BOARD_SPAWN_HEIGHT, x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
+        g2.drawLine(x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT, x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
+        g2.drawLine(x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT, x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
 
         // Draw Level
         g2.setColor(Color.WHITE);
-        g2.drawString("Level: " + getLevel(), x, y + spawnHeight + boardHeight + 30);
+        g2.drawString("Level: " + getLevel(), x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 20);
 
         // Draw Score
         g2.setColor(Color.WHITE);
-        g2.drawString("Score: " + getScore(), x + 50, y + spawnHeight + boardHeight + 30);
+        g2.drawString("Score: " + getScore(), x + 50, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 20);
 
         // Draw Held Piece
         hold.draw(g2);
@@ -149,7 +143,7 @@ public class Board {
 
     private void updateFallingTetromino() {
         nextTetromino.setParentXY(x, y);
-        nextTetromino.setXY((Board.COLUMNS - nextTetromino.getWidth())/2, 0);
+        nextTetromino.setXY((BOARD_COLUMNS - nextTetromino.getWidth())/2, 0);
 
         fallingTetromino = nextTetromino;
         fallingTetrominoShadow = new TetrominoShadow(fallingTetromino);
@@ -175,9 +169,9 @@ public class Board {
 
     private void clearLines() {
         int linesCleared = 0;
-        for (int r = 0; r < ROWS + SPAWN_ROWS; r++) {
+        for (int r = 0; r < BOARD_ROWS + BOARD_SPAWN_ROWS; r++) {
             boolean full = true;
-            for (int c = 0; c < COLUMNS; c++) {
+            for (int c = 0; c < BOARD_COLUMNS; c++) {
                 if (!grid[r][c]) {
                     full = false;
                     break;
@@ -187,11 +181,11 @@ public class Board {
                 linesCleared++;
                 // Shift down
                 for (int y = r; y > 0; y--) {
-                    System.arraycopy(grid[y - 1], 0, grid[y], 0, COLUMNS);
-                    System.arraycopy(gridColor[y - 1], 0, gridColor[y], 0, COLUMNS);
+                    System.arraycopy(grid[y - 1], 0, grid[y], 0, BOARD_COLUMNS);
+                    System.arraycopy(gridColor[y - 1], 0, gridColor[y], 0, BOARD_COLUMNS);
                 }
                 // Clear top
-                for (int c = 0; c < COLUMNS; c++) {
+                for (int c = 0; c < BOARD_COLUMNS; c++) {
                     grid[0][c] = false;
                     gridColor[0][c] = null;
                 }

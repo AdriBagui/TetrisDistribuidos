@@ -1,22 +1,21 @@
 package tetris.tetrominoes;
 
-import tetris.GamePanel;
-
 import java.awt.*;
 
+import static tetris.Config.*;
+
 public class TetrominoCell {
-    private static final int BORDER_WIDTH = GamePanel.CELL_SIZE/6;
     private static final int[][] XPOINTS = {
-            {0, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE - BORDER_WIDTH, 0 + BORDER_WIDTH},
-            {0, 0, 0 + BORDER_WIDTH, 0 + BORDER_WIDTH},
-            {GamePanel.CELL_SIZE, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE - BORDER_WIDTH, GamePanel.CELL_SIZE - BORDER_WIDTH},
-            {0, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE-BORDER_WIDTH, 0 + BORDER_WIDTH}
+            {0, CELL_SIZE, CELL_SIZE - TETROMINO_BORDER_WIDTH, TETROMINO_BORDER_WIDTH},
+            {0, 0, TETROMINO_BORDER_WIDTH, TETROMINO_BORDER_WIDTH},
+            {CELL_SIZE, CELL_SIZE, CELL_SIZE - TETROMINO_BORDER_WIDTH, CELL_SIZE - TETROMINO_BORDER_WIDTH},
+            {0, CELL_SIZE, CELL_SIZE- TETROMINO_BORDER_WIDTH, TETROMINO_BORDER_WIDTH}
     };
     private static final int[][] YPOINTS = {
-            {0, 0, 0 + BORDER_WIDTH, 0 + BORDER_WIDTH},
-            {0, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE - BORDER_WIDTH, 0 + BORDER_WIDTH},
-            {0, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE - BORDER_WIDTH, 0 + BORDER_WIDTH},
-            {GamePanel.CELL_SIZE, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE - BORDER_WIDTH, GamePanel.CELL_SIZE - BORDER_WIDTH}
+            {0, 0, TETROMINO_BORDER_WIDTH, TETROMINO_BORDER_WIDTH},
+            {0, CELL_SIZE, CELL_SIZE - TETROMINO_BORDER_WIDTH, TETROMINO_BORDER_WIDTH},
+            {0, CELL_SIZE, CELL_SIZE - TETROMINO_BORDER_WIDTH, TETROMINO_BORDER_WIDTH},
+            {CELL_SIZE, CELL_SIZE, CELL_SIZE - TETROMINO_BORDER_WIDTH, CELL_SIZE - TETROMINO_BORDER_WIDTH}
 
     };
     private static final int NPOINTS = 4;
@@ -28,17 +27,17 @@ public class TetrominoCell {
     public static void drawMinimal(Graphics2D g2, int x, int y, Color c) {
         // Draw Cell Fill
         g2.setColor(c);
-        g2.fillRect(x, y, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE);
+        g2.fillRect(x, y, CELL_SIZE, CELL_SIZE);
 
         // Draw Cell Border
         g2.setColor(c.darker());
-        g2.drawRect(x, y, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE);
+        g2.drawRect(x, y, CELL_SIZE, CELL_SIZE);
     }
 
     public static void drawClassicCell(Graphics2D g2, int x, int y, Color c) {
         // Draw Cell Fill
         g2.setColor(c);
-        g2.fillRect(x, y, GamePanel.CELL_SIZE, GamePanel.CELL_SIZE);
+        g2.fillRect(x, y, CELL_SIZE, CELL_SIZE);
 
         // Draw Cell Border
         int[] xPoints = new int[NPOINTS];

@@ -4,6 +4,8 @@ import tetris.movement.CollisionDetector;
 import tetris.generators.TetrominoFactory;
 import tetris.tetrominoes.Tetromino;
 
+import static tetris.Config.*;
+
 public class SuperRotationSystem extends RotationSystem {
     // J, L, S, T, Z Tetromino Wall Kick Data
     private static final int[][][] ROTATE_RIGHT_KICK_DATA = {
@@ -69,9 +71,9 @@ public class SuperRotationSystem extends RotationSystem {
         Tetromino aux = tetromino.createCopy();
         aux.rotateRight();
 
-        if (tetromino.getType() == TetrominoFactory.I) {
+        if (tetromino.getType() == I) {
             success = tryAndApplyKickData(aux, I_ROTATE_RIGHT_KICK_DATA[tetromino.getRotationIndex()]);
-        } else if (tetromino.getType() != TetrominoFactory.O) {
+        } else if (tetromino.getType() != O) {
             success = tryAndApplyKickData(aux, ROTATE_RIGHT_KICK_DATA[tetromino.getRotationIndex()]);
         }
 
@@ -86,9 +88,9 @@ public class SuperRotationSystem extends RotationSystem {
         Tetromino aux = tetromino.createCopy();
         aux.rotateLeft();
 
-        if (tetromino.getType() == TetrominoFactory.I) {
+        if (tetromino.getType() == I) {
             success = tryAndApplyKickData(aux, I_ROTATE_LEFT_KICK_DATA[tetromino.getRotationIndex()]);
-        } else if (tetromino.getType() != TetrominoFactory.O) {
+        } else if (tetromino.getType() != O) {
             success = tryAndApplyKickData(aux, ROTATE_LEFT_KICK_DATA[tetromino.getRotationIndex()]);
         }
 
@@ -114,7 +116,7 @@ public class SuperRotationSystem extends RotationSystem {
         boolean success = false;
 
         for (int i = 0; i < kickData.length && !success; i++) {
-            success = tryAndApplyKick(t, kickData[i][0], kickData[i][1]);
+            success = tryAndApplyKick(t, kickData[i][0], -kickData[i][1]);
         }
 
         return success;

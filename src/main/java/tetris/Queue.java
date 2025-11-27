@@ -5,6 +5,9 @@ import tetris.tetrominoes.Tetromino;
 
 import java.awt.*;
 
+import static tetris.Config.CELL_SIZE;
+import static tetris.Config.QUEUE_WIDTH;
+
 public class Queue {
     private Tetromino[] tetrominoesQueue;
     private TetrominoesGenerator tetrominoesGenerator;
@@ -32,10 +35,9 @@ public class Queue {
     }
 
     public void draw(Graphics2D g2) {
-        int queueWidth = GamePanel.CELL_SIZE * 5;
-        int queueHeight = GamePanel.CELL_SIZE * (tetrominoesQueue.length * 3 + 2);
+        int queueHeight = CELL_SIZE * (tetrominoesQueue.length * 3 + 2);
 
-        g2.drawString("Next:", x + GamePanel.CELL_SIZE, y + GamePanel.CELL_SIZE);
+        g2.drawString("Next:", x + CELL_SIZE, y + CELL_SIZE);
 
         for (int i = 0; i < tetrominoesQueue.length; i++) {
             tetrominoesQueue[i].draw(g2);
@@ -43,7 +45,7 @@ public class Queue {
 
         // Draw Border
         g2.setColor(Color.WHITE);
-        g2.drawRect(x, y, queueWidth, queueHeight);
+        g2.drawRect(x, y, QUEUE_WIDTH, queueHeight);
     }
 
     private void setTetrominoPosition(Tetromino t, int i) {

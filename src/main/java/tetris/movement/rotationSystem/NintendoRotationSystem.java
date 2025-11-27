@@ -4,6 +4,8 @@ import tetris.generators.TetrominoFactory;
 import tetris.movement.CollisionDetector;
 import tetris.tetrominoes.Tetromino;
 
+import static tetris.Config.*;
+
 public class NintendoRotationSystem extends RotationSystem {
     public NintendoRotationSystem(CollisionDetector collisionDetector) {
         super(collisionDetector);
@@ -15,7 +17,7 @@ public class NintendoRotationSystem extends RotationSystem {
         Tetromino aux = tetromino.createCopy();
         aux.rotateRight();
 
-        if (tetromino.getType() == TetrominoFactory.I || tetromino.getType() == TetrominoFactory.S || tetromino.getType() == TetrominoFactory.Z) {
+        if (tetromino.getType() == I || tetromino.getType() == S || tetromino.getType() == Z) {
             switch (tetromino.getRotationIndex()) {
                 case 0:
                     break;
@@ -41,7 +43,7 @@ public class NintendoRotationSystem extends RotationSystem {
         Tetromino aux = tetromino.createCopy();
         aux.rotateLeft();
 
-        if (tetromino.getType() == TetrominoFactory.I || tetromino.getType() == TetrominoFactory.S || tetromino.getType() == TetrominoFactory.Z) {
+        if (tetromino.getType() == I || tetromino.getType() == S || tetromino.getType() == Z) {
             switch (tetromino.getRotationIndex()) {
                 case 0:
                     aux.moveRight();

@@ -4,6 +4,8 @@ import tetris.generators.TetrominoFactory;
 
 import java.awt.*;
 
+import static tetris.Config.*;
+
 public class OTetromino extends Tetromino {
     private static final boolean[][] O_ROTATION_0 = {
             {true , true },
@@ -17,7 +19,7 @@ public class OTetromino extends Tetromino {
     }
 
     @Override
-    public int getType() { return TetrominoFactory.O; }
+    public int getType() { return O; }
 
     @Override
     public int getWidth() { return 2; }
