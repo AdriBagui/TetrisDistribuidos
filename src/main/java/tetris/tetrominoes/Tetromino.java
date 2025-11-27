@@ -14,11 +14,9 @@ public abstract class Tetromino {
     private double x, y;
     private int parentX, parentY;
     private Color color;
-    TetrominoShadow shadow;
-    private boolean shadowVisible;
 
 
-    public Tetromino(boolean[][][] shapeRotations, int rotationIndex, double x, double y, Color color, int parentX, int parentY, boolean hasShadow) {
+    public Tetromino(boolean[][][] shapeRotations, int rotationIndex, double x, double y, Color color, int parentX, int parentY) {
         this.shapeRotations = shapeRotations;
         this.rotationIndex = rotationIndex;
         this.x = x;
@@ -26,12 +24,6 @@ public abstract class Tetromino {
         this.color = color;
         this.parentX = parentX;
         this.parentY = parentY;
-        this.shadowVisible = false;
-
-        if (hasShadow) shadow = new TetrominoShadow(this);
-    }
-    public Tetromino(boolean[][][] shapeRotations, int rotationIndex, double x, double y, Color color, int parentX, int parentY) {
-        this(shapeRotations, rotationIndex, x, y, color, parentX, parentY, false);
     }
 
 
@@ -56,79 +48,58 @@ public abstract class Tetromino {
     // SETTERS
     public void setRotationIndex(int rotationIndex) {
         this.rotationIndex = rotationIndex;
-
-        if (shadow != null) shadow.setRotationIndex(rotationIndex);
     }
     public void setX(double x) {
         this.x = x;
-        if (shadow != null) shadow.setX(x);
     }
     public void setY(double y) { this.y = y; }
-    public void setXY(double x, double y) {
+    public synchronized void setXY(double x, double y) {
         setX(x);
         setY(y);
     }
-    public void setColor(Color color) {
-        this.color = color;
-        if (shadow != null) shadow.setColor(color);
-    }
-    public void setParentX(int parentX) {
-        this.parentX = parentX;
-        if (shadow != null) shadow.setParentX(parentX);
-    }
-    public void setParentY(int parentY) {
-        this.parentY = parentY;
-        if (shadow != null) shadow.setParentY(parentY);
-    }
-    public void setParentXY(int parentX, int parentY) {
+    public void setColor(Color color) { this.color = color; }
+    public void setParentX(int parentX) { this.parentX = parentX; }
+    public void setParentY(int parentY) { this.parentY = parentY; }
+    public synchronized void setParentXY(int parentX, int parentY) {
         setParentX(parentX);
         setParentY(parentY);
     }
-
-    // SHADOW CONTROLLERS
-    public void showShadow() { shadowVisible = true; }
-    public void hideShadow() { shadowVisible = false; }
+    public synchronized void setXYRotationIndex(double x, double y, int rotationIndex) {
+        setXY(x, y);
+        setRotationIndex(rotationIndex);
+    }
 
     // MOVEMENT CONTROLLERS
-    public void moveDown() { y++; }
-    public void moveUp() { y--; }
-    public void moveLeft() {
-        x--;
-        if (shadow != null) shadow.moveLeft();
-    }
-    public void moveRight() {
-        x++;
-        if (shadow != null) shadow.moveRight();
-    }
+    public void moveDown() { setY(getY() + 1); }
+    public void drop(int cells) { setY(getY() + cells); }
+    public void moveUp() { setY(getY() - 1); }
+    public void moveLeft() { setX(getX() - 1); }
+    public void moveRight() { setX(getX() + 1); }
     public void rotateRight() {
-        rotationIndex++;
+        int aux = getRotationIndex() + 1;
 
-        if (rotationIndex > 3) { rotationIndex = 0; }
+        if (aux > 3) { aux = 0; }
 
-        if (shadow != null) shadow.rotateRight();
+        setRotationIndex(aux);
     }
     public void rotateLeft() {
-        rotationIndex--;
+        int aux = getRotationIndex() - 1;
 
-        if (rotationIndex < 0) { rotationIndex = 3; }
+        if (aux < 0) { aux = 3; }
 
-        if (shadow != null) shadow.rotateLeft();
+        setRotationIndex(aux);
     }
     public void flip() {
-        rotationIndex += + 2;
+        int aux = getRotationIndex() + 2;
 
-        if (rotationIndex > 3) { rotationIndex = rotationIndex - 4; }
+        if (aux > 3) { aux = aux - 4; }
 
-        if (shadow != null) shadow.flip();
+        setRotationIndex(aux);
     }
 
-    // DRAW
-    public void draw(Graphics2D g2) {
+    // DRAW (Synchronized because when updating position and rotation simultaneously index of tetromino incoherent states may appear)
+    public synchronized void draw(Graphics2D g2) {
         boolean[][] shape = getShape();
-
-        if (shadowVisible && shadow != null) {
-            shadow.draw(g2);
-        }
 
         for (int r = 0; r < shape.length; r++) {
             for (int c = 0; c < shape[r].length; c++) {

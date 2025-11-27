@@ -64,7 +64,7 @@ public class MainFrame extends JFrame {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_A -> b1.moveLeftPressed();
                     case KeyEvent.VK_D -> b1.moveRightPressed();
-                    case KeyEvent.VK_W -> b1.moveDownPressed();
+                    case KeyEvent.VK_W -> b1.dropPressed();
                     case KeyEvent.VK_S -> b1.moveDownPressed();
                     case KeyEvent.VK_J -> b1.rotateLeftPressed();
                     case KeyEvent.VK_K -> b1.flipPressed();
@@ -91,7 +91,7 @@ public class MainFrame extends JFrame {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_A -> b1.moveLeftReleased();
                     case KeyEvent.VK_D -> b1.moveRightReleased();
-                    case KeyEvent.VK_W -> b1.moveDownReleased();
+                    case KeyEvent.VK_W -> b1.dropReleased();
                     case KeyEvent.VK_S -> b1.moveDownReleased();
                     case KeyEvent.VK_J -> b1.rotateLeftReleased();
                     case KeyEvent.VK_K -> b1.flipReleased();

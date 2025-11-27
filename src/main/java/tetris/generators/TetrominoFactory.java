@@ -12,8 +12,6 @@ public class TetrominoFactory {
     public static final int S = 5;
     public static final int Z = 6;
 
-
-
     public static Tetromino createTetromino(int type, int rotationIndex, int x, int y, int containerX, int containerY) {
         Tetromino tetromino = null;
 

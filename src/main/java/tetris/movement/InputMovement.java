@@ -1,14 +1,16 @@
 package tetris.movement;
 
-import tetris.movement.srs.SuperRotationSystem;
+import tetris.MainFrame;
+import tetris.movement.rotationSystem.RotationSystem;
+import tetris.movement.rotationSystem.SuperRotationSystem;
 import tetris.tetrominoes.Tetromino;
 
 public class InputMovement {
-    private static final int INPUT_SKIPPED_FRAMES = 2;
-    private static final int INPUT_DELAY = 10;
+    private static final int BETWEEN_MOVEMENT_FRAMES = ((int) MainFrame.FPS) / 30;
+    private static final int INITIAL_INPUT_DELAY_FRAMES = ((int) MainFrame.FPS) / 6;
 
     private CollisionDetector collisionDetector;
-    private SuperRotationSystem superRotationSystem;
+    private RotationSystem superRotationSystem;
     private Tetromino fallingTetrimonio;
     private int fastMovingDown;
     private int movingLeft;
@@ -18,7 +20,7 @@ public class InputMovement {
     private int rotatedRight;
     private int flipped;
 
-    public InputMovement(CollisionDetector collisionDetector, SuperRotationSystem superRotationSystem) {
+    public InputMovement(CollisionDetector collisionDetector, RotationSystem superRotationSystem) {
         this.collisionDetector = collisionDetector;
         this.superRotationSystem = superRotationSystem;
         this.fallingTetrimonio = null;
@@ -38,51 +40,61 @@ public class InputMovement {
 
     public void update() {
         if (dropped == 0) {
-            while(!collisionDetector.checkCollision(fallingTetrimonio)) {
-                moveDown();
-            }
+            TetrominoMovement.drop(fallingTetrimonio, collisionDetector);
 
             dropped = 1;
             return;
         }
 
-        if (movingLeft < 0 || movingRight < 0) {
-            if (movingLeft >= 0) {
-                if (movingLeft < INPUT_SKIPPED_FRAMES + INPUT_DELAY) {
-                    movingLeft++;
-                } else {
-                    moveLeft();
-                    movingLeft -= INPUT_SKIPPED_FRAMES;
-                }
-            }
-
-            if (movingRight >= 0) {
-                if (movingRight < INPUT_SKIPPED_FRAMES + INPUT_DELAY) {
-                    movingRight++;
-                } else {
-                    moveRight();
-                    movingRight -= INPUT_SKIPPED_FRAMES;
-                }
-            }
+        if (movingLeft < 0) {
+            movingRightUpdate();
         } else {
-            movingRight = INPUT_DELAY/2;
-            movingLeft = INPUT_DELAY/2;
+            if (movingRight < 0) {
+                movingLeftUpdate();
+            } else {
+                if (movingRight < movingLeft) {
+                    movingRightUpdate();
+
+                    if (movingLeft < INITIAL_INPUT_DELAY_FRAMES + BETWEEN_MOVEMENT_FRAMES + 1) {
+                        movingLeft++;
+                    }
+                } else {
+                    movingLeftUpdate();
+
+                    if (movingRight < INITIAL_INPUT_DELAY_FRAMES + BETWEEN_MOVEMENT_FRAMES + 1) {
+                        movingRight++;
+                    }
+                }
+            }
         }
 
         if (fastMovingDown >= 0) {
-            if (fastMovingDown < INPUT_SKIPPED_FRAMES + INPUT_DELAY) {
-                fastMovingDown++;
-            } else {
-                moveDown();
-                fastMovingDown -= INPUT_SKIPPED_FRAMES;
-            }
+            fastMovingDownUpdate();
+        }
+
+        if (rotatedRight == 0) {
+            superRotationSystem.rotateRight(fallingTetrimonio);
+            rotatedRight = 1;
+        }
+
+        if (rotatedLeft == 0) {
+            superRotationSystem.rotateLeft(fallingTetrimonio);
+            rotatedLeft = 1;
+        }
+
+        if (flipped == 0) {
+            superRotationSystem.flip(fallingTetrimonio);
+            flipped = 1;
         }
     }
 
     public void moveLeftPressed() {
-        if (movingLeft == -1) {
-            moveLeft();
+        if (movingLeft < 0) {
             movingLeft = 0;
+
+            if (movingRight == 0) { // Make sure if movingRight has been pressed before, moving right is greater than movingLeft
+                movingRight++;
+            }
         }
     }
 
@@ -91,9 +103,12 @@ public class InputMovement {
     }
 
     public void moveRightPressed() {
-        if (movingRight == -1) {
-            moveRight();
+        if (movingRight < 0) {
             movingRight = 0;
+
+            if (movingLeft == 0) { // Make sure if movingLeft has been pressed before, moving right is greater than movingRight
+                movingLeft++;
+            }
         }
     }
 
@@ -102,8 +117,7 @@ public class InputMovement {
     }
 
     public void moveDownPressed() {
-        if (fastMovingDown == -1) {
-            moveDown();
+        if (fastMovingDown < 0) {
             fastMovingDown = 0;
         }
     }
@@ -113,9 +127,9 @@ public class InputMovement {
     }
 
     public void dropPressed() {
-        if (dropped >= 0) return;
-
-        dropped = 0;
+        if (dropped < 0) {
+            dropped = 0;
+        }
     }
 
     public void dropReleased() {
@@ -123,10 +137,9 @@ public class InputMovement {
     }
 
     public void rotateRightPressed() {
-        if (rotatedRight >= 0) return;
-
-        superRotationSystem.rotateRight(fallingTetrimonio);
-        rotatedRight = 0;
+        if (rotatedRight < 0) {
+            rotatedRight = 0;
+        }
     }
 
     public void rotateRightReleased() {
@@ -134,10 +147,9 @@ public class InputMovement {
     }
 
     public void rotateLeftPressed() {
-        if (rotatedLeft >= 0) return;
-
-        superRotationSystem.rotateLeft(fallingTetrimonio);
-        rotatedLeft = 0;
+        if (rotatedLeft < 0) {
+            rotatedLeft = 0;
+        }
     }
 
     public void rotateLeftReleased() {
@@ -145,37 +157,79 @@ public class InputMovement {
     }
 
     public void flipPressed() {
-        if (flipped >= 0) return;
-
-        superRotationSystem.flip(fallingTetrimonio);
-        flipped = 0;
+        if (flipped < 0) {
+            flipped = 0;
+        }
     }
 
     public void flipReleased() {
         flipped = -1;
     }
 
-    private void moveLeft() {
-        fallingTetrimonio.moveLeft();
+    private void tryAndApplyMoveLeft() {
+        Tetromino aux = fallingTetrimonio.createCopy();
 
-        if (collisionDetector.checkCollision(fallingTetrimonio)) {
-            fallingTetrimonio.moveRight();
-        }
-    }
+        aux.moveLeft();
 
-    private void moveRight() {
-        fallingTetrimonio.moveRight();
-
-        if (collisionDetector.checkCollision(fallingTetrimonio)) {
+        if (!collisionDetector.checkCollision(aux)) {
             fallingTetrimonio.moveLeft();
         }
     }
 
-    private void moveDown() {
-        fallingTetrimonio.moveDown();
+    private void tryAndApplyMoveRight() {
+        Tetromino aux = fallingTetrimonio.createCopy();
 
-        if (collisionDetector.checkCollision(fallingTetrimonio)) {
-            fallingTetrimonio.moveUp();
+        aux.moveRight();
+
+        if (!collisionDetector.checkCollision(aux)) {
+            fallingTetrimonio.moveRight();
+        }
+    }
+
+    private void tryAndApplyMoveDown() {
+        Tetromino aux = fallingTetrimonio.createCopy();
+
+        aux.moveDown();
+
+        if (!collisionDetector.checkCollision(aux)) {
+            fallingTetrimonio.moveDown();
+        }
+    }
+
+    private void movingRightUpdate() {
+        if (movingRight == 0) {
+            tryAndApplyMoveRight();
+            movingRight++;
+        } else if (movingRight > 0) {
+            if (movingRight < INITIAL_INPUT_DELAY_FRAMES + BETWEEN_MOVEMENT_FRAMES) {
+                movingRight++;
+            } else {
+                tryAndApplyMoveRight();
+                movingRight = INITIAL_INPUT_DELAY_FRAMES;
+            }
+        }
+    }
+
+    private void movingLeftUpdate() {
+        if (movingLeft == 0) {
+            tryAndApplyMoveLeft();
+            movingLeft++;
+        } else if (movingLeft > 0) {
+            if (movingLeft < INITIAL_INPUT_DELAY_FRAMES + BETWEEN_MOVEMENT_FRAMES) {
+                movingLeft++;
+            } else {
+                tryAndApplyMoveLeft();
+                movingLeft = INITIAL_INPUT_DELAY_FRAMES;
+            }
+        }
+    }
+
+    private void fastMovingDownUpdate() {
+        if (fastMovingDown < BETWEEN_MOVEMENT_FRAMES + INITIAL_INPUT_DELAY_FRAMES) {
+            fastMovingDown++;
+        } else {
+            tryAndApplyMoveDown();
+            fastMovingDown = INITIAL_INPUT_DELAY_FRAMES;
         }
     }
 }

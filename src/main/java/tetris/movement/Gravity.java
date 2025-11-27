@@ -4,7 +4,7 @@ import tetris.MainFrame;
 import tetris.tetrominoes.Tetromino;
 
 public class Gravity {
-    private static final double LOCK_DELAY = MainFrame.FPS/2; // 500ms
+    private static final double LOCK_DELAY_FRAMES = MainFrame.FPS/2; // aprox 500ms
 
     private boolean[][] grid;
     private Tetromino fallingTetromino;
@@ -41,7 +41,7 @@ public class Gravity {
     }
 
     public boolean locked() {
-        return delayUsed >= LOCK_DELAY;
+        return delayUsed >= LOCK_DELAY_FRAMES;
     }
 
     public void setFallingTetromino(Tetromino t) {
@@ -56,16 +56,34 @@ public class Gravity {
     }
 
     public void increaseGravity() {
-        gravity += 0.025;
+        int framesPerCellSubstracted = 5;
+
+        if (gravity > ((1./12.9)*60.0988)/MainFrame.FPS) {
+            if (gravity > ((1./7.9)*60.0988)/MainFrame.FPS) {
+                if (gravity > ((1./1.9)*60.0988)/MainFrame.FPS) {
+                    framesPerCellSubstracted = 0;
+                }
+                else {
+                    framesPerCellSubstracted = 1;
+                }
+            }
+            else {
+                framesPerCellSubstracted = 2;
+            }
+        }
+
+        System.out.println((gravity*MainFrame.FPS/60.0988));
+
+        gravity *= (gravity*MainFrame.FPS/60.0988) / ((gravity*MainFrame.FPS/60.0988) - framesPerCellSubstracted);
+
+        System.out.println((gravity*MainFrame.FPS/60.0988));
     }
 
     private boolean isTouchingFloor() {
-        boolean isTouchingFloor;
+        Tetromino aux = fallingTetromino.createCopy();
 
-        fallingTetromino.moveDown();
-        isTouchingFloor = collisionDetector.checkCollision(fallingTetromino);
-        fallingTetromino.moveUp();
+        aux.moveDown();
 
-        return isTouchingFloor;
+        return collisionDetector.checkCollision(aux);
     }
 }

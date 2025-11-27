@@ -1,21 +1,23 @@
 package tetris.movement;
 
-import tetris.movement.srs.SuperRotationSystem;
-import tetris.movement.srs.SuperRotationSystemPlus;
+import tetris.GamePanel;
+import tetris.MainFrame;
+import tetris.movement.rotationSystem.RotationSystem;
+import tetris.movement.rotationSystem.SuperRotationSystemPlus;
 import tetris.tetrominoes.Tetromino;
 
 public class TetrominoMovement {
     private CollisionDetector collisionDetector;
-    private SuperRotationSystem superRotationSystem;
+    private RotationSystem rotationSystem;
     private Gravity gravity;
     private InputMovement inputMovement;
     private Tetromino fallingTetromino;
 
     public TetrominoMovement(boolean[][] grid) {
         collisionDetector = new CollisionDetector(grid);
-        superRotationSystem = new SuperRotationSystemPlus(collisionDetector);
-        gravity = new Gravity(grid, collisionDetector, 0.05);
-        inputMovement = new InputMovement(collisionDetector, superRotationSystem);
+        rotationSystem = new SuperRotationSystemPlus(collisionDetector);
+        gravity = new Gravity(grid, collisionDetector, ((1./48)*60.0988)/MainFrame.FPS);
+        inputMovement = new InputMovement(collisionDetector, rotationSystem);
     }
 
     public void setFallingTetromino(Tetromino fallingTetromino) {
@@ -33,6 +35,28 @@ public class TetrominoMovement {
     public boolean hasCollision(Tetromino t) { return collisionDetector.checkCollision(t); }
     public boolean locked() { return gravity.locked(); }
     public void increaseGravity() { gravity.increaseGravity(); }
+    public void drop(Tetromino t) {
+        int dropCells = 0;
+        Tetromino aux = t.createCopy();
+
+        while (!collisionDetector.checkCollision(aux)) {
+            aux.moveDown();
+            dropCells += 1;
+        }
+
+        t.drop(dropCells-1);
+    }
+    public static void drop(Tetromino t, CollisionDetector collisionDetector) {
+        int dropCells = 0;
+        Tetromino aux = t.createCopy();
+
+        while (!collisionDetector.checkCollision(aux)) {
+            aux.moveDown();
+            dropCells += 1;
+        }
+
+        t.drop(dropCells-1);
+    }
 
     // Controls
     public void moveLeftPressed() { inputMovement.moveLeftPressed(); }

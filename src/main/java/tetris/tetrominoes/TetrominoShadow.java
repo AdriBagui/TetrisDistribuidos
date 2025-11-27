@@ -13,11 +13,6 @@ public class TetrominoShadow extends Tetromino {
         this.parent = parent;
     }
 
-    public void project(int distance) { setY(getY() + distance); }
-
-    @Override
-    public void setColor(Color color) { super.setColor(color.darker().darker());}
-
     @Override
     public int getType() { return parent.getType(); }
 
