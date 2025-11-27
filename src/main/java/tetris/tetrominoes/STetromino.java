@@ -26,10 +26,10 @@ public class STetromino extends Tetromino {
             {false, true , false}
     };
     private static final boolean[][][] S_ROTATIONS = {S_ROTATION_0, S_ROTATION_R, S_ROTATION_2, S_ROTATION_L};
-    private static final Color S_COLOR = Color.GREEN;
+    private static final Color S_COLOR = Color.GREEN.darker();
 
-    public STetromino(int rotationIndex, int x, int y, int boardX, int boardY) {
-        super(S_ROTATIONS, rotationIndex, x, y, S_COLOR, boardX, boardY);
+    public STetromino(int rotationIndex, int x, int y, int parentX, int parentY) {
+        super(S_ROTATIONS, rotationIndex, x, y, S_COLOR, parentX, parentY);
     }
 
     @Override
@@ -63,5 +63,10 @@ public class STetromino extends Tetromino {
         else height = 3;
 
         return height;
+    }
+
+    @Override
+    public Tetromino createCopy() {
+        return new STetromino(getRotationIndex(), getX(), getY(), getParentX(), getParentY());
     }
 }

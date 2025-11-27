@@ -41,6 +41,7 @@ public abstract class Tetromino {
     public abstract int getHeight();
     public abstract int getApparentWidth();
     public abstract int getApparentHeight();
+    public abstract Tetromino createCopy();
 
     // GETTERS
     public boolean[][][] getShapeRotations() { return shapeRotations; }

@@ -26,10 +26,10 @@ public class JTetromino extends Tetromino {
             {true , true , false}
     };
     private static final boolean[][][] J_ROTATIONS = {J_ROTATION_0, J_ROTATION_R, J_ROTATION_2, J_ROTATION_L};
-    private static final Color J_COLOR = Color.BLUE;
+    private static final Color J_COLOR = Color.BLUE.darker();
 
-    public JTetromino(int rotationIndex, int x, int y, int boardX, int boardY) {
-        super(J_ROTATIONS, rotationIndex, x, y, J_COLOR, boardX, boardY);
+    public JTetromino(int rotationIndex, int x, int y, int parentX, int parentY) {
+        super(J_ROTATIONS, rotationIndex, x, y, J_COLOR, parentX, parentY);
     }
 
     @Override
@@ -63,5 +63,10 @@ public class JTetromino extends Tetromino {
         else height = 3;
 
         return height;
+    }
+
+    @Override
+    public Tetromino createCopy() {
+        return new JTetromino(getRotationIndex(), getX(), getY(), getParentX(), getParentY());
     }
 }

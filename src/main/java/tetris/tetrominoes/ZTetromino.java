@@ -26,10 +26,10 @@ public class ZTetromino extends Tetromino {
             {true , false, false}
     };
     private static final boolean[][][] Z_ROTATIONS = {Z_ROTATION_0, Z_ROTATION_R, Z_ROTATION_2, Z_ROTATION_L};
-    private static final Color Z_COLOR = Color.RED;
+    private static final Color Z_COLOR = Color.RED.darker();
 
-    public ZTetromino(int rotationIndex, int x, int y, int boardX, int boardY) {
-        super(Z_ROTATIONS, rotationIndex, x, y, Z_COLOR, boardX, boardY);
+    public ZTetromino(int rotationIndex, int x, int y, int parentX, int parentY) {
+        super(Z_ROTATIONS, rotationIndex, x, y, Z_COLOR, parentX, parentY);
     }
 
     @Override
@@ -63,5 +63,10 @@ public class ZTetromino extends Tetromino {
         else height = 3;
 
         return height;
+    }
+
+    @Override
+    public Tetromino createCopy() {
+        return new ZTetromino(getRotationIndex(), getX(), getY(), getParentX(), getParentY());
     }
 }

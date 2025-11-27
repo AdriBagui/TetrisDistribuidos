@@ -90,6 +90,8 @@ public class Board {
     public void moveRightReleased() { tetrominoMovement.moveRightReleased(); }
     public void moveDownPressed() { tetrominoMovement.moveDownPressed(); }
     public void moveDownReleased() { tetrominoMovement.moveDownReleased(); }
+    public void dropPressed() { tetrominoMovement.dropPressed(); }
+    public void dropReleased() { tetrominoMovement.dropReleased(); }
     public void rotateRightPressed() { tetrominoMovement.rotateRightPressed(); }
     public void rotateRightReleased() { tetrominoMovement.rotateRightReleased(); }
     public void rotateLeftPressed() { tetrominoMovement.rotateLeftPressed(); }
@@ -198,13 +200,6 @@ public class Board {
         // Draw Current Falling Tetromino
         if (fallingTetromino != null) {
             fallingTetromino.draw(g2);
-
-            // Draw Current Falling Tetromino Shadow
-            if (isAlive) {
-                TetrominoShadow tetrominoShadow = new TetrominoShadow(fallingTetromino);
-                drop(tetrominoShadow);
-                tetrominoShadow.draw(g2);
-            }
         }
 
         // Draw Border

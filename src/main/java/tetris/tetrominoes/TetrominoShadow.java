@@ -36,4 +36,9 @@ public class TetrominoShadow extends Tetromino {
 
     @Override
     public int getApparentHeight() { return parent.getApparentHeight(); }
+
+    @Override
+    public Tetromino createCopy() {
+        return new TetrominoShadow(parent.createCopy());
+    }
 }

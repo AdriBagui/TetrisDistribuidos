@@ -20,8 +20,7 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
         tetromino.rotateRight();
 
         // Test 1 (0,0) - Basic Rotation
-        if (!collisionDetector.checkCollision(tetromino))
-            return;
+        if (tryKick(tetromino, x, y, 0, 0)) return;
 
         // If basic rotation failed, try Wall Kicks
         if (tetromino.getType() == TetrominoFactory.I) {
@@ -83,7 +82,6 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
         }
 
         // If all kicks failed, revert rotation
-        tetromino.setXY(x, y);
         tetromino.rotateLeft();
     }
 
@@ -97,8 +95,7 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
 
         tetromino.rotateLeft();
 
-        if (!collisionDetector.checkCollision(tetromino))
-            return;
+        if (tryKick(tetromino, x, y, 0, 0)) return;
 
         if (tetromino.getType() == TetrominoFactory.I) {
             switch (rotationIndex) {
@@ -158,7 +155,6 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
         }
 
         // If all kicks failed, revert rotation
-        tetromino.setXY(x, y);
         tetromino.rotateRight();
     }
 
@@ -172,7 +168,7 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
 
         tetromino.flip();
 
-        if (!collisionDetector.checkCollision(tetromino)) return;
+        if (tryKick(tetromino, x, y, 0, 0)) return;
 
         switch (rotationIndex) {
             case 0: // 0 -> 2
@@ -206,7 +202,6 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
         }
 
         // If all kicks failed, revert rotation
-        tetromino.setXY(x, y);
         tetromino.flip();
     }
 }

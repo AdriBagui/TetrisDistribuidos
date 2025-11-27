@@ -41,6 +41,8 @@ public class TetrominoMovement {
     public void moveRightReleased() { inputMovement.moveRightReleased(); }
     public void moveDownPressed() { inputMovement.moveDownPressed(); }
     public void moveDownReleased() { inputMovement.moveDownReleased(); }
+    public void dropPressed() { inputMovement.dropPressed(); }
+    public void dropReleased() { inputMovement.dropReleased(); }
     public void rotateRightPressed() { inputMovement.rotateRightPressed(); }
     public void rotateRightReleased() { inputMovement.rotateRightReleased(); }
     public void rotateLeftPressed() { inputMovement.rotateLeftPressed(); }

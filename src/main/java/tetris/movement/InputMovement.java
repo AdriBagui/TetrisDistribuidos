@@ -13,9 +13,10 @@ public class InputMovement {
     private int fastMovingDown;
     private int movingLeft;
     private int movingRight;
-    private boolean rotatedLeft;
-    private boolean rotatedRight;
-    private boolean flipped;
+    private int dropped;
+    private int rotatedLeft;
+    private int rotatedRight;
+    private int flipped;
 
     public InputMovement(CollisionDetector collisionDetector, SuperRotationSystem superRotationSystem) {
         this.collisionDetector = collisionDetector;
@@ -25,9 +26,10 @@ public class InputMovement {
         fastMovingDown = -1;
         movingLeft = -1;
         movingRight = -1;
-        rotatedLeft = false;
-        rotatedRight = false;
-        flipped = false;
+        dropped = -1;
+        rotatedLeft = -1;
+        rotatedRight = -1;
+        flipped = -1;
     }
 
     public void setFallingTetrimonio(Tetromino fallingTetrimonio) {
@@ -35,7 +37,16 @@ public class InputMovement {
     }
 
     public void update() {
-        if (movingLeft <= 0 || movingRight <= 0) {
+        if (dropped == 0) {
+            while(!collisionDetector.checkCollision(fallingTetrimonio)) {
+                moveDown();
+            }
+
+            dropped = 1;
+            return;
+        }
+
+        if (movingLeft < 0 || movingRight < 0) {
             if (movingLeft >= 0) {
                 if (movingLeft < INPUT_SKIPPED_FRAMES + INPUT_DELAY) {
                     movingLeft++;
@@ -101,42 +112,50 @@ public class InputMovement {
         fastMovingDown = -1;
     }
 
+    public void dropPressed() {
+        if (dropped >= 0) return;
+
+        dropped = 0;
+    }
+
+    public void dropReleased() {
+        dropped = -1;
+    }
+
     public void rotateRightPressed() {
-        if (rotatedRight) return;
+        if (rotatedRight >= 0) return;
 
         superRotationSystem.rotateRight(fallingTetrimonio);
-        rotatedRight = true;
+        rotatedRight = 0;
     }
 
     public void rotateRightReleased() {
-        rotatedRight = false;
+        rotatedRight = -1;
     }
 
     public void rotateLeftPressed() {
-        if (rotatedLeft) return;
+        if (rotatedLeft >= 0) return;
 
         superRotationSystem.rotateLeft(fallingTetrimonio);
-        rotatedLeft = true;
+        rotatedLeft = 0;
     }
 
     public void rotateLeftReleased() {
-        rotatedLeft = false;
+        rotatedLeft = -1;
     }
 
     public void flipPressed() {
-        if (flipped) return;
+        if (flipped >= 0) return;
 
         superRotationSystem.flip(fallingTetrimonio);
-        flipped = true;
+        flipped = 0;
     }
 
     public void flipReleased() {
-        flipped = false;
+        flipped = -1;
     }
 
     private void moveLeft() {
-        if (movingRight >= 0) return;
-
         fallingTetrimonio.moveLeft();
 
         if (collisionDetector.checkCollision(fallingTetrimonio)) {
@@ -145,8 +164,6 @@ public class InputMovement {
     }
 
     private void moveRight() {
-        if (movingLeft >= 0) return;
-
         fallingTetrimonio.moveRight();
 
         if (collisionDetector.checkCollision(fallingTetrimonio)) {

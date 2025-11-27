@@ -1,5 +1,6 @@
 package tetris.movement.srs;
 
+import tetris.generators.TetrominoFactory;
 import tetris.movement.CollisionDetector;
 import tetris.tetrominoes.Tetromino;
 
