@@ -25,7 +25,8 @@ public class Config {
     public static final int SOFT_DROP_FACTOR = 6;
     public static final int SOFT_DROP_DELAY_QUOTIENT = SOFT_DROP_FACTOR/6;
     public static final int NES_SECONDS_PER_FRAME_INITIAL_GRAVITY = 48;
-    public static final double INITIAL_GRAVITY = ((1./NES_SECONDS_PER_FRAME_INITIAL_GRAVITY)*NES_FPS)/FPS;
+    //public static final double INITIAL_GRAVITY = ((1./NES_SECONDS_PER_FRAME_INITIAL_GRAVITY)*NES_FPS)/FPS;
+    public static final double INITIAL_GRAVITY = 0.05;
 
     // INPUT CONFIGURATION
     public static final int AUTOMATIC_REPEAT_RATE_FRAMES = ((int) FPS) / 30;

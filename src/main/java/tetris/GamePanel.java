@@ -45,6 +45,8 @@ public class GamePanel extends JPanel {
         long seed = System.currentTimeMillis();
         p1Board = new Board(1, seed, BOARD1_X, BOARD1_Y);
         p2Board = new Board(2, seed, BOARD2_X, BOARD2_Y);
+        p1Board.setEnemyBoard(p2Board);
+        p2Board.setEnemyBoard(p1Board);
         repaint();
     }
 
@@ -52,7 +54,7 @@ public class GamePanel extends JPanel {
         if (p1Board.isAlive()) p1Board.update();
         if (p2Board.isAlive()) p2Board.update();
 
-        if (!p1Board.isAlive() && !p2Board.isAlive()) {
+        if (!p1Board.isAlive() || !p2Board.isAlive()) {
             gameOver = true;
         }
     }
@@ -83,8 +85,8 @@ public class GamePanel extends JPanel {
             g2.setFont(new Font("Arial", Font.BOLD, 40));
             String msg = "GAME OVER";
             String winner = "";
-            if (p1Board.getScore() > p2Board.getScore()) winner = "Player 1 Wins!";
-            else if (p2Board.getScore() > p1Board.getScore()) winner = "Player 2 Wins!";
+            if (p1Board.isAlive()) winner = "Player 1 Wins!";
+            else if (p2Board.isAlive()) winner = "Player 2 Wins!";
             else winner = "It's a Tie!";
 
             g2.drawString(msg, 300, 250);

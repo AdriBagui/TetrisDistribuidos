@@ -7,6 +7,7 @@ import tetris.tetrominoes.TetrominoCell;
 import tetris.tetrominoes.TetrominoShadow;
 
 import java.awt.*;
+import java.util.Random;
 
 import static tetris.Config.*;
 
@@ -27,6 +28,8 @@ public class Board {
     private TetrominoMovement tetrominoMovement;
     private int score, linesCleared, level;
     private boolean isAlive;
+    private Board enemyBoard;
+    private Random random;
 
     public Board(int playerID, long seed, int x, int y) {
         this.playerID = playerID;
@@ -42,6 +45,7 @@ public class Board {
         linesCleared = 0;
         level = 1;
         isAlive = true;
+        random = new Random();
 
         nextTetromino = queue.getNext(); // Initialize first block
         fallingTetromino = null;
@@ -52,6 +56,26 @@ public class Board {
     public int getScore() { return score; }
     public Tetromino getFallingTetromino() { return fallingTetromino; }
     public boolean isAlive() { return isAlive; }
+    public void setEnemyBoard(Board enemyBoard) { this.enemyBoard = enemyBoard; }
+    public void addGarbage(int lines) {
+        int columnaQueMeLaChupa = random.nextInt(BOARD_COLUMNS);
+
+        for (int y = 0; y < BOARD_ROWS + BOARD_SPAWN_ROWS - lines; y++) {
+            System.arraycopy(grid[y + lines], 0, grid[y], 0, BOARD_COLUMNS);
+            System.arraycopy(gridColor[y + lines], 0, gridColor[y], 0, BOARD_COLUMNS);
+        }
+        for (int y = BOARD_ROWS + BOARD_SPAWN_ROWS - 1; y > BOARD_ROWS + BOARD_SPAWN_ROWS - lines - 1l; y--) {
+            for (int x = 0; x < BOARD_COLUMNS; x++) {
+                if(x == columnaQueMeLaChupa) {
+                    grid[y][x] = false;
+                    gridColor[y][x] = null;
+                } else {
+                    grid[y][x] = true;
+                    gridColor[y][x] = Color.GRAY;
+                }
+            }
+        }
+    }
 
     // Controls
     public void moveLeftPressed() { tetrominoMovement.moveLeftPressed(); }
@@ -193,10 +217,21 @@ public class Board {
         }
         // NES Scoring: 40, 100, 300, 1200
         switch (linesCleared) {
-            case 1 -> score += 40;
-            case 2 -> score += 100;
-            case 3 -> score += 300;
-            case 4 -> score += 1200;
+            case 1:
+                score += 40;
+                break;
+            case 2:
+                score += 100;
+                enemyBoard.addGarbage(1);
+                break;
+            case 3:
+                score += 300;
+                enemyBoard.addGarbage(2);
+                break;
+            case 4:
+                score += 1200;
+                enemyBoard.addGarbage(4);
+                break;
         }
 
         this.linesCleared += linesCleared;

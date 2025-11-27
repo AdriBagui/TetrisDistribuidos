@@ -48,8 +48,8 @@ public class MainFrame extends JFrame {
                     case KeyEvent.VK_W -> b1.dropPressed();
                     case KeyEvent.VK_S -> b1.moveDownPressed();
                     case KeyEvent.VK_J -> b1.rotateLeftPressed();
-                    case KeyEvent.VK_K -> b1.flipPressed();
-                    case KeyEvent.VK_L -> b1.rotateRightPressed();
+                    case KeyEvent.VK_K -> b1.rotateRightPressed();
+                    case KeyEvent.VK_L -> b1.flipPressed();
                     case KeyEvent.VK_SHIFT ->  b1.hold();
                 }
 
@@ -75,8 +75,8 @@ public class MainFrame extends JFrame {
                     case KeyEvent.VK_W -> b1.dropReleased();
                     case KeyEvent.VK_S -> b1.moveDownReleased();
                     case KeyEvent.VK_J -> b1.rotateLeftReleased();
-                    case KeyEvent.VK_K -> b1.flipReleased();
-                    case KeyEvent.VK_L -> b1.rotateRightReleased();
+                    case KeyEvent.VK_K -> b1.rotateRightReleased();
+                    case KeyEvent.VK_L -> b1.flipReleased();
                 }
 
                 // Player 2 Controls (Arrows)
