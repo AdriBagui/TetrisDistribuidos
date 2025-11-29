@@ -30,63 +30,46 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
 
         // Input Handling
-        addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (gamePanel.isGameOver()) {
-                    if (e.getKeyCode() == KeyEvent.VK_R) {
-                        gamePanel.restartGame();
-                    }
-                    return;
-                }
+        addKeyListener(new KeyController());
+    }
 
-                // Player 1 Controls (WASD)
-                Board b1 = gamePanel.getP1Board();
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_A -> b1.moveLeftPressed();
-                    case KeyEvent.VK_D -> b1.moveRightPressed();
-                    case KeyEvent.VK_W -> b1.dropPressed();
-                    case KeyEvent.VK_S -> b1.moveDownPressed();
-                    case KeyEvent.VK_J -> b1.rotateLeftPressed();
-                    case KeyEvent.VK_K -> b1.rotateRightPressed();
-                    case KeyEvent.VK_L -> b1.flipPressed();
-                    case KeyEvent.VK_SHIFT ->  b1.hold();
+    private class KeyController extends KeyAdapter {
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (gamePanel.isGameOver()) {
+                if (e.getKeyCode() == KeyEvent.VK_R) {
+                    gamePanel.restartGame();
                 }
-
-                // Player 2 Controls (Arrows)
-                Board b2 = gamePanel.getP2Board();
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_LEFT -> b2.moveLeftPressed();
-                    case KeyEvent.VK_RIGHT -> b2.moveRightPressed();
-                    case KeyEvent.VK_UP -> b2.rotateRightPressed();
-                    case KeyEvent.VK_DOWN -> b2.moveDownPressed();
-                    case KeyEvent.VK_PERIOD ->  b2.hold();
-                }
+                return;
             }
 
-            @Override
-            public void keyReleased(KeyEvent e) {
-                // Player 1 Controls (WASD)
-                Board b1 = gamePanel.getP1Board();
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_A -> b1.moveLeftReleased();
-                    case KeyEvent.VK_D -> b1.moveRightReleased();
-                    case KeyEvent.VK_W -> b1.dropReleased();
-                    case KeyEvent.VK_S -> b1.moveDownReleased();
-                    case KeyEvent.VK_J -> b1.rotateLeftReleased();
-                    case KeyEvent.VK_K -> b1.rotateRightReleased();
-                    case KeyEvent.VK_L -> b1.flipReleased();
-                }
-
-                // Player 2 Controls (Arrows)
-                Board b2 = gamePanel.getP2Board();
-                switch (e.getKeyCode()) {
-                    case KeyEvent.VK_LEFT -> b2.moveLeftReleased();
-                    case KeyEvent.VK_RIGHT -> b2.moveRightReleased();
-                    case KeyEvent.VK_UP -> b2.rotateRightReleased();
-                    case KeyEvent.VK_DOWN -> b2.moveDownReleased();
-                }
+            // Player 1 Controls (WASD)
+            Board b1 = gamePanel.getP1Board();
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_A -> b1.moveLeftPressed();
+                case KeyEvent.VK_D -> b1.moveRightPressed();
+                case KeyEvent.VK_W -> b1.dropPressed();
+                case KeyEvent.VK_S -> b1.moveDownPressed();
+                case KeyEvent.VK_J -> b1.rotateLeftPressed();
+                case KeyEvent.VK_K -> b1.rotateRightPressed();
+                case KeyEvent.VK_L -> b1.flipPressed();
+                case KeyEvent.VK_SHIFT ->  b1.hold();
             }
-        });
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            // Player 1 Controls (WASD)
+            Board b1 = gamePanel.getP1Board();
+            switch (e.getKeyCode()) {
+                case KeyEvent.VK_A -> b1.moveLeftReleased();
+                case KeyEvent.VK_D -> b1.moveRightReleased();
+                case KeyEvent.VK_W -> b1.dropReleased();
+                case KeyEvent.VK_S -> b1.moveDownReleased();
+                case KeyEvent.VK_J -> b1.rotateLeftReleased();
+                case KeyEvent.VK_K -> b1.rotateRightReleased();
+                case KeyEvent.VK_L -> b1.flipReleased();
+            }
+        }
     }
 }
