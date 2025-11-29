@@ -1,5 +1,7 @@
 package tetris;
 
+import tetris.tetrominoes.Tetromino;
+
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,6 +34,8 @@ public class MainFrame extends JFrame {
         // Input Handling
         addKeyListener(new KeyController());
     }
+
+    public Tetromino getFallingTetromino() { return gamePanel.getP1Board().getFallingTetromino(); }
 
     private class KeyController extends KeyAdapter {
         @Override
