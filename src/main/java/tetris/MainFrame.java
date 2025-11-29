@@ -37,6 +37,12 @@ public class MainFrame extends JFrame {
 
     public Tetromino getFallingTetromino() { return gamePanel.getP1Board().getFallingTetromino(); }
 
+    public void setTetrominoXYRotationIndex(int x, int y, int rotationIndex) {
+        gamePanel.getP2Board().getFallingTetromino().setXYRotationIndex(x, y, rotationIndex);
+    }
+
+    public boolean isGameOver() { return gamePanel.isGameOver(); }
+
     private class KeyController extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {

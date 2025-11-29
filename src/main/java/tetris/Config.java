@@ -12,7 +12,8 @@ public class Config {
     public static final int Z = 6;
 
     // GAME UPDATE CONFIG
-    public static final double FPS = 62.5;
+    // public static final double FPS = 62.5;
+    public static final double FPS = 1;
     public static final int MILIS_PER_FRAME = (int) (1000/FPS);
     public static final double NES_FPS = 60.0988;
 

@@ -17,6 +17,7 @@ public class HostClient implements Runnable {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(new HostClient());
+
     }
 
     @Override
@@ -26,7 +27,10 @@ public class HostClient implements Runnable {
 
         try(ServerSocket serverSocket = new ServerSocket(HOST_CLIENT_PORT)){
             try(Socket client = serverSocket.accept()){
+                InputManager inputManager = new InputManager(client.getInputStream(), mainFrame);
+                OutputManager outputManager = new OutputManager(client.getOutputStream(), mainFrame);
 
+                // TODO: Recibir XML con historial actualizado
             }
         }
         catch (IOException ioe){
