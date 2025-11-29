@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static tetris.Config.*;
 
@@ -14,6 +16,7 @@ import static tetris.Config.*;
 public class GamePanel extends JPanel {
     private MainFrame mainFrame;
     private Timer gameLoop;
+    private Timer paintLoop;
     private Board p1Board;
     private Board p2Board;
     private boolean gameOver;
@@ -23,21 +26,11 @@ public class GamePanel extends JPanel {
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
         setBackground(Color.DARK_GRAY);
 
-        // Game Loop (approx 60fps (62.5fps) for smoothness, logic updates slower)
-        gameLoop = new Timer(MILIS_PER_FRAME, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (!isGameOver()) {
-                    updateBoards();
-                    repaint();
-                }
-            }
-        });
-
         // Initialize Boards
         reset();
 
-        gameLoop.start();
+        // Game Loop (approx 60fps (62.5fps) for smoothness, logic updates slower)
+        new Timer().scheduleAtFixedRate(new GameLoop(), 0, MILIS_PER_FRAME);
     }
 
     public void reset() {
@@ -98,6 +91,22 @@ public class GamePanel extends JPanel {
 
     public void restartGame() {
         reset();
-        gameLoop.start();
+    }
+
+    private class GameLoop extends TimerTask {
+        @Override
+        public void run() {
+            if (!isGameOver()) {
+                updateBoards();
+
+            }
+        }
+    }
+
+    private class PainLoop extends TimerTask {
+        @Override
+        public void run() {
+            repaint();
+        }
     }
 }
