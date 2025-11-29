@@ -30,6 +30,7 @@ public class Board {
     private boolean isAlive;
     private Board enemyBoard;
     private Random random;
+    private int garbageLinesToAdd;
 
     public Board(int playerID, long seed, int x, int y) {
         this.playerID = playerID;
@@ -46,6 +47,7 @@ public class Board {
         level = 1;
         isAlive = true;
         random = new Random();
+        garbageLinesToAdd = 0;
 
         nextTetromino = queue.getNext(); // Initialize first block
         fallingTetromino = null;
@@ -57,25 +59,7 @@ public class Board {
     public Tetromino getFallingTetromino() { return fallingTetromino; }
     public boolean isAlive() { return isAlive; }
     public void setEnemyBoard(Board enemyBoard) { this.enemyBoard = enemyBoard; }
-    public void addGarbage(int lines) {
-        int columnaQueMeLaChupa = random.nextInt(BOARD_COLUMNS);
-
-        for (int y = 0; y < BOARD_ROWS + BOARD_SPAWN_ROWS - lines; y++) {
-            System.arraycopy(grid[y + lines], 0, grid[y], 0, BOARD_COLUMNS);
-            System.arraycopy(gridColor[y + lines], 0, gridColor[y], 0, BOARD_COLUMNS);
-        }
-        for (int y = BOARD_ROWS + BOARD_SPAWN_ROWS - 1; y > BOARD_ROWS + BOARD_SPAWN_ROWS - lines - 1l; y--) {
-            for (int x = 0; x < BOARD_COLUMNS; x++) {
-                if(x == columnaQueMeLaChupa) {
-                    grid[y][x] = false;
-                    gridColor[y][x] = null;
-                } else {
-                    grid[y][x] = true;
-                    gridColor[y][x] = Color.GRAY;
-                }
-            }
-        }
-    }
+    public void addGarbage(int lines) { this.garbageLinesToAdd += lines; }
 
     // Controls
     public void moveLeftPressed() { tetrominoMovement.moveLeftPressed(); }
@@ -108,6 +92,8 @@ public class Board {
 
         tetrominoMovement.update();
         updateFallingTetrominoShadow();
+
+        if (garbageLinesToAdd > 0) { updateGarbage(); }
 
         if (tetrominoMovement.isLocked()) {
             lockTetromino();
@@ -248,5 +234,27 @@ public class Board {
             fallingTetrominoShadow.setXYRotationIndex(fallingTetromino.getX(), fallingTetromino.getY(), fallingTetromino.getRotationIndex());
             tetrominoMovement.drop(fallingTetrominoShadow);
         }
+    }
+
+    private void updateGarbage() {
+        int columnaQueMeLaChupa = random.nextInt(BOARD_COLUMNS);
+
+        for (int y = 0; y < BOARD_ROWS + BOARD_SPAWN_ROWS - garbageLinesToAdd; y++) {
+            System.arraycopy(grid[y + garbageLinesToAdd], 0, grid[y], 0, BOARD_COLUMNS);
+            System.arraycopy(gridColor[y + garbageLinesToAdd], 0, gridColor[y], 0, BOARD_COLUMNS);
+        }
+        for (int y = BOARD_ROWS + BOARD_SPAWN_ROWS - 1; y > BOARD_ROWS + BOARD_SPAWN_ROWS - garbageLinesToAdd - 1; y--) {
+            for (int x = 0; x < BOARD_COLUMNS; x++) {
+                if(x == columnaQueMeLaChupa) {
+                    grid[y][x] = false;
+                    gridColor[y][x] = null;
+                } else {
+                    grid[y][x] = true;
+                    gridColor[y][x] = Color.GRAY;
+                }
+            }
+        }
+
+        garbageLinesToAdd = 0;
     }
 }

@@ -62,7 +62,6 @@ public class MainFrame extends JFrame {
                     case KeyEvent.VK_DOWN -> b2.moveDownPressed();
                     case KeyEvent.VK_PERIOD ->  b2.hold();
                 }
-                gamePanel.repaint();
             }
 
             @Override
@@ -87,7 +86,6 @@ public class MainFrame extends JFrame {
                     case KeyEvent.VK_UP -> b2.rotateRightReleased();
                     case KeyEvent.VK_DOWN -> b2.moveDownReleased();
                 }
-                gamePanel.repaint();
             }
         });
     }

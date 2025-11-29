@@ -15,8 +15,6 @@ import static tetris.Config.*;
 // ==========================================
 public class GamePanel extends JPanel {
     private MainFrame mainFrame;
-    private Timer gameLoop;
-    private Timer paintLoop;
     private Board p1Board;
     private Board p2Board;
     private boolean gameOver;
@@ -31,6 +29,7 @@ public class GamePanel extends JPanel {
 
         // Game Loop (approx 60fps (62.5fps) for smoothness, logic updates slower)
         new Timer().scheduleAtFixedRate(new GameLoop(), 0, MILIS_PER_FRAME);
+        new Timer().scheduleAtFixedRate(new PainLoop(), 0, MILIS_PER_FRAME/2);
     }
 
     public void reset() {

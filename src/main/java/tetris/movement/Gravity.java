@@ -10,7 +10,7 @@ public class Gravity {
     private CollisionDetector collisionDetector;
     private double gravity; // cells per frame
     private double appliedGravity;
-    private double lockDelayFrames; // aprox 500ms
+    private double lockDelayFrames;
     private double appliedLockDelayFrames;
     private int delayUsed;
 
@@ -20,7 +20,7 @@ public class Gravity {
         this.collisionDetector = collisionDetector;
         this.gravity = gravity;
         this.appliedGravity = gravity;
-        this.lockDelayFrames = FPS/2;
+        this.lockDelayFrames = FPS/2;  // aprox 500ms
         this.appliedLockDelayFrames = lockDelayFrames;
         delayUsed = 0;
     }
