@@ -14,9 +14,7 @@ public class MainPanel extends JPanel {
     private static final String START_MENU_PANEL = "Start Menu Screen";
     private static final String LOCAL_TETRIS_PANEL = "Local Tetris Screen";
     private static final String ONLINE_TETRIS_PANEL = "Online Tetris Screen";
-    //TODO: eliminar valor a hostIp. Luego se lo dará el servidor
     private String hostIp;
-    //TODO: eliminar valor a hostPort. Luego se lo dará el servidor
     private int hostPort;
     private StartMenuPanel startMenuPanel;
     private LocalTwoPlayerTetrisPanel localTwoPlayerTetrisPanel;
@@ -27,6 +25,8 @@ public class MainPanel extends JPanel {
         super(cardLayout);
 
         this.cardLayout = cardLayout;
+        hostIp = "localhost"; //TODO: eliminar valor a hostIp. Luego se lo dará el servidor
+        hostPort = 7777; //TODO: eliminar valor a hostPort. Luego se lo dará el servidor
 
         startMenuPanel = new StartMenuPanel(this);
         // TODO: Probably have to add more menus to create room and join room
@@ -52,20 +52,23 @@ public class MainPanel extends JPanel {
 
     public void startOnlineGameAsHost() {
         try(ServerSocket server = new ServerSocket(hostPort)){
-            try(Socket client = server.accept()){
+            try {
+                Socket client = server.accept();
                 OnlineTwoPlayerTetrisPanel twoPlayerTetrisPanel = new OnlineTwoPlayerTetrisPanel(this);
                 twoPlayerTetrisPanel.setSocket(client);
+                twoPlayerTetrisPanel.startGame();
             }
+            catch(IOException ioe) { ioe.printStackTrace(); }
         }
-        catch(IOException ioe){
-            ioe.printStackTrace();
-        }
+        catch(IOException ioe) { ioe.printStackTrace(); }
     }
 
     public void startOnlineGameAsClient() {
-        try(Socket host = new Socket(hostIp,hostPort)){
+        try {
+            Socket host = new Socket(hostIp,hostPort);
             OnlineTwoPlayerTetrisPanel twoPlayerTetrisPanel = new OnlineTwoPlayerTetrisPanel(this);
             twoPlayerTetrisPanel.setSocket(host);
+            twoPlayerTetrisPanel.startGame();
         }
         catch (IOException ioe){
             ioe.printStackTrace();
