@@ -1,5 +1,7 @@
 package src.tetris.physics;
 
+import java.net.Socket;
+
 public class OnlineBoardPhysics extends BoardPhysics {
     public OnlineBoardPhysics(boolean[][] grid) {
         super(grid);
