@@ -7,6 +7,7 @@ import src.tetris.boards.OnlineBoard;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.net.Socket;
 
 import static src.tetris.Config.*;
@@ -41,12 +42,12 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     protected void initializeGame() {
         gameOver = false;
 
-        // TODO: Obtener la seed para generación de tetrominoes de alguna manera
-        // TODO: Probeblemte tmb haya que pasar un output stream al local board y un input stream al online board
-        long seed = 0;
-
         board1 = new LocalBoard(BOARD1_X, BOARD1_Y, seed);
-        board2 = new OnlineBoard(BOARD2_X, BOARD2_Y, seed);
+        try {
+            board2 = new OnlineBoard(BOARD2_X, BOARD2_Y, seed, socket.getInputStream());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         board1.setEnemyBoard(board2);
         board2.setEnemyBoard(board1);
