@@ -15,6 +15,7 @@ import static src.tetris.Config.BOARD2_Y;
 public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     private Socket socket;
     private RivalInput rivalInput;
+    private long seed;
 
     public OnlineTwoPlayerTetrisPanel(MainPanel mainPanel) {
         super(mainPanel);
@@ -25,6 +26,7 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     public void setSocket(Socket socket) {
         this.socket = socket;
     }
+    public void setSeed(long seed){this.seed = seed;}
 
     @Override
     public void startGame() {

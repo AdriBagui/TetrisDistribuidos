@@ -6,6 +6,9 @@ import src.tetris.panels.LocalTwoPlayerTetrisPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -55,6 +58,11 @@ public class MainPanel extends JPanel {
             try {
                 Socket client = server.accept();
                 onlineTwoPlayerTetrisPanel.setSocket(client);
+                // Creating and sending seed
+                long seed = System.currentTimeMillis();
+                onlineTwoPlayerTetrisPanel.setSeed(System.currentTimeMillis());
+                DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+                dos.writeLong(seed);
 
                 cardLayout.show(this, ONLINE_TETRIS_PANEL);
                 onlineTwoPlayerTetrisPanel.startGame();
@@ -68,6 +76,9 @@ public class MainPanel extends JPanel {
         try {
             Socket host = new Socket(hostIp,hostPort);
             onlineTwoPlayerTetrisPanel.setSocket(host);
+            // Reading and setting the seed
+            DataInputStream dis = new DataInputStream(host.getInputStream());
+            onlineTwoPlayerTetrisPanel.setSeed(dis.readLong());
 
             cardLayout.show(this, ONLINE_TETRIS_PANEL);
             onlineTwoPlayerTetrisPanel.startGame();
