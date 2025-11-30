@@ -42,11 +42,11 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     protected void initializeGame() {
         gameOver = false;
 
-        board1 = new LocalBoard(BOARD1_X, BOARD1_Y, seed);
         try {
+            board1 = new LocalBoard(BOARD1_X, BOARD1_Y, seed, socket.getOutputStream());
             board2 = new OnlineBoard(BOARD2_X, BOARD2_Y, seed, socket.getInputStream());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
         }
 
         board1.setEnemyBoard(board2);
