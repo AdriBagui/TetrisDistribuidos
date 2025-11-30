@@ -3,16 +3,19 @@ package src.tetris.boards;
 import src.tetris.physics.BoardPhysics;
 import src.tetris.physics.OnlineBoardPhysics;
 
+import java.io.InputStream;
+
 public class OnlineBoard extends Board {
-    public OnlineBoard(int x, int y, long seed) {
+    private InputStream inputStream;
+
+    public OnlineBoard(int x, int y, long seed, InputStream inputStream) {
         super(x, y, seed);
-        // TODO: Insertar InputStream (y no sé si algo más)
+        this.inputStream = inputStream;
     }
 
     @Override
     protected BoardPhysics initializeBoardPhysics() {
-        // TODO: La OnlineBoardPhysics necesitará un Input Stream (y no sé si algo más)
-        return new OnlineBoardPhysics(grid);
+        return new OnlineBoardPhysics(grid, inputStream);
     }
 
     @Override

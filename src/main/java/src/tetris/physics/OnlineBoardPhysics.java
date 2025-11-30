@@ -1,11 +1,14 @@
 package src.tetris.physics;
 
+import java.io.InputStream;
 import java.net.Socket;
 
 public class OnlineBoardPhysics extends BoardPhysics {
-    public OnlineBoardPhysics(boolean[][] grid) {
+    private InputStream inputStream;
+
+    public OnlineBoardPhysics(boolean[][] grid, InputStream inputStream) {
         super(grid);
-        // TODO: Insertar input stream (igual hacen falta más cosas idk)
+        this.inputStream = inputStream;
     }
 
     @Override
