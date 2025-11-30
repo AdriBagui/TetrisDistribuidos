@@ -92,8 +92,6 @@ public class ClassicBoard extends Board {
     public void rotateLeftReleased() { localBoardPhysics.rotateLeftReleased(); }
     public void flipPressed() { localBoardPhysics.flipPressed(); }
     public void flipReleased() { localBoardPhysics.flipReleased(); }
-    @Override
-    public void hold() { nextTetromino = tetrominoHolder.hold(fallingTetromino); }
 
     private void updateFallingTetrominoShadow() {
         fallingTetrominoShadow.setXYRotationIndex(fallingTetromino.getX(), fallingTetromino.getY(), fallingTetromino.getRotationIndex());

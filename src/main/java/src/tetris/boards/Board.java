@@ -26,6 +26,7 @@ public abstract class Board {
     // BOARD LOGIC
     private final TetrominoesQueue tetrominoesQueue;
     protected final TetrominoHolder tetrominoHolder;
+    protected boolean holdTetromino;
     protected final BoardPhysics boardPhysics;
     // SCORING SYSTEM
     private int score, linesCleared, level;
@@ -60,11 +61,10 @@ public abstract class Board {
 
     protected abstract BoardPhysics initializeBoardPhysics();
     protected abstract void updateGarbage();
-    public abstract void hold();
-
 
     public void setEnemyBoard(Board enemyBoard) { this.enemyBoard = enemyBoard; }
     public void addGarbage(int lines) { this.garbageLinesToAdd += lines; }
+    public void hold() { nextTetromino = tetrominoHolder.hold(fallingTetromino); }
 
     public boolean isAlive() { return isAlive; }
 
