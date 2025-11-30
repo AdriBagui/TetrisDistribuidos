@@ -39,9 +39,17 @@ public class MainPanel extends JPanel {
         localTwoPlayerTetrisPanel.startGame();
     }
 
-    public void startOnlineGame() {
-        cardLayout.show(this, ONLINE_TETRIS_PANEL);
-        onlineTwoPlayerTetrisPanel.startGame();
+//    public void startOnlineGame() {
+//        cardLayout.show(this, ONLINE_TETRIS_PANEL);
+//        onlineTwoPlayerTetrisPanel.startGame();
+//    }
+
+    public void startOnlineGameAsHost() {
+        // TODO: Aquí se añade la lógica para crear un servidor que acepta a un cliente y conseguir el socket del cliente
+    }
+
+    public void startOnlineGameAsClient() {
+        // TODO: Aquí se añade la lógica para unirse al servidor del otro método
     }
 
     public void endGame() {

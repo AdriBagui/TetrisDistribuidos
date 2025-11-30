@@ -23,38 +23,65 @@ public class StartMenuPanel extends JPanel {
         });
         add(btnPlayLocal);
 
-        JButton btnCreateRoom = new JButton("CREAR SALA");
-        btnCreateRoom.setFont(new Font("Arial", Font.BOLD, 18));
-        btnCreateRoom.addActionListener(new ActionListener() {
+        JButton btnPlayOnlineAsHost = new JButton("JUGAR ONLINE (COMO HOST)");
+        btnPlayOnlineAsHost.setFont(new Font("Arial", Font.BOLD, 18));
+        btnPlayOnlineAsHost.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                createRoomHandler();
+                playOnlineAsHost();
             }
         });
-        add(btnCreateRoom);
+        add(btnPlayOnlineAsHost);
 
-        JButton btnJoinRoom = new JButton("UNIRSE A SALA");
-        btnJoinRoom.setFont(new Font("Arial", Font.BOLD, 18));
-        btnJoinRoom.addActionListener(new ActionListener() {
+        JButton btnPlayOnlineAsClient = new JButton("JUGAR ONLINE (COMO CLIENTE)");
+        btnPlayOnlineAsClient.setFont(new Font("Arial", Font.BOLD, 18));
+        btnPlayOnlineAsClient.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                joinRoomHandler();
+                playOnlineAsClient();
             }
         });
-        add(btnJoinRoom);
+        add(btnPlayOnlineAsClient);
+
+//        JButton btnCreateRoom = new JButton("CREAR SALA");
+//        btnCreateRoom.setFont(new Font("Arial", Font.BOLD, 18));
+//        btnCreateRoom.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                createRoomHandler();
+//            }
+//        });
+//        add(btnCreateRoom);
+//
+//        JButton btnJoinRoom = new JButton("UNIRSE A SALA");
+//        btnJoinRoom.setFont(new Font("Arial", Font.BOLD, 18));
+//        btnJoinRoom.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                joinRoomHandler();
+//            }
+//        });
+//        add(btnJoinRoom);
     }
 
     private void playLocalHandler() {
         mainPanel.startLocalGame();
     }
 
-    private void createRoomHandler() {
-        // TODO: Modify create a room
-        mainPanel.startOnlineGame();
+    private void playOnlineAsHost() {
+        mainPanel.startOnlineGameAsHost();
     }
 
-    private void joinRoomHandler() {
-        // TODO: Modify to join a room
-        mainPanel.startOnlineGame();
+    private void playOnlineAsClient() {
+        mainPanel.startOnlineGameAsClient();
     }
+
+//    private void createRoomHandler() {
+//        // TODO: Modify create a room
+//    }
+//
+//    private void joinRoomHandler() {
+//        // TODO: Modify to join a room
+//
+//    }
 }
