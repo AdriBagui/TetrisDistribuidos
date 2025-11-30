@@ -14,18 +14,22 @@ import static src.tetris.Config.BOARD2_Y;
 
 public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     private Socket socket;
-    private Thread rivalInput;
+    private RivalInput rivalInput;
 
     public OnlineTwoPlayerTetrisPanel(MainPanel mainPanel) {
         super(mainPanel);
 
-        // TODO: Insertar socket para comunicarse con otro jugador y añadir hilo para la online board (para que no sé quede
-        // TODO: colgada la app cuando se este esperando mensajes del otro jugador) (igual faltan más cosas, no sé)
-        // TODO: el siguiente código se ejecuta en el hilo nuevo: if (board2.isAlive()) board2.update();
+        rivalInput = new RivalInput();
     }
 
     public void setSocket(Socket socket) {
         this.socket = socket;
+    }
+
+    @Override
+    public void startGame() {
+        super.startGame();
+        rivalInput.start();
     }
 
     @Override
@@ -52,6 +56,15 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
 
         if (!board1.isAlive() || !board2.isAlive()) {
             gameOver = true;
+        }
+    }
+
+    private class RivalInput extends Thread {
+        @Override
+        public void run() {
+            while (board2.isAlive()) board2.update();
+
+            // TODO: Dormir hasta que se vuelva a empezar una partida
         }
     }
 
