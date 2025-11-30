@@ -82,6 +82,5 @@ public class StartMenuPanel extends JPanel {
 //
 //    private void joinRoomHandler() {
 //        // TODO: Modify to join a room
-//
 //    }
 }
