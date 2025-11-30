@@ -6,12 +6,18 @@ import src.tetris.panels.LocalTwoPlayerTetrisPanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class MainPanel extends JPanel {
     private static final String START_MENU_PANEL = "Start Menu Screen";
     private static final String LOCAL_TETRIS_PANEL = "Local Tetris Screen";
     private static final String ONLINE_TETRIS_PANEL = "Online Tetris Screen";
-
+    //TODO: eliminar valor a hostIp. Luego se lo dará el servidor
+    private String hostIp;
+    //TODO: eliminar valor a hostPort. Luego se lo dará el servidor
+    private int hostPort;
     private StartMenuPanel startMenuPanel;
     private LocalTwoPlayerTetrisPanel localTwoPlayerTetrisPanel;
     private OnlineTwoPlayerTetrisPanel onlineTwoPlayerTetrisPanel;
@@ -45,11 +51,25 @@ public class MainPanel extends JPanel {
 //    }
 
     public void startOnlineGameAsHost() {
-        // TODO: Aquí se añade la lógica para crear un servidor que acepta a un cliente y conseguir el socket del cliente
+        try(ServerSocket server = new ServerSocket(hostPort)){
+            try(Socket client = server.accept()){
+                OnlineTwoPlayerTetrisPanel twoPlayerTetrisPanel = new OnlineTwoPlayerTetrisPanel(this);
+                twoPlayerTetrisPanel.setSocket(client);
+            }
+        }
+        catch(IOException ioe){
+            ioe.printStackTrace();
+        }
     }
 
     public void startOnlineGameAsClient() {
-        // TODO: Aquí se añade la lógica para unirse al servidor del otro método
+        try(Socket host = new Socket(hostIp,hostPort)){
+            OnlineTwoPlayerTetrisPanel twoPlayerTetrisPanel = new OnlineTwoPlayerTetrisPanel(this);
+            twoPlayerTetrisPanel.setSocket(host);
+        }
+        catch (IOException ioe){
+            ioe.printStackTrace();
+        }
     }
 
     public void endGame() {
