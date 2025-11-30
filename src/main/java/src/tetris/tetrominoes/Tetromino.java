@@ -9,6 +9,7 @@ import static src.tetris.Config.*;
 // Base class for all Tetris shapes
 // ==========================================
 public abstract class Tetromino {
+    private long id;
     private boolean[][][] shapeRotations;
     protected int rotationIndex;
     private double x, y;
@@ -24,6 +25,7 @@ public abstract class Tetromino {
         this.color = color;
         this.parentX = parentX;
         this.parentY = parentY;
+        id = System.currentTimeMillis();
     }
 
 
@@ -49,9 +51,7 @@ public abstract class Tetromino {
     public void setRotationIndex(int rotationIndex) {
         this.rotationIndex = rotationIndex;
     }
-    public void setX(double x) {
-        this.x = x;
-    }
+    public void setX(double x) { this.x = x; }
     public void setY(double y) { this.y = y; }
     public synchronized void setXY(double x, double y) {
         setX(x);

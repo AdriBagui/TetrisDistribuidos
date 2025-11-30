@@ -4,6 +4,7 @@ import src.MainPanel;
 import src.tetris.boards.ClassicBoard;
 import src.tetris.boards.LocalBoard;
 import src.tetris.boards.OnlineBoard;
+import src.tetris.boards.PhysicsCalculatingBoard;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
@@ -32,6 +33,7 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     @Override
     public void startGame() {
         super.startGame();
+        rivalInput = new RivalInput();
         rivalInput.start();
     }
 
@@ -66,8 +68,6 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
         @Override
         public void run() {
             while (board2.isAlive()) board2.update();
-
-            // TODO: Dormir hasta que se vuelva a empezar una partida
         }
     }
 
@@ -75,7 +75,7 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     private class KeyInputHandler extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            ClassicBoard localBoard = (ClassicBoard) board1;
+            PhysicsCalculatingBoard localBoard = (PhysicsCalculatingBoard) board1;
 
             if (gameOver) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -98,7 +98,7 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            ClassicBoard localBoard = (ClassicBoard) board1;
+            PhysicsCalculatingBoard localBoard = (PhysicsCalculatingBoard) board1;
 
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_A -> localBoard.moveLeftReleased();

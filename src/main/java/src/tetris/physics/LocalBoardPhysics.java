@@ -22,7 +22,7 @@ public class LocalBoardPhysics extends BoardPhysics {
     public void setFallingTetromino(Tetromino fallingTetromino) {
         super.setFallingTetromino(fallingTetromino);
         gravity.setFallingTetromino(fallingTetromino);
-        inputMovement.setFallingTetrimonio(fallingTetromino);
+        inputMovement.setFallingTetromino(fallingTetromino);
     }
 
     @Override

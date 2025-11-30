@@ -9,7 +9,7 @@ public class InputMovement {
     private boolean[][] grid;
     private RotationSystem superRotationSystem;
     private Gravity gravity;
-    private Tetromino fallingTetrimonio;
+    private Tetromino fallingTetromino;
     private int softDropping;
     private int movingLeft;
     private int movingRight;
@@ -22,7 +22,7 @@ public class InputMovement {
         this.grid = grid;
         this.superRotationSystem = superRotationSystem;
         this.gravity = gravity;
-        this.fallingTetrimonio = null;
+        this.fallingTetromino = null;
 
         softDropping = -1;
         movingLeft = -1;
@@ -33,8 +33,8 @@ public class InputMovement {
         flipped = -1;
     }
 
-    public void setFallingTetrimonio(Tetromino fallingTetrimonio) {
-        this.fallingTetrimonio = fallingTetrimonio;
+    public void setFallingTetromino(Tetromino fallingTetromino) {
+        this.fallingTetromino = fallingTetromino;
     }
 
     public void update() {
@@ -72,17 +72,17 @@ public class InputMovement {
         }
 
         if (rotatedRight == 0) {
-            superRotationSystem.rotateRight(fallingTetrimonio);
+            superRotationSystem.rotateRight(fallingTetromino);
             rotatedRight = 1;
         }
 
         if (rotatedLeft == 0) {
-            superRotationSystem.rotateLeft(fallingTetrimonio);
+            superRotationSystem.rotateLeft(fallingTetromino);
             rotatedLeft = 1;
         }
 
         if (flipped == 0) {
-            superRotationSystem.flip(fallingTetrimonio);
+            superRotationSystem.flip(fallingTetromino);
             flipped = 1;
         }
     }
@@ -166,32 +166,32 @@ public class InputMovement {
     }
 
     private void tryAndApplyMoveLeft() {
-        Tetromino aux = fallingTetrimonio.createCopy();
+        Tetromino aux = fallingTetromino.createCopy();
 
         aux.moveLeft();
 
         if (!CollisionDetector.checkCollision(grid, aux)) {
-            fallingTetrimonio.moveLeft();
+            fallingTetromino.moveLeft();
         }
     }
 
     private void tryAndApplyMoveRight() {
-        Tetromino aux = fallingTetrimonio.createCopy();
+        Tetromino aux = fallingTetromino.createCopy();
 
         aux.moveRight();
 
         if (!CollisionDetector.checkCollision(grid, aux)) {
-            fallingTetrimonio.moveRight();
+            fallingTetromino.moveRight();
         }
     }
 
     private void tryAndApplyMoveDown() {
-        Tetromino aux = fallingTetrimonio.createCopy();
+        Tetromino aux = fallingTetromino.createCopy();
 
         aux.moveDown();
 
         if (!CollisionDetector.checkCollision(grid, aux)) {
-            fallingTetrimonio.moveDown();
+            fallingTetromino.moveDown();
         }
     }
 

@@ -7,7 +7,6 @@ import src.tetris.panels.LocalTwoPlayerTetrisPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataInputStream;
-import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;

@@ -2,6 +2,8 @@ package src.tetris.panels;
 
 import src.MainPanel;
 import src.tetris.boards.ClassicBoard;
+import src.tetris.boards.PhysicsCalculatingBoard;
+
 import java.awt.event.*;
 
 import static src.tetris.Config.*;
@@ -39,8 +41,8 @@ public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     private class KeyInputHandler extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent e) {
-            ClassicBoard player1Board = (ClassicBoard) board1;
-            ClassicBoard player2Board = (ClassicBoard) board2;
+            PhysicsCalculatingBoard player1Board = (PhysicsCalculatingBoard) board1;
+            PhysicsCalculatingBoard player2Board = (PhysicsCalculatingBoard) board2;
 
             if (gameOver) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
@@ -70,8 +72,8 @@ public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
 
         @Override
         public void keyReleased(KeyEvent e) {
-            ClassicBoard player1Board = (ClassicBoard) board1;
-            ClassicBoard player2Board = (ClassicBoard) board2;
+            PhysicsCalculatingBoard player1Board = (PhysicsCalculatingBoard) board1;
+            PhysicsCalculatingBoard player2Board = (PhysicsCalculatingBoard) board2;
 
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_A -> player1Board.moveLeftReleased();

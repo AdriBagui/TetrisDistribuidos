@@ -7,20 +7,32 @@ import java.io.InputStream;
 
 public class OnlineBoard extends Board {
     private InputStream inputStream;
+    private final OnlineBoardPhysics onlineBoardPhysics;
+    private int garbageLinesRecieved;
+    private int emptyGarbageColumnRecieved;
 
     public OnlineBoard(int x, int y, long seed, InputStream inputStream) {
-        super(x, y, seed);
         this.inputStream = inputStream;
+        super(x, y, seed);
+        onlineBoardPhysics = (OnlineBoardPhysics) boardPhysics;
+        garbageLinesRecieved = 0;
+        emptyGarbageColumnRecieved = 0;
     }
 
     @Override
     protected BoardPhysics initializeBoardPhysics() {
-        return new OnlineBoardPhysics(grid, inputStream);
+        return new OnlineBoardPhysics(grid, this, inputStream);
     }
 
     @Override
-    protected void updateGarbage() {
-        // TODO: Necesita saber la columna que se va a quedar vacía, probablemente como es online board physics la que lee los inputs
-        // TODO: hacer un método get en la online board physics
+    public void update() {
+        super.update();
+        garbageLinesRecieved = onlineBoardPhysics.getGarbageLinesRecieved();
+        emptyGarbageColumnRecieved = onlineBoardPhysics.getEmptyGarbageColumnRecieved();
+
+        if (garbageLinesRecieved > 0) enemyBoard.addGarbage(garbageLinesRecieved, emptyGarbageColumnRecieved);
+
+        garbageLinesToAdd = onlineBoardPhysics.getGarbageLinesToUpdate();
+        emptyGarbageColumn = onlineBoardPhysics.getEmptyGarbageColumnToUpdate();
     }
 }

@@ -10,7 +10,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static src.tetris.Config.*;
-import static src.tetris.Config.PANEL_WIDTH;
 
 public abstract class TwoPlayerTetrisPanel extends JPanel {
     protected MainPanel mainPanel;

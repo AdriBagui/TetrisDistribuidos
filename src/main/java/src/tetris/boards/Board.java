@@ -10,10 +10,6 @@ import java.awt.*;
 
 import static src.tetris.Config.*;
 
-// ==========================================
-// CLASS: Board
-// Logic for a single player's 10x20 grid
-// ==========================================
 public abstract class Board {
     // BOARD POSITION IN PANEL
     private int x, y;
@@ -29,10 +25,11 @@ public abstract class Board {
     protected boolean holdTetromino;
     protected final BoardPhysics boardPhysics;
     // SCORING SYSTEM
-    private int score, linesCleared, level;
+    protected int score, totalClearedLines, level;
     // GARBAGE SYSTEM
     protected Board enemyBoard;
     protected int garbageLinesToAdd;
+    protected int emptyGarbageColumn;
     // END OF GAME DETECTION
     private boolean isAlive;
 
@@ -48,10 +45,11 @@ public abstract class Board {
         boardPhysics = initializeBoardPhysics();
 
         score = 0;
-        linesCleared = 0;
+        totalClearedLines = 0;
         level = 1;
 
         garbageLinesToAdd = 0;
+        emptyGarbageColumn = 0;
 
         isAlive = true;
 
@@ -60,10 +58,31 @@ public abstract class Board {
     }
 
     protected abstract BoardPhysics initializeBoardPhysics();
-    protected abstract void updateGarbage();
+    protected void updateGarbage() {
+        for (int y = 0; y < BOARD_ROWS + BOARD_SPAWN_ROWS - garbageLinesToAdd; y++) {
+            System.arraycopy(grid[y + garbageLinesToAdd], 0, grid[y], 0, BOARD_COLUMNS);
+            System.arraycopy(gridColor[y + garbageLinesToAdd], 0, gridColor[y], 0, BOARD_COLUMNS);
+        }
+        for (int y = BOARD_ROWS + BOARD_SPAWN_ROWS - 1; y > BOARD_ROWS + BOARD_SPAWN_ROWS - garbageLinesToAdd - 1; y--) {
+            for (int x = 0; x < BOARD_COLUMNS; x++) {
+                if(x == emptyGarbageColumn) {
+                    grid[y][x] = false;
+                    gridColor[y][x] = null;
+                } else {
+                    grid[y][x] = true;
+                    gridColor[y][x] = Color.GRAY;
+                }
+            }
+        }
+
+        garbageLinesToAdd = 0;
+    }
 
     public void setEnemyBoard(Board enemyBoard) { this.enemyBoard = enemyBoard; }
-    public void addGarbage(int lines) { this.garbageLinesToAdd += lines; }
+    public void addGarbage(int lines, int emptyGarbageColumn) {
+        this.garbageLinesToAdd += lines;
+        this.emptyGarbageColumn = emptyGarbageColumn;
+    }
     public void hold() { nextTetromino = tetrominoHolder.hold(fallingTetromino); }
 
     public boolean isAlive() { return isAlive; }
@@ -72,11 +91,11 @@ public abstract class Board {
         if (nextTetromino != null) {
             setNextTetrominoAsFallingTetromino();
             nextTetromino = null;
-        }
 
-        if (CollisionDetector.checkCollision(grid, fallingTetromino)) {
-            isAlive = false;
-            return;
+            if (CollisionDetector.checkCollision(grid, fallingTetromino)) {
+                isAlive = false;
+                return;
+            }
         }
 
         updateFallingTetromino();
@@ -161,23 +180,30 @@ public abstract class Board {
 
         tetrominoHolder.unlockHold();
     }
-    private void clearLines() {
+
+    protected void clearLines() {
+        boolean full;
         int linesCleared = 0;
+
         for (int r = 0; r < BOARD_ROWS + BOARD_SPAWN_ROWS; r++) {
-            boolean full = true;
+            full = true;
+
             for (int c = 0; c < BOARD_COLUMNS; c++) {
                 if (!grid[r][c]) {
                     full = false;
                     break;
                 }
             }
+
             if (full) {
                 linesCleared++;
+
                 // Shift down
                 for (int y = r; y > 0; y--) {
                     System.arraycopy(grid[y - 1], 0, grid[y], 0, BOARD_COLUMNS);
                     System.arraycopy(gridColor[y - 1], 0, gridColor[y], 0, BOARD_COLUMNS);
                 }
+
                 // Clear top
                 for (int c = 0; c < BOARD_COLUMNS; c++) {
                     grid[0][c] = false;
@@ -185,6 +211,7 @@ public abstract class Board {
                 }
             }
         }
+
         // NES Scoring: 40, 100, 300, 1200
         switch (linesCleared) {
             case 1:
@@ -192,24 +219,21 @@ public abstract class Board {
                 break;
             case 2:
                 score += 100;
-                enemyBoard.addGarbage(1);
                 break;
             case 3:
                 score += 300;
-                enemyBoard.addGarbage(2);
                 break;
             case 4:
                 score += 1200;
-                enemyBoard.addGarbage(4);
                 break;
         }
 
-        this.linesCleared += linesCleared;
+        this.totalClearedLines += linesCleared;
 
-        if (level < (this.linesCleared / 10) + 1 && level < 21) {
+        if (level < (this.totalClearedLines / 10) + 1 && level < 21) {
             //boardPhysics.increaseGravity();
         }
 
-        level = (this.linesCleared / 10) + 1;
+        level = (this.totalClearedLines / 10) + 1;
     }
 }

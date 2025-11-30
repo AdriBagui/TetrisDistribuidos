@@ -1,44 +1,63 @@
 package src.tetris.physics;
 
+import src.tetris.boards.OnlineBoard;
+
+import javax.xml.crypto.Data;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 
 public class OnlineBoardPhysics extends BoardPhysics {
-    private InputStream inputStream;
-    private boolean lock;
-    private int garbageLines;
+    private DataInputStream inputStream;
+    private OnlineBoard onlineBoard;
+    private boolean isLocked;
+    private int garbageLinesRecieved;
+    private int emptyGarbageColumnRecieved;
+    private int garbageLinesToUpdate;
+    private int emptyGarbageColumnToUpdate;
 
-    public OnlineBoardPhysics(boolean[][] grid, InputStream inputStream) {
+    public OnlineBoardPhysics(boolean[][] grid, OnlineBoard onlineBoard, InputStream inputStream) {
         super(grid);
-        this.inputStream = inputStream;
-        this.lock = false;
-        this.garbageLines = 0;
+        this.inputStream = new DataInputStream(inputStream);
+        this.onlineBoard = onlineBoard;
+        isLocked = false;
+        garbageLinesRecieved = 0;
+        emptyGarbageColumnRecieved = 0;
+        garbageLinesToUpdate = 0;
+        emptyGarbageColumnToUpdate = 0;
     }
 
-    // Este método se encarga de actualizar el estado del tetromino activo en todo momento
+    // Este metodo se encarga de actualizar el estado del tetromino activo constantemente
     @Override
     public void update() {
         /*
         Vamos a codificar lo que pasamos de la siguiente manera. Enviaremos bytes codificados de la siguiente manera:
             - Si empieza por 1 le van a seguir 4 bytes significando "MOVE X Y ROT LOCK"
             - Si empieza por 2 significará "HOLD"
-            - Si empieza por 3 le va a seguir 1 byte significando "GARBAGE LINEAS"
+            - Si empieza por 3 le va a seguir 1 byte significando "RECIEVE_GARBAGE LINEAS COLUMNA_VACÍA" (para recibir la basura enviada por el rival)
+            - Si empieza por 4 le va a seguir 2 bytes significando "UPDATE_GARBAGE LINEAS COLUMNA_VACÍA" (para actualizar la OnlineBoard (la que representa la board del rival))
         */
         try{
-            int action = inputStream.read();
+            short action = inputStream.readShort();
             int x, y, rotationIndex, lock;
             switch (action){
                 case 1:
-                    x = inputStream.read();
-                    y = inputStream.read();
-                    rotationIndex = inputStream.read();
-                    lock = inputStream.read();
+                    x = inputStream.readInt();
+                    y = inputStream.readInt();
+                    rotationIndex = inputStream.readInt();
+                    isLocked = inputStream.readBoolean();
                     fallingTetromino.setXYRotationIndex(x,y,rotationIndex);
-                    this.lock = (lock==1);
+                    break;
+                case 2:
+                    onlineBoard.hold();
                     break;
                 case 3:
-                    this.garbageLines = inputStream.read();
+                    garbageLinesRecieved = inputStream.readInt();
+                    emptyGarbageColumnRecieved = inputStream.readInt();
+                    break;
+                case 4:
+                    garbageLinesToUpdate = inputStream.readInt();
+                    emptyGarbageColumnToUpdate = inputStream.readInt();
                     break;
             }
         }
@@ -49,11 +68,25 @@ public class OnlineBoardPhysics extends BoardPhysics {
 
     // Sirve para ver si una pieza ha sido fijada
     @Override
-    public boolean isLocked() {
-        return this.lock;
+    public boolean isLocked() { return isLocked; }
+    public int getGarbageLinesRecieved(){
+        int aux = garbageLinesRecieved;
+        garbageLinesRecieved = 0;
+        return aux;
     }
-
-    public int getGarbageLines(){
-        return this.garbageLines;
+    public int getEmptyGarbageColumnRecieved() {
+        int aux = emptyGarbageColumnRecieved;
+        emptyGarbageColumnRecieved = 0;
+        return aux;
+    }
+    public int getGarbageLinesToUpdate(){
+        int aux = garbageLinesToUpdate;
+        garbageLinesToUpdate = 0;
+        return aux;
+    }
+    public int getEmptyGarbageColumnToUpdate() {
+        int aux = emptyGarbageColumnToUpdate;
+        emptyGarbageColumnToUpdate = 0;
+        return aux;
     }
 }
