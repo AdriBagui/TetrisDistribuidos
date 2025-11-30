@@ -54,9 +54,10 @@ public class MainPanel extends JPanel {
         try(ServerSocket server = new ServerSocket(hostPort)){
             try {
                 Socket client = server.accept();
-                OnlineTwoPlayerTetrisPanel twoPlayerTetrisPanel = new OnlineTwoPlayerTetrisPanel(this);
-                twoPlayerTetrisPanel.setSocket(client);
-                twoPlayerTetrisPanel.startGame();
+                onlineTwoPlayerTetrisPanel.setSocket(client);
+
+                cardLayout.show(this, ONLINE_TETRIS_PANEL);
+                onlineTwoPlayerTetrisPanel.startGame();
             }
             catch(IOException ioe) { ioe.printStackTrace(); }
         }
@@ -66,9 +67,10 @@ public class MainPanel extends JPanel {
     public void startOnlineGameAsClient() {
         try {
             Socket host = new Socket(hostIp,hostPort);
-            OnlineTwoPlayerTetrisPanel twoPlayerTetrisPanel = new OnlineTwoPlayerTetrisPanel(this);
-            twoPlayerTetrisPanel.setSocket(host);
-            twoPlayerTetrisPanel.startGame();
+            onlineTwoPlayerTetrisPanel.setSocket(host);
+
+            cardLayout.show(this, ONLINE_TETRIS_PANEL);
+            onlineTwoPlayerTetrisPanel.startGame();
         }
         catch (IOException ioe){
             ioe.printStackTrace();
