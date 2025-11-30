@@ -60,6 +60,8 @@ public abstract class Board {
 
     protected abstract BoardPhysics initializeBoardPhysics();
     protected abstract void updateGarbage();
+    public abstract void hold();
+
 
     public void setEnemyBoard(Board enemyBoard) { this.enemyBoard = enemyBoard; }
     public void addGarbage(int lines) { this.garbageLinesToAdd += lines; }

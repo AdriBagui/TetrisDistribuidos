@@ -23,4 +23,9 @@ public class OnlineBoard extends Board {
         // TODO: Necesita saber la columna que se va a quedar vacía, probablemente como es online board physics la que lee los inputs
         // TODO: hacer un método get en la online board physics
     }
+
+    @Override
+    public void hold() {
+        // TODO: hacerlo :)
+    }
 }
