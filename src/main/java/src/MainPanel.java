@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+// El MainPanel es el panel (contenido del frame (ventana)). Contiene el resto de paneles en un CardLayout y estos se
+// pintan sobre el
 public class MainPanel extends JPanel {
     private static final String START_MENU_PANEL = "Start Menu Screen";
     private static final String LOCAL_TETRIS_PANEL = "Local Tetris Screen";
