@@ -18,11 +18,11 @@ The project is divided into logical layers separating the View (UI) from the Mod
 * **MainFrame.java**: The top-level JFrame window.  
 * **MainPanel.java**: Acts as the central controller using a CardLayout. It switches between the Menu, Local Game, and Online Game panels. It also handles the initial TCP ServerSocket and Socket connection setup.
 
-### **src.menus**
+### **menus**
 
 * **StartMenuPanel.java**: Simple UI for selecting game modes (Local, Host, Client).
 
-### **src.tetris**
+### **tetris**
 
 * **Config.java**: A centralized configuration file containing constants for:  
   * **Facts:** Tetromino IDs.  
@@ -30,7 +30,7 @@ The project is divided into logical layers separating the View (UI) from the Mod
   * **Dimensions:** Board rows/cols, cell sizes.  
   * **Physics:** Gravity calculations, DAS (Delayed Auto Shift), ARR (Auto Repeat Rate).
 
-### **src.tetris.boards (The Data Model)**
+### **tetris.boards (The Data Model)**
 
 * **Board.java (Abstract)**: Represents the game state (the grid, score, level, current piece). It handles the drawing of the grid and UI overlays.  
 * **ClassicBoard.java**: Extends Board to add standard Tetris logic (shadows, specific garbage calculation, key input handling).  
@@ -39,13 +39,13 @@ The project is divided into logical layers separating the View (UI) from the Mod
 * **TetrominoesQueue.java**: Manages the "Next Piece" preview using a generator.  
 * **TetrominoHolder.java**: Manages the "Hold" mechanic.
 
-### **src.tetris.panels (The View/Controller)**
+### **tetris.panels (The View/Controller)**
 
 * **TwoPlayerTetrisPanel.java**: Base class for rendering two boards. Contains the **Game Loop** (java.util.Timer).  
 * **LocalTwoPlayerTetrisPanel.java**: Handles input for two players on the same keyboard (WASD vs Arrow Keys).  
 * **OnlineTwoPlayerTetrisPanel.java**: Handles input for one local player and updates the second board based on network data.
 
-### **src.tetris.physics (The Logic Engine)**
+### **tetris.physics (The Logic Engine)**
 
 * **BoardPhysics.java**: Abstract base for movement logic.  
 * **LocalBoardPhysics.java**: Calculates movement, collision, and gravity for the player currently controlling the keyboard.  
@@ -54,7 +54,7 @@ The project is divided into logical layers separating the View (UI) from the Mod
 * **Gravity.java**: Handles the falling speed, "Soft Drop", and "Hard Drop" calculations.  
 * **InputMovement.java**: Handles the complex DAS/ARR (key repeat) logic for smooth movement.
 
-### **src.tetris.tetrominoes**
+### **tetris.tetrominoes**
 
 * **Tetromino.java**: Abstract definition of a piece (shape, color, rotation state, coordinates).  
 * **TetrominoCell.java**: Static helper to draw individual blocks (squares) using Graphics2D.  
