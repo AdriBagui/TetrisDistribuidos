@@ -3,6 +3,7 @@ package distributedServices.server;
 import java.io.*;
 import java.net.Socket;
 
+// Versión 1: Esta clase se encarga de enviar paquetes del sender al reciver.
 public class PlayerComunicationHandler implements Runnable{
     Socket sender;
     Socket reciver;

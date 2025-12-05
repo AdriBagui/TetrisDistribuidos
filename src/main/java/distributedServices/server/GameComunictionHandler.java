@@ -4,6 +4,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// Versión 1: Crea dos "lineas de comunicacion" que se encargan de transladar los mensajes de un jugador al otro.
 public class GameComunictionHandler implements Runnable{
     private Socket client1;
     private Socket client2;

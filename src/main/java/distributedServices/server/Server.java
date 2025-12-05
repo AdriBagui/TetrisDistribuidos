@@ -7,6 +7,8 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// Versión 1: Sigue la lógica del botón jugar online. Simplemente los dos primeros clientes que se conecten para jugar
+// y los envía a un GameComunicationHandler.
 public class Server {
     public static final String SERVER_IP = "localhost";
     public static final int SERVER_PORT = 7777;
