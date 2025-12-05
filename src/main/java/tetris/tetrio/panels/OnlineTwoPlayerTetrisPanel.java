@@ -2,8 +2,8 @@ package tetris.tetrio.panels;
 
 import main.MainPanel;
 import tetris.general.boards.BoardGrid;
-import tetris.tetrio.boards.InputBoard;
 import tetris.general.boards.BoardWithPhysics;
+import tetris.tetrio.boards.TetrioBoardRepresentation;
 import tetris.tetrio.boards.TetrioBoardWithPhysics;
 
 import java.awt.event.KeyAdapter;
@@ -46,7 +46,7 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
 
         try {
             board1 = new TetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, new BoardGrid(BOARD1_X + TETROMINO_HOLDER_WIDTH, BOARD1_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, socket.getOutputStream());
-            board2 = new InputBoard(BOARD2_X, BOARD2_Y, new BoardGrid(BOARD2_X + TETROMINO_HOLDER_WIDTH, BOARD2_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, socket.getInputStream());
+            board2 = new TetrioBoardRepresentation(BOARD2_X, BOARD2_Y, new BoardGrid(BOARD2_X + TETROMINO_HOLDER_WIDTH, BOARD2_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed);
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }

@@ -1,6 +1,6 @@
 package tetris.general.boards;
 
-import tetris.tetrio.boards.InputBoard;
+import tetris.tetrio.boards.TetrioBoardRepresentation;
 import tetris.tetrio.boards.TetrioBoardWithPhysics;
 
 import java.io.DataInputStream;
@@ -21,9 +21,9 @@ public class BoardInputManager extends Thread {
      */
     private DataInputStream boardsInputReciever;
     private TetrioBoardWithPhysics garbageRecieverBoard;
-    private InputBoard updatesRecieverBoard;
+    private TetrioBoardRepresentation updatesRecieverBoard;
 
-    public BoardInputManager(InputStream boardsInputReciever, TetrioBoardWithPhysics garbageRecieverBoard, InputBoard updatesRecieverBoard) {
+    public BoardInputManager(InputStream boardsInputReciever, TetrioBoardWithPhysics garbageRecieverBoard, TetrioBoardRepresentation updatesRecieverBoard) {
         this.boardsInputReciever = new DataInputStream(boardsInputReciever);
         this.garbageRecieverBoard = garbageRecieverBoard;
         this.updatesRecieverBoard = updatesRecieverBoard;
@@ -55,16 +55,17 @@ public class BoardInputManager extends Thread {
                         y = boardsInputReciever.readByte();
                         rotationIndex = boardsInputReciever.readByte();
                         isLocked = (boardsInputReciever.readByte() == 1);
-                        //fallingTetromino.setXYRotationIndex(x,y,rotationIndex);
+                        if (updatesRecieverBoard != null) updatesRecieverBoard.setFallingTetrominoXYRotationIndex(x,y,rotationIndex);
                         break;
                     case 5:
                         // Acción 5 (HOLD): no le sigue nada
-                        //inputBoard.hold();
+                        if (updatesRecieverBoard != null) updatesRecieverBoard.hold();
                         break;
                     case 6:
                         // Acción 6 (UPDATE_GARBAGE): le van a seguir 2 bytes significando "LÍNEAS COLUMNA_VACÍA"
                         numberOfGarbageRowsToUpdate = boardsInputReciever.readByte();
                         emptyGarbageColumnToUpdate = boardsInputReciever.readByte();
+                        if (updatesRecieverBoard != null) updatesRecieverBoard.addGarbage(numberOfGarbageRowsToUpdate, emptyGarbageColumnToUpdate);
                         break;
                 }
             }

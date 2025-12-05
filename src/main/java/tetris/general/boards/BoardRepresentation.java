@@ -9,10 +9,12 @@ public class BoardRepresentation extends Board {
 
     @Override
     protected void updateFallingTetromino() {
-
+        fallingTetromino.setXYRotationIndex(fallingTetrominoNextX, fallingTetrominoNextY, fallingTetrominoNextRotationIndex);
     }
 
-    public void setFallingTetrominoNextRotationIndex(int fallingTetrominoNextRotationIndex) {
-        this.fallingTetrominoNextRotationIndex = fallingTetrominoNextRotationIndex;
+    public void setFallingTetrominoXYRotationIndex(int x, int y, int rotationIndex) {
+        this.fallingTetrominoNextX = x;
+        this.fallingTetrominoNextY = y;
+        this.fallingTetrominoNextRotationIndex = rotationIndex;
     }
 }

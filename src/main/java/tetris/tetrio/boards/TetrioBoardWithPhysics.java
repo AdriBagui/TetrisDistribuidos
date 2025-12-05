@@ -28,8 +28,7 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
     protected TetrioBoardPhysics tetrioBoardPhysics;
     // GARBAGE SYSTEM
     protected Random garbageRandom;
-    protected Queue<Byte> garbageRowsToAdd;
-    protected Queue<Byte> garbageEmptyColumnsToAdd;
+    protected GarbageRecievingSystem garbageRecievingSystem;
 
     public TetrioBoardWithPhysics(int x, int y, BoardGrid grid, long seed, OutputStream garbageAndUpdatesOutput) {
         super(x, y, grid, seed, new TetrioBoardPhysics(grid));
@@ -39,13 +38,11 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
         tetrioBoardPhysics = (TetrioBoardPhysics) boardPhysics;
 
         garbageRandom = new Random();
-        garbageRowsToAdd = new ConcurrentLinkedDeque<>();
-        garbageEmptyColumnsToAdd = new ConcurrentLinkedDeque<>();
+        garbageRecievingSystem = new GarbageRecievingSystem();
     }
 
-    public  synchronized void addGarbage(byte numberOfGarbageRows, byte emptyGarbageColumn) {
-        garbageRowsToAdd.add(numberOfGarbageRows);
-        garbageEmptyColumnsToAdd.add(emptyGarbageColumn);
+    public void addGarbage(byte numberOfGarbageRows, byte emptyGarbageColumn) {
+        garbageRecievingSystem.addGarbage(numberOfGarbageRows, emptyGarbageColumn);
 
         // Acción 6 (UPDATE_GARBAGE): le van a seguir 2 bytes significando "LÍNEAS COLUMNA_VACÍA"
         sendMessage((byte) 6, new byte[] {
@@ -58,7 +55,7 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
     public void update() {
         super.update();
 
-        if (!garbageRowsToAdd.isEmpty()) { updateGarbage(); }
+        garbageRecievingSystem.updateGarbage(grid, fallingTetromino, nextTetromino);
 
         // Acción 4 (MOVE): le van a seguir 4 bytes significando "X Y ROT LOCK"
         sendMessage((byte) 4, new byte[] {
@@ -67,31 +64,6 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
                 (byte) fallingTetromino.getRotationIndex(),
                 (byte) (boardPhysics.isLocked() ? 1 : 0)
         });
-    }
-    protected synchronized void updateGarbage()  {
-        boolean overflow = false;
-        int distanceToFloor;
-        byte garbageRows;
-
-        while (!garbageRowsToAdd.isEmpty()) {
-            garbageRows = garbageRowsToAdd.remove();
-
-            // Si no ha sido ya fijado al tablero
-            if (nextTetromino == null) { // No es null si acaba de ser fijado en el mismo frame
-                distanceToFloor = grid.distanceToFloor(fallingTetromino);
-
-                // Si las filas de basura llegan a la altura del tetromino
-                if (distanceToFloor < garbageRows) {
-                    fallingTetromino.setY(Math.max(fallingTetromino.getY() - garbageRows + distanceToFloor, 0));
-                }
-            }
-
-            // Si ha habido overflow al añadir basura se marca
-            if (grid.addGarbage(garbageRows, garbageEmptyColumnsToAdd.remove()))
-                overflow = true;
-        }
-
-        if (overflow) isAlive = false;
     }
 
     @Override
