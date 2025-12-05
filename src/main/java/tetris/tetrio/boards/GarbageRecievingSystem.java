@@ -15,7 +15,7 @@ public class GarbageRecievingSystem {
         garbageEmptyColumnsToAdd = new ConcurrentLinkedDeque<>();
     }
 
-    public synchronized boolean updateGarbage(BoardGrid grid, Tetromino fallingTetromino, Tetromino nextTetromino)  {
+    public synchronized boolean updateGarbage(BoardGrid grid, Tetromino fallingTetromino, boolean isFallingTetrominoLocked)  {
         boolean overflow = false;
         int distanceToFloor;
         byte garbageRows;
@@ -24,7 +24,7 @@ public class GarbageRecievingSystem {
             garbageRows = garbageRowsToAdd.remove();
 
             // Si no ha sido ya fijado al tablero
-            if (nextTetromino == null) { // No es null si acaba de ser fijado en el mismo frame
+            if (!isFallingTetrominoLocked) { // No es null si acaba de ser fijado en el mismo frame
                 distanceToFloor = grid.distanceToFloor(fallingTetromino);
 
                 // Si las filas de basura llegan a la altura del tetromino

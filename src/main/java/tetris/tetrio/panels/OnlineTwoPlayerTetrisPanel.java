@@ -1,7 +1,9 @@
 package tetris.tetrio.panels;
 
+import distributedServices.ServerConnector;
 import main.MainPanel;
 import tetris.general.boards.BoardGrid;
+import tetris.general.boards.BoardsInputManager;
 import tetris.general.boards.BoardWithPhysics;
 import tetris.tetrio.boards.TetrioBoardRepresentation;
 import tetris.tetrio.boards.TetrioBoardWithPhysics;
@@ -15,45 +17,26 @@ import static tetris.Config.*;
 import static tetris.Config.BOARD2_Y;
 
 public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
-    private Socket socket;
-    private RivalInput rivalInput;
+    private ServerConnector serverConnector;
+    private Socket boardsSocket;
+    private BoardsInputManager boardsInputManager;
     private long seed;
 
     public OnlineTwoPlayerTetrisPanel(MainPanel mainPanel) {
         super(mainPanel);
 
-        rivalInput = new RivalInput();
+        serverConnector = null;
+        boardsSocket = null;
+        boardsInputManager = null;
+        seed = -1;
+
+        addKeyListener(new KeyInputHandler());
     }
 
     public void setSocket(Socket socket) {
-        this.socket = socket;
+        this.boardsSocket = socket;
     }
-    public void setSeed(long seed){this.seed = seed;}
-
-    @Override
-    public void startGame() {
-        super.startGame();
-        rivalInput = new RivalInput();
-        rivalInput.start();
-    }
-
-    @Override
-    protected KeyAdapter initializeKeyListener() { return new KeyInputHandler(); }
-
-    @Override
-    protected void initializeGame() {
-        gameOver = false;
-
-        try {
-            board1 = new TetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, new BoardGrid(BOARD1_X + TETROMINO_HOLDER_WIDTH, BOARD1_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, socket.getOutputStream());
-            board2 = new TetrioBoardRepresentation(BOARD2_X, BOARD2_Y, new BoardGrid(BOARD2_X + TETROMINO_HOLDER_WIDTH, BOARD2_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed);
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-//        board1.setEnemyBoard(board2);
-//        board2.setEnemyBoard(board1);
-    }
+    public void setSeed(long seed) { this.seed = seed;}
 
     @Override
     public void update() {
@@ -64,13 +47,24 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
         }
     }
 
-    private class RivalInput extends Thread {
-        @Override
-        public void run() {
-            while (board2.isAlive()) board2.update();
-        }
+    @Override
+    protected void connectPlayers() {
+        serverConnector = new ServerConnector();
+        boardsSocket = serverConnector.getSocket();
     }
 
+    @Override
+    protected void initializeGame() {
+        try {
+            board1 = new TetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, new BoardGrid(BOARD1_X + TETROMINO_HOLDER_WIDTH, BOARD1_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, boardsSocket.getOutputStream());
+            board2 = new TetrioBoardRepresentation(BOARD2_X, BOARD2_Y, new BoardGrid(BOARD2_X + TETROMINO_HOLDER_WIDTH, BOARD2_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed);
+            boardsInputManager = new BoardsInputManager(boardsSocket.getInputStream(), (TetrioBoardWithPhysics) board1, (TetrioBoardRepresentation) board2);
+            boardsInputManager.start();
+        }
+        catch (IOException ioe) { ioe.printStackTrace(); }
+
+        requestFocusInWindow();
+    }
 
     private class KeyInputHandler extends KeyAdapter {
         @Override

@@ -1,14 +1,10 @@
 package tetris.general.boards;
 
 import tetris.general.boards.physics.BoardPhysics;
-import tetris.tetrio.boards.physics.TetrioBoardPhysics;
-import tetris.general.tetrominoes.TetrominoShadow;
 
 import java.awt.*;
 
 public abstract class BoardWithPhysics extends Board {
-    // TETROMINO SHADOW
-    protected TetrominoShadow fallingTetrominoShadow;
     // BOARD PHYSICS
     protected final BoardPhysics boardPhysics;
 
@@ -18,25 +14,16 @@ public abstract class BoardWithPhysics extends Board {
         fallingTetrominoShadow = null;
     }
 
+    // Board auxiliary methods
     @Override
-    public void update() {
-        super.update();
-        if (boardPhysics.isLocked()) { lockTetromino(); }
-    }
-
+    protected boolean isFallingTetrominoLocked() { return boardPhysics.isLocked(); }
+    @Override
+    protected void updateFallingTetromino() { boardPhysics.update(); }
     @Override
     protected void setNextTetrominoAsFallingTetromino() {
         super.setNextTetrominoAsFallingTetromino();
         boardPhysics.setFallingTetromino(fallingTetromino);
-        fallingTetrominoShadow = new TetrominoShadow(fallingTetromino);
     }
-
-    @Override
-    protected void updateFallingTetromino() {
-        boardPhysics.update();
-        updateFallingTetrominoShadow();
-    }
-
     @Override
     protected void drawFallingTetromino(Graphics2D g2) {
         fallingTetrominoShadow.draw(g2);
@@ -58,9 +45,4 @@ public abstract class BoardWithPhysics extends Board {
     public abstract void rotateLeftReleased();
     public abstract void flipPressed();
     public abstract void flipReleased();
-
-    private void updateFallingTetrominoShadow() {
-        fallingTetrominoShadow.setXYRotationIndex(fallingTetromino.getX(), fallingTetromino.getY(), fallingTetromino.getRotationIndex());
-        boardPhysics.drop(fallingTetrominoShadow);
-    }
 }

@@ -58,14 +58,15 @@ public class MainPanel extends JPanel {
     // Muestra el panel de partida local y empieza el juego
     public void start1vs1LocalGame() {
         cardLayout.show(this, LOCAL_TETRIS_PANEL);
-        localTwoPlayerTetrisPanel.startGame();
+        localTwoPlayerTetrisPanel.connectPlayersAndStartGame();
     }
 
     // PRE: Requiere de que se haya creado un socket para la partida
     // Muestra el panel de partida online (no sé si empezar las partidas aquí o no, darle una vuelta.
     // Si no empiezo las partidas aquí cambiar el nombre de los métodos a show).
-    public void startOnlineGame() {
-
+    public void connectToOnlineGame() {
+        cardLayout.show(this, ONLINE_TETRIS_PANEL);
+        onlineTwoPlayerTetrisPanel.connectPlayersAndStartGame();
     }
 
     // Espera a que otro cliente se conecte a él y cuando se conecta empieza la partida
@@ -91,7 +92,7 @@ public class MainPanel extends JPanel {
                 dos.writeLong(seed);
 
                 cardLayout.show(this, ONLINE_TETRIS_PANEL);
-                onlineTwoPlayerTetrisPanel.startGame();
+                onlineTwoPlayerTetrisPanel.connectPlayersAndStartGame();
             }
             catch(IOException ioe) { ioe.printStackTrace(); }
         }
@@ -108,7 +109,7 @@ public class MainPanel extends JPanel {
             onlineTwoPlayerTetrisPanel.setSeed(dis.readLong());
 
             cardLayout.show(this, ONLINE_TETRIS_PANEL);
-            onlineTwoPlayerTetrisPanel.startGame();
+            onlineTwoPlayerTetrisPanel.connectPlayersAndStartGame();
         }
         catch (IOException ioe){
             ioe.printStackTrace();

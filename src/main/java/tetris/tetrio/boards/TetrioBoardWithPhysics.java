@@ -2,13 +2,10 @@ package tetris.tetrio.boards;
 
 import tetris.general.boards.BoardGrid;
 import tetris.general.boards.BoardWithPhysics;
-import tetris.general.tetrominoes.Tetromino;
 import tetris.tetrio.boards.physics.TetrioBoardPhysics;
 
 import java.io.*;
-import java.util.Queue;
 import java.util.Random;
-import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static tetris.Config.BOARD_COLUMNS;
 
@@ -55,7 +52,8 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
     public void update() {
         super.update();
 
-        garbageRecievingSystem.updateGarbage(grid, fallingTetromino, nextTetromino);
+        if (garbageRecievingSystem.updateGarbage(grid, fallingTetromino, isFallingTetrominoLocked()))
+            isAlive = false;
 
         // Acción 4 (MOVE): le van a seguir 4 bytes significando "X Y ROT LOCK"
         sendMessage((byte) 4, new byte[] {
@@ -67,10 +65,8 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
     }
 
     @Override
-    protected void lockTetromino() {
-        int totalClearedLines = this.totalClearedLines;
-        super.lockTetromino();
-        int clearedLines = this.totalClearedLines - totalClearedLines;
+    protected int lockFallingTetrominoAndClearLines() {
+        int clearedLines = super.lockFallingTetrominoAndClearLines();
 
         // Acción 0 (ADD_GARBAGE): le van a seguir 2 bytes significando "LÍNEAS COLUMNA_VACÍA"
         switch (clearedLines) {
@@ -84,6 +80,8 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
                 sendGarbageMessage((byte) 4, (byte) garbageRandom.nextInt(BOARD_COLUMNS));
                 break;
         }
+
+        return clearedLines;
     }
 
     @Override
@@ -131,8 +129,8 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
             garbageAndUpdatesOutput.writeByte(action);
 
             if (content != null) {
-                for (int i = 0; i < content.length; i++) {
-                    garbageAndUpdatesOutput.writeByte(content[i]);
+                for (byte b : content) {
+                    garbageAndUpdatesOutput.writeByte(b);
                 }
             }
 

@@ -53,7 +53,10 @@ public class Gravity {
         return isLocked;
     }
 
-    public void resetLockDelay() { delayUsed = 0; appliedLockDelayFrames = lockDelayFrames; }
+    public void resetLockDelay() {
+        delayUsed = 0;
+        appliedLockDelayFrames = lockDelayFrames;
+    }
 
     public void increaseGravity() {
         int framesPerCellSubstracted;

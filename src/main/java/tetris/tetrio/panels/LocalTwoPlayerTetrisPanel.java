@@ -2,7 +2,7 @@ package tetris.tetrio.panels;
 
 import main.MainPanel;
 import tetris.general.boards.BoardGrid;
-import tetris.general.boards.BoardInputManager;
+import tetris.general.boards.BoardsInputManager;
 import tetris.tetrio.boards.TetrioBoardWithPhysics;
 import tetris.general.boards.BoardWithPhysics;
 
@@ -16,28 +16,35 @@ import static tetris.Config.*;
 public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     private Socket board1Socket;
     private Socket board2Socket;
-    private BoardInputManager board1InputManager;
-    private BoardInputManager board2InputManager;
+    private BoardsInputManager board1InputManager;
+    private BoardsInputManager board2InputManager;
+    private long seed;
 
     public LocalTwoPlayerTetrisPanel(MainPanel mainPanel) {
         super(mainPanel);
+
+        addKeyListener(new KeyInputHandler());
     }
 
     @Override
-    protected KeyAdapter initializeKeyListener() { return new KeyInputHandler(); }
+    public void update() {
+        if (board1.isAlive()) board1.update();
+        if (board2.isAlive()) board2.update();
+
+        if (!board1.isAlive() || !board2.isAlive()) {
+            gameOver = true;
+        }
+    }
 
     @Override
-    protected void initializeGame() {
-        gameOver = false;
-        long seed = System.currentTimeMillis();
+    protected void connectPlayers() {
+        seed = System.currentTimeMillis();
 
         Thread board1Thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try (ServerSocket tempServerSocket = new ServerSocket(7777)) {
                     board1Socket = tempServerSocket.accept();
-                    board1 = new TetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, new BoardGrid(BOARD1_X + TETROMINO_HOLDER_WIDTH, BOARD1_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, board1Socket.getOutputStream());
-                    board1InputManager = new BoardInputManager(board1Socket.getInputStream(), (TetrioBoardWithPhysics) board1, null);
                 }
                 catch (IOException ioe) { ioe.printStackTrace(); }
             }
@@ -49,8 +56,6 @@ public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
                 try {
                     Thread.sleep(10);
                     board2Socket = new Socket("localhost", 7777);
-                    board2 = new TetrioBoardWithPhysics(BOARD2_X, BOARD2_Y, new BoardGrid(BOARD2_X + TETROMINO_HOLDER_WIDTH, BOARD2_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, board2Socket.getOutputStream());
-                    board2InputManager = new BoardInputManager(board2Socket.getInputStream(), (TetrioBoardWithPhysics) board2, null);
                 }
                 catch (IOException ioe) { ioe.printStackTrace(); }
                 catch (InterruptedException ie) { ie.printStackTrace(); }
@@ -65,18 +70,22 @@ public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
             board2Thread.join();
         }
         catch (InterruptedException ie) { ie.printStackTrace(); }
-
-
     }
 
     @Override
-    public void update() {
-        if (board1.isAlive()) board1.update();
-        if (board2.isAlive()) board2.update();
+    protected void initializeGame() {
+        try {
+            board1 = new TetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, new BoardGrid(BOARD1_X + TETROMINO_HOLDER_WIDTH, BOARD1_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, board1Socket.getOutputStream());
+            board1InputManager = new BoardsInputManager(board1Socket.getInputStream(), (TetrioBoardWithPhysics) board1, null);
+            board1InputManager.start();
 
-        if (!board1.isAlive() || !board2.isAlive()) {
-            gameOver = true;
+            board2 = new TetrioBoardWithPhysics(BOARD2_X, BOARD2_Y, new BoardGrid(BOARD2_X + TETROMINO_HOLDER_WIDTH, BOARD2_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, board2Socket.getOutputStream());
+            board2InputManager = new BoardsInputManager(board2Socket.getInputStream(), (TetrioBoardWithPhysics) board2, null);
+            board2InputManager.start();
         }
+        catch (IOException ioe) { ioe.printStackTrace(); }
+
+        requestFocusInWindow();
     }
 
     private class KeyInputHandler extends KeyAdapter {

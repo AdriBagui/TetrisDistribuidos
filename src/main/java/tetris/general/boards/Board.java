@@ -1,7 +1,7 @@
 package tetris.general.boards;
 
+import tetris.general.tetrominoes.TetrominoShadow;
 import tetris.general.tetrominoes.generators.RandomBagTetrominoesGenerator;
-import tetris.general.boards.physics.BoardPhysics;
 import tetris.general.tetrominoes.Tetromino;
 
 import java.awt.*;
@@ -10,15 +10,16 @@ import static tetris.Config.*;
 
 public abstract class Board {
     // BOARD POSITION IN PANEL
-    private int x, y;
-    // TETROMINOES
+    private final int x, y;
+    // FALLING TETROMINO
     protected Tetromino fallingTetromino;
     protected Tetromino nextTetromino;
+    // FALLING TETROMINO SHADOW
+    protected TetrominoShadow fallingTetrominoShadow;
     // BOARD COMPONENTS
     protected final TetrominoHolder tetrominoHolder;
     protected final BoardGrid grid;
     private final TetrominoesQueue tetrominoesQueue;
-    protected boolean holdTetromino;
     // SCORING SYSTEM
     protected int score, totalClearedLines, level;
     // END OF GAME DETECTION
@@ -42,10 +43,11 @@ public abstract class Board {
         fallingTetromino = null;
     }
 
-    public void hold() { nextTetromino = tetrominoHolder.hold(fallingTetromino); }
+    protected abstract boolean isFallingTetrominoLocked();
+    protected abstract void updateFallingTetromino();
 
     public boolean isAlive() { return isAlive; }
-
+    public void hold() { nextTetromino = tetrominoHolder.hold(fallingTetromino); }
     public void update() {
         if (nextTetromino != null) {
             setNextTetrominoAsFallingTetromino();
@@ -58,9 +60,10 @@ public abstract class Board {
         }
 
         updateFallingTetromino();
-    }
-    protected abstract void updateFallingTetromino();
+        updateFallingTetrominoShadow();
 
+        if (isFallingTetrominoLocked()) { lockFallingTetrominoAndClearLines(); }
+    }
     public void draw(Graphics2D g2) {
         // Dibuja el tablero (con sus bordes y la plantilla)
         grid.draw(g2);
@@ -82,16 +85,18 @@ public abstract class Board {
         // Draw Next Piece Preview
         tetrominoesQueue.draw(g2);
     }
-    protected void drawFallingTetromino(Graphics2D g2) { fallingTetromino.draw(g2); }
 
+    // Auxiliary methods
     protected void setNextTetrominoAsFallingTetromino() {
         nextTetromino.setParentXY(grid.getX(), grid.getY());
-        nextTetromino.setXY((BOARD_COLUMNS - nextTetromino.getWidth())/2, 0);
+        // El >> 1 lo ha sugerido IntelIJ (es como el SHR 1 de ensamblador),
+        // es decir, mueve los bits uno para la derecha que es equivalente a dividir entre 2.
+        nextTetromino.setXY((BOARD_COLUMNS - nextTetromino.getWidth()) >> 1, 0);
 
         fallingTetromino = nextTetromino;
+        fallingTetrominoShadow = new TetrominoShadow(fallingTetromino);
     }
-
-    protected void lockTetromino() {
+    protected int lockFallingTetrominoAndClearLines() {
         int linesCleared = grid.lockTetrominoAndClearLines(fallingTetromino);
 
         // NES Scoring: 40, 100, 300, 1200
@@ -120,5 +125,14 @@ public abstract class Board {
 
         nextTetromino = tetrominoesQueue.getNext();
         tetrominoHolder.unlockHold();
+
+        return linesCleared;
+    }
+    protected void drawFallingTetromino(Graphics2D g2) { fallingTetromino.draw(g2); }
+    private void updateFallingTetrominoShadow() {
+        int shadowDistanceToFloor;
+        fallingTetrominoShadow.setXYRotationIndex(fallingTetromino.getX(), fallingTetromino.getY(), fallingTetromino.getRotationIndex());
+        shadowDistanceToFloor = grid.distanceToFloor(fallingTetrominoShadow);
+        fallingTetrominoShadow.setY(fallingTetrominoShadow.getY() + shadowDistanceToFloor);
     }
 }

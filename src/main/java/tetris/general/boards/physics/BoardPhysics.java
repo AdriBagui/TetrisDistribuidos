@@ -17,18 +17,4 @@ public abstract class BoardPhysics {
     public void setFallingTetromino(Tetromino fallingTetromino) {
         this.fallingTetromino = fallingTetromino;
     }
-
-    public void drop(Tetromino t) {
-        int dropCells = 0;
-        Tetromino aux = t.createCopy();
-
-        while (!grid.hasCollision(aux)) {
-            aux.moveDown();
-            dropCells += 1;
-        }
-
-        if (dropCells > 0) dropCells -= 1;
-
-        t.drop(dropCells);
-    }
 }

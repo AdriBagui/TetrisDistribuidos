@@ -82,13 +82,19 @@ public class BoardGrid {
                     numberOfClearedRows++;
                 }
 
-                copyRow(row - numberOfClearedRows, row);
+                // Solo por eficiencia, se podría hacer cut en todas (no sé puede hacer copy en todas porque entonces
+                // las numberOfClearedRows primeras filas no se limpian, se copian abajo pero siguen llenas)
+                if (row - numberOfClearedRows > numberOfClearedRows) {
+                    copyRow(row - numberOfClearedRows, row);
+                } else {
+                    cutRow(row - numberOfClearedRows, row);
+                }
+
             }
         }
 
         return numberOfRowsToClear;
     }
-
     // Añade tantas líneas de basura (abajo del tablero) como se pide y deja la columna indicada vacía
     // Si al añadir las líneas de basura alguna de las líneas del tablero se sale por arriba devuelve true.
     // En caso contrario devuelve falso.
@@ -143,7 +149,6 @@ public class BoardGrid {
         }
         return false;
     }
-
     public int distanceToFloor(Tetromino t) {
         Tetromino aux = t.createCopy();
         int distanceToFloor = 0;
@@ -195,7 +200,6 @@ public class BoardGrid {
         grid[row][column] = false;
         gridColor[row][column] = null;
     }
-
     // Auxiliary row operations
     private boolean isRowFull(int row) {
         boolean full = true;

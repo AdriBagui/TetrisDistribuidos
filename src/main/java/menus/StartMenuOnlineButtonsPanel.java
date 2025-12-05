@@ -37,8 +37,7 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
         // BOTÓN JUGAR ONLINE
         JButton btnJugarOnline = new JButton("JUGAR ONLINE");
         btnJugarOnline.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            }
+            public void actionPerformed(ActionEvent e) { playOnline(); }
         });
         btnJugarOnline.setFont(new Font("Arial", Font.PLAIN, 15));
         GridBagConstraints gbc_btnJugarOnline = new GridBagConstraints();
@@ -83,6 +82,8 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
         gbc_btnUnirseASala.gridy = 2;
         add(btnUnirseASala, gbc_btnUnirseASala);
     }
+
+    private void playOnline() { mainPanel.connectToOnlineGame(); }
 
     private void playOnlineAsHost() {
         mainPanel.startOnlineGameAsHost();

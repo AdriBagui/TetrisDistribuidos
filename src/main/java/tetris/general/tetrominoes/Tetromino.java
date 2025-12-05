@@ -9,7 +9,6 @@ import static tetris.Config.*;
 // Base class for all Tetris shapes
 // ==========================================
 public abstract class Tetromino {
-    private long id;
     private boolean[][][] shapeRotations;
     protected int rotationIndex;
     private double x, y;
@@ -34,7 +33,6 @@ public abstract class Tetromino {
         this.color = color;
         this.parentX = parentX;
         this.parentY = parentY;
-        id = System.currentTimeMillis();
     }
 
 
@@ -238,6 +236,10 @@ public abstract class Tetromino {
      */
     public synchronized void draw(Graphics2D g2) {
         boolean[][] shape = getShape();
+
+        //For debugging (draws the hitbox borders of the tetromino)
+//        g2.setColor(Color.WHITE);
+//        g2.drawRect((int) (parentX + (x) * CELL_SIZE), (int) (parentY + (y) * CELL_SIZE), getWidth() * CELL_SIZE, getHeight() * CELL_SIZE);
 
         for (int r = 0; r < shape.length; r++) {
             for (int c = 0; c < shape[r].length; c++) {

@@ -5,7 +5,7 @@ import tetris.general.boards.Board;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,26 +26,16 @@ public abstract class TwoPlayerTetrisPanel extends JPanel {
         board1 = null;
         board2 = null;
         gameOver = false;
-
-        addKeyListener(initializeKeyListener());
-    }
-
-    protected abstract KeyAdapter initializeKeyListener();
-    protected abstract void initializeGame();
-
-    public void startGame() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                initializeGame();
-                requestFocusInWindow();
-                gameLoopTimer = new Timer();
-                gameLoopTimer.scheduleAtFixedRate(new GameLoop(), 0, MILLISECONDS_PER_FRAME);
-            }
-        }).start();
     }
 
     public abstract void update();
+    protected abstract void connectPlayers();
+    protected abstract void initializeGame();
+
+    public void connectPlayersAndStartGame() {
+        // Empieza la partida y cuando empieza la partida se muere el hilo
+        new GameConnectorAndStarter().start();
+    }
 
     public void draw(Graphics2D g2) {
         if (board1 != null) board1.draw(g2);
@@ -84,11 +74,29 @@ public abstract class TwoPlayerTetrisPanel extends JPanel {
         }
     }
 
+    protected void startGame() {
+        connectPlayers();
+        resetGame();
+        gameLoopTimer = new Timer();
+        gameLoopTimer.scheduleAtFixedRate(new GameLoop(), 0, MILLISECONDS_PER_FRAME);
+    }
+    protected void resetGame() {
+        gameOver = false;
+        initializeGame();
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
         draw(g2);
+    }
+
+    private class GameConnectorAndStarter extends Thread {
+        @Override
+        public void run() {
+            startGame();
+        }
     }
 
     private class GameLoop extends TimerTask {
