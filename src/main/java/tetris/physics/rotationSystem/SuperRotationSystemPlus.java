@@ -1,5 +1,6 @@
 package tetris.physics.rotationSystem;
 
+import tetris.boards.BoardGrid;
 import tetris.tetrominoes.Tetromino;
 
 import static tetris.Config.*;
@@ -27,7 +28,7 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
             {{0, 0}, {1, 0}, {-2, 0}, {1, 2}, {-2, -1}}
     };
 
-    public SuperRotationSystemPlus(boolean[][] grid) {
+    public SuperRotationSystemPlus(BoardGrid grid) {
         super(grid);
     }
 

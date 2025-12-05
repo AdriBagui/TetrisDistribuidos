@@ -56,11 +56,11 @@ public class LocalBoard extends PhysicsCalculatingBoard {
     }
 
     @Override
-    protected void clearLines() {
+    protected void lockTetromino() {
         // Aquí se envía lo relacinado con el *CASO 3*
 
         int totalClearedLines = this.totalClearedLines;
-        super.clearLines();
+        super.lockTetromino();
         int clearedLines = this.totalClearedLines - totalClearedLines;
 
         switch (clearedLines) {
@@ -76,22 +76,22 @@ public class LocalBoard extends PhysicsCalculatingBoard {
         }
     }
 
-    @Override
-    public void addGarbage(int lines, int emptyGarbageColumn) {
-        // Aquí se envía lo relacinado con el *CASO 4*
-        super.addGarbage(lines, emptyGarbageColumn);
-
-        synchronized (this) {
-            try{
-                outputStream.writeShort(4); // Envio el caso
-                outputStream.writeInt(garbageLinesToAdd);
-                outputStream.writeInt(this.emptyGarbageColumn);
-                outputStream.flush();
-            } catch (IOException ioe){
-                ioe.printStackTrace();
-            }
-        }
-    }
+//    @Override
+//    public void addGarbage(int lines, int emptyGarbageColumn) {
+//        // Aquí se envía lo relacinado con el *CASO 4*
+//        super.addGarbage(lines, emptyGarbageColumn);
+//
+//        synchronized (this) {
+//            try{
+//                outputStream.writeShort(4); // Envio el caso
+//                outputStream.writeInt(numberOfGarbageRowsToAdd);
+//                outputStream.writeInt(this.emptyGarbageColumn);
+//                outputStream.flush();
+//            } catch (IOException ioe){
+//                ioe.printStackTrace();
+//            }
+//        }
+//    }
 
     private synchronized void sendGarbage(int lines, int emptyColumn) {
         // Métod0 auxiliar para lo relacinado con el *CASO 3*

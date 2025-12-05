@@ -13,8 +13,7 @@ import static tetris.Config.*;
 
 public abstract class TwoPlayerTetrisPanel extends JPanel {
     protected MainPanel mainPanel;
-    protected Board board1;
-    protected Board board2;
+    protected Board board1, board2;
     private java.util.Timer gameLoopTimer;
     protected boolean gameOver;
 
@@ -24,6 +23,10 @@ public abstract class TwoPlayerTetrisPanel extends JPanel {
         setBackground(Color.DARK_GRAY);
         setFocusable(true);
 
+        board1 = null;
+        board2 = null;
+        gameOver = false;
+
         addKeyListener(initializeKeyListener());
     }
 
@@ -31,17 +34,22 @@ public abstract class TwoPlayerTetrisPanel extends JPanel {
     protected abstract void initializeGame();
 
     public void startGame() {
-        initializeGame();
-        requestFocusInWindow();
-        gameLoopTimer = new Timer();
-        gameLoopTimer.scheduleAtFixedRate(new GameLoop(), 0, MILLISECONDS_PER_FRAME);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                initializeGame();
+                requestFocusInWindow();
+                gameLoopTimer = new Timer();
+                gameLoopTimer.scheduleAtFixedRate(new GameLoop(), 0, MILLISECONDS_PER_FRAME);
+            }
+        }).start();
     }
 
     public abstract void update();
 
     public void draw(Graphics2D g2) {
-        board1.draw(g2);
-        board2.draw(g2);
+        if (board1 != null) board1.draw(g2);
+        if (board2 != null) board2.draw(g2);
 
         if (gameOver) {
             String gameOverMessage = "GAME OVER";

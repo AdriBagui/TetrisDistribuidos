@@ -1,6 +1,7 @@
 package tetris.physics;
 
-import tetris.boards.OnlineBoard;
+import tetris.boards.BoardGrid;
+import tetris.boards.InputBoard;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -8,17 +9,17 @@ import java.io.InputStream;
 
 public class OnlineBoardPhysics extends BoardPhysics {
     private DataInputStream inputStream;
-    private OnlineBoard onlineBoard;
+    private InputBoard inputBoard;
     private boolean isLocked;
     private int garbageLinesRecieved;
     private int emptyGarbageColumnRecieved;
     private int garbageLinesToUpdate;
     private int emptyGarbageColumnToUpdate;
 
-    public OnlineBoardPhysics(boolean[][] grid, OnlineBoard onlineBoard, InputStream inputStream) {
+    public OnlineBoardPhysics(BoardGrid grid, InputBoard inputBoard, InputStream inputStream) {
         super(grid);
         this.inputStream = new DataInputStream(inputStream);
-        this.onlineBoard = onlineBoard;
+        this.inputBoard = inputBoard;
         isLocked = false;
         garbageLinesRecieved = 0;
         emptyGarbageColumnRecieved = 0;
@@ -48,7 +49,7 @@ public class OnlineBoardPhysics extends BoardPhysics {
                     fallingTetromino.setXYRotationIndex(x,y,rotationIndex);
                     break;
                 case 2:
-                    onlineBoard.hold();
+                    inputBoard.hold();
                     break;
                 case 3:
                     garbageLinesRecieved = inputStream.readInt();

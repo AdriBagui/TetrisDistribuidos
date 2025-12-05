@@ -34,15 +34,6 @@ public abstract class PhysicsCalculatingBoard extends Board {
     }
 
     @Override
-    protected void updateGarbage() {
-        super.updateGarbage();
-
-        while (localBoardPhysics.thereIsCollision()) {
-            fallingTetromino.moveUp();
-        }
-    }
-
-    @Override
     protected void updateFallingTetromino() {
         super.updateFallingTetromino();
         updateFallingTetrominoShadow();

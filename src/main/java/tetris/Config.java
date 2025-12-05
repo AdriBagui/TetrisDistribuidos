@@ -48,9 +48,9 @@ public class Config {
     public static final int BOARD_WIDTH = BOARD_COLUMNS*CELL_SIZE;
     public static final int BOARD_HEIGHT = BOARD_ROWS*CELL_SIZE;
     public static final int BOARD_SPAWN_HEIGHT = BOARD_SPAWN_ROWS*CELL_SIZE;
-    public static final int BOARD1_X = FRAME_PADDING + TETROMINO_HOLDER_WIDTH;
+    public static final int BOARD1_X = FRAME_PADDING;
     public static final int BOARD1_Y = FRAME_PADDING;
-    public static final int BOARD2_X = FRAME_PADDING + TETROMINO_HOLDER_WIDTH + BOARD_WIDTH + TETROMINOES_QUEUE_WIDTH + FRAME_PADDING + TETROMINO_HOLDER_WIDTH;
+    public static final int BOARD2_X = FRAME_PADDING + TETROMINO_HOLDER_WIDTH + BOARD_WIDTH + TETROMINOES_QUEUE_WIDTH + FRAME_PADDING;
     public static final int BOARD2_Y = BOARD1_Y;
     public static final int PANEL_WIDTH = 3*FRAME_PADDING + 2* TETROMINO_HOLDER_WIDTH + 2*BOARD_WIDTH + 2* TETROMINOES_QUEUE_WIDTH;
     public static final int PANEL_HEIGHT = 3*FRAME_PADDING + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT;

@@ -1,12 +1,13 @@
 package tetris.physics;
 
+import tetris.boards.BoardGrid;
 import tetris.tetrominoes.Tetromino;
 
 public abstract class BoardPhysics {
-    protected boolean[][] grid;
+    protected BoardGrid grid;
     protected Tetromino fallingTetromino;
 
-    public BoardPhysics(boolean[][] grid) {
+    public BoardPhysics(BoardGrid grid) {
         this.grid = grid;
     }
 

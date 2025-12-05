@@ -1,5 +1,6 @@
 package tetris.physics;
 
+import tetris.boards.BoardGrid;
 import tetris.tetrominoes.Tetromino;
 
 import static tetris.Config.*;
@@ -7,14 +8,14 @@ import static tetris.Config.*;
 public class Gravity {
     private Tetromino fallingTetromino;
     private double decimalY;
-    private boolean[][] grid;
+    private BoardGrid grid;
     private double gravity; // cells per frame
     private double appliedGravity;
     private double lockDelayFrames;
     private double appliedLockDelayFrames;
     private int delayUsed;
 
-    public Gravity(boolean[][] grid, double gravity) {
+    public Gravity(BoardGrid grid, double gravity) {
         this.fallingTetromino = null;
         decimalY = 0;
         this.grid = grid;
@@ -93,6 +94,6 @@ public class Gravity {
 
         aux.moveDown();
 
-        return CollisionDetector.checkCollision(grid, aux);
+        return grid.hasCollision(aux);
     }
 }

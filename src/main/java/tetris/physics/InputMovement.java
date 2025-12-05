@@ -1,12 +1,13 @@
 package tetris.physics;
 
+import tetris.boards.BoardGrid;
 import tetris.physics.rotationSystem.RotationSystem;
 import tetris.tetrominoes.Tetromino;
 
 import static tetris.Config.*;
 
 public class InputMovement {
-    private boolean[][] grid;
+    private BoardGrid grid;
     private RotationSystem superRotationSystem;
     private Gravity gravity;
     private Tetromino fallingTetromino;
@@ -18,7 +19,7 @@ public class InputMovement {
     private int rotatedRight;
     private int flipped;
 
-    public InputMovement(boolean[][] grid, RotationSystem superRotationSystem, Gravity gravity) {
+    public InputMovement(BoardGrid grid, RotationSystem superRotationSystem, Gravity gravity) {
         this.grid = grid;
         this.superRotationSystem = superRotationSystem;
         this.gravity = gravity;
@@ -170,7 +171,7 @@ public class InputMovement {
 
         aux.moveLeft();
 
-        if (!CollisionDetector.checkCollision(grid, aux)) {
+        if (!grid.hasCollision(aux)) {
             fallingTetromino.moveLeft();
         }
     }
@@ -180,7 +181,7 @@ public class InputMovement {
 
         aux.moveRight();
 
-        if (!CollisionDetector.checkCollision(grid, aux)) {
+        if (!grid.hasCollision(aux)) {
             fallingTetromino.moveRight();
         }
     }
@@ -190,7 +191,7 @@ public class InputMovement {
 
         aux.moveDown();
 
-        if (!CollisionDetector.checkCollision(grid, aux)) {
+        if (!grid.hasCollision(aux)) {
             fallingTetromino.moveDown();
         }
     }

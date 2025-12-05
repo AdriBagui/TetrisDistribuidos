@@ -1,12 +1,12 @@
 package tetris.physics.rotationSystem;
 
-import tetris.physics.CollisionDetector;
+import tetris.boards.BoardGrid;
 import tetris.tetrominoes.Tetromino;
 
 import static tetris.Config.*;
 
 public class NintendoRotationSystem extends RotationSystem {
-    public NintendoRotationSystem(boolean[][] grid) { super(grid); }
+    public NintendoRotationSystem(BoardGrid grid) { super(grid); }
 
     @Override
     public void rotateRight(Tetromino tetromino) {
@@ -29,7 +29,7 @@ public class NintendoRotationSystem extends RotationSystem {
             }
         }
 
-        if (!CollisionDetector.checkCollision(grid, aux)) {
+        if (!grid.hasCollision(aux)) {
             tetromino.setXYRotationIndex(aux.getX(), aux.getY(), aux.getRotationIndex());
         }
     }
@@ -55,7 +55,7 @@ public class NintendoRotationSystem extends RotationSystem {
             }
         }
 
-        if (!CollisionDetector.checkCollision(grid, aux)) {
+        if (!grid.hasCollision(aux)) {
             tetromino.setXYRotationIndex(aux.getX(), aux.getY(), aux.getRotationIndex());
         }
     }

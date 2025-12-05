@@ -5,13 +5,13 @@ import tetris.physics.OnlineBoardPhysics;
 
 import java.io.InputStream;
 
-public class OnlineBoard extends Board {
+public class InputBoard extends Board {
     private InputStream inputStream;
     private final OnlineBoardPhysics onlineBoardPhysics;
     private int garbageLinesRecieved;
     private int emptyGarbageColumnRecieved;
 
-    public OnlineBoard(int x, int y, long seed, InputStream inputStream) {
+    public InputBoard(int x, int y, long seed, InputStream inputStream) {
         this.inputStream = inputStream;
         super(x, y, seed);
         onlineBoardPhysics = (OnlineBoardPhysics) boardPhysics;
@@ -30,9 +30,9 @@ public class OnlineBoard extends Board {
         garbageLinesRecieved = onlineBoardPhysics.getGarbageLinesRecieved();
         emptyGarbageColumnRecieved = onlineBoardPhysics.getEmptyGarbageColumnRecieved();
 
-        if (garbageLinesRecieved > 0) enemyBoard.addGarbage(garbageLinesRecieved, emptyGarbageColumnRecieved);
+        //if (garbageLinesRecieved > 0) enemyBoard.addGarbage(garbageLinesRecieved, emptyGarbageColumnRecieved);
 
-        garbageLinesToAdd = onlineBoardPhysics.getGarbageLinesToUpdate();
-        emptyGarbageColumn = onlineBoardPhysics.getEmptyGarbageColumnToUpdate();
+        //numberOfGarbageRowsToAdd = onlineBoardPhysics.getGarbageLinesToUpdate();
+        //emptyGarbageColumn = onlineBoardPhysics.getEmptyGarbageColumnToUpdate();
     }
 }

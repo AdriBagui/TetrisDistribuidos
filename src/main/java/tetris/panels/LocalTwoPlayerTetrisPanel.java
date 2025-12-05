@@ -1,14 +1,24 @@
 package tetris.panels;
 
+import clientDistributedServices.Server;
 import main.MainPanel;
-import tetris.boards.ClassicBoard;
+import tetris.boards.BoardInputManager;
+import tetris.boards.TetrioBoard;
 import tetris.boards.PhysicsCalculatingBoard;
 
 import java.awt.event.*;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 import static tetris.Config.*;
 
 public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
+    private Socket board1Socket;
+    private Socket board2Socket;
+    private BoardInputManager board1InputManager;
+    private BoardInputManager board2InputManager;
+
     public LocalTwoPlayerTetrisPanel(MainPanel mainPanel) {
         super(mainPanel);
     }
@@ -19,13 +29,44 @@ public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
     @Override
     protected void initializeGame() {
         gameOver = false;
-
         long seed = System.currentTimeMillis();
-        board1 = new ClassicBoard(BOARD1_X, BOARD1_Y, seed);
-        board2 = new ClassicBoard(BOARD2_X, BOARD2_Y, seed);
 
-        board1.setEnemyBoard(board2);
-        board2.setEnemyBoard(board1);
+        Thread board1Thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try (ServerSocket tempServerSocket = new ServerSocket(7777)) {
+                    board1Socket = tempServerSocket.accept();
+                    board1 = new TetrioBoard(BOARD1_X, BOARD1_Y, seed, board1Socket.getOutputStream());
+                    board1InputManager = new BoardInputManager(board1Socket.getInputStream(), (TetrioBoard) board1, null);
+                }
+                catch (IOException ioe) { ioe.printStackTrace(); }
+            }
+        });
+
+        Thread board2Thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(10);
+                    board2Socket = new Socket("localhost", 7777);
+                    board2 = new TetrioBoard(BOARD2_X, BOARD2_Y, seed, board2Socket.getOutputStream());
+                    board2InputManager = new BoardInputManager(board2Socket.getInputStream(), (TetrioBoard) board2, null);
+                }
+                catch (IOException ioe) { ioe.printStackTrace(); }
+                catch (InterruptedException ie) { ie.printStackTrace(); }
+            }
+        });
+
+        board1Thread.start();
+        board2Thread.start();
+
+        try {
+            board1Thread.join();
+            board2Thread.join();
+        }
+        catch (InterruptedException ie) { ie.printStackTrace(); }
+
+
     }
 
     @Override

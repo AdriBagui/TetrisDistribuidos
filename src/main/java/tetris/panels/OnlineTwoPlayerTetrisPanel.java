@@ -2,7 +2,7 @@ package tetris.panels;
 
 import main.MainPanel;
 import tetris.boards.LocalBoard;
-import tetris.boards.OnlineBoard;
+import tetris.boards.InputBoard;
 import tetris.boards.PhysicsCalculatingBoard;
 
 import java.awt.event.KeyAdapter;
@@ -45,13 +45,13 @@ public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
 
         try {
             board1 = new LocalBoard(BOARD1_X, BOARD1_Y, seed, socket.getOutputStream());
-            board2 = new OnlineBoard(BOARD2_X, BOARD2_Y, seed, socket.getInputStream());
+            board2 = new InputBoard(BOARD2_X, BOARD2_Y, seed, socket.getInputStream());
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
 
-        board1.setEnemyBoard(board2);
-        board2.setEnemyBoard(board1);
+//        board1.setEnemyBoard(board2);
+//        board2.setEnemyBoard(board1);
     }
 
     @Override

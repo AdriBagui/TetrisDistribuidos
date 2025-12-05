@@ -1,6 +1,6 @@
 package tetris.physics.rotationSystem;
 
-import tetris.physics.CollisionDetector;
+import tetris.boards.BoardGrid;
 import tetris.tetrominoes.Tetromino;
 
 import static tetris.Config.*;
@@ -60,7 +60,7 @@ public class SuperRotationSystem extends RotationSystem {
             {{0, 0}, {-1, 0}, {-1, 2}, {-1, 1}, {0, 2}, {0, 1}}
     };
 
-    public SuperRotationSystem(boolean[][] grid) {
+    public SuperRotationSystem(BoardGrid grid) {
         super(grid);
     }
 
@@ -126,7 +126,7 @@ public class SuperRotationSystem extends RotationSystem {
 
         t.setXY(t.getX() + offsetX, t.getY() + offsetY);
 
-        success = !CollisionDetector.checkCollision(grid, t);
+        success = !grid.hasCollision(t);
 
         if (!success) { t.setXY(t.getX() - offsetX, t.getY() - offsetY); }
 

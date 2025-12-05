@@ -1,5 +1,6 @@
 package tetris.physics;
 
+import tetris.boards.BoardGrid;
 import tetris.physics.rotationSystem.RotationSystem;
 import tetris.physics.rotationSystem.SuperRotationSystemPlus;
 import tetris.tetrominoes.Tetromino;
@@ -11,7 +12,7 @@ public class LocalBoardPhysics extends BoardPhysics {
     private Gravity gravity;
     private InputMovement inputMovement;
 
-    public LocalBoardPhysics(boolean[][] grid) {
+    public LocalBoardPhysics(BoardGrid grid) {
         super(grid);
         rotationSystem = new SuperRotationSystemPlus(grid);
         gravity = new Gravity(grid, INITIAL_GRAVITY);
@@ -34,13 +35,12 @@ public class LocalBoardPhysics extends BoardPhysics {
     @Override
     public boolean isLocked() { return gravity.isLocked(); }
 
-    public boolean thereIsCollision() { return CollisionDetector.checkCollision(grid, fallingTetromino); }
     public void increaseGravity() { gravity.increaseGravity(); }
     public void drop(Tetromino t) {
         int dropCells = 0;
         Tetromino aux = t.createCopy();
 
-        while (!CollisionDetector.checkCollision(grid, aux)) {
+        while (!grid.hasCollision(aux)) {
             aux.moveDown();
             dropCells += 1;
         }
