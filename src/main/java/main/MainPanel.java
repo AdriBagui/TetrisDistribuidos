@@ -1,8 +1,8 @@
 package main;
 
 import menus.StartMenuPanel;
-import tetris.panels.OnlineTwoPlayerTetrisPanel;
-import tetris.panels.LocalTwoPlayerTetrisPanel;
+import tetris.tetrio.panels.OnlineTwoPlayerTetrisPanel;
+import tetris.tetrio.panels.LocalTwoPlayerTetrisPanel;
 
 import javax.swing.*;
 import java.awt.*;
