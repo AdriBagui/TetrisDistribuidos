@@ -5,10 +5,12 @@ import distributedServices.server.Server;
 import java.io.IOException;
 import java.net.Socket;
 
-// Esta clase se encarga de realizar la conexión con el servidor para obtener un socket
 public class ServerConnector {
     private Socket socket;
 
+    /**
+     * Connects to the server to get the socket for the rest of the code.
+     */
     public ServerConnector() {
         try{
             this.socket = new Socket(Server.SERVER_IP, Server.SERVER_PORT);

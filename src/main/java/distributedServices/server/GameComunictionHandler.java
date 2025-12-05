@@ -4,7 +4,6 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// Versión 1: Crea dos "lineas de comunicacion" que se encargan de transladar los mensajes de un jugador al otro.
 public class GameComunictionHandler implements Runnable{
     private Socket client1;
     private Socket client2;
@@ -15,6 +14,9 @@ public class GameComunictionHandler implements Runnable{
         this.client2 = client2;
     }
 
+    /**
+     * Creates the communication channel for {@code client1} and {@code client2} so they can send their inputs
+     */
     @Override
     public void run() {
         ExecutorService pool = Executors.newFixedThreadPool(2);
