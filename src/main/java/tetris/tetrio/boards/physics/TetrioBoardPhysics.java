@@ -1,18 +1,21 @@
-package tetris.general.boards.physics;
+package tetris.tetrio.boards.physics;
 
 import tetris.general.boards.BoardGrid;
+import tetris.general.boards.physics.BoardPhysics;
+import tetris.general.boards.physics.Gravity;
+import tetris.general.boards.physics.InputMovement;
 import tetris.general.boards.physics.rotationSystems.RotationSystem;
 import tetris.tetrio.boards.physics.rotationSystems.SuperRotationSystemPlus;
 import tetris.general.tetrominoes.Tetromino;
 
 import static tetris.Config.INITIAL_GRAVITY;
 
-public class LocalBoardPhysics extends BoardPhysics {
+public class TetrioBoardPhysics extends BoardPhysics {
     private RotationSystem rotationSystem;
     private Gravity gravity;
     private InputMovement inputMovement;
 
-    public LocalBoardPhysics(BoardGrid grid) {
+    public TetrioBoardPhysics(BoardGrid grid) {
         super(grid);
         rotationSystem = new SuperRotationSystemPlus(grid);
         gravity = new Gravity(grid, INITIAL_GRAVITY);
@@ -36,19 +39,6 @@ public class LocalBoardPhysics extends BoardPhysics {
     public boolean isLocked() { return gravity.isLocked(); }
 
     public void increaseGravity() { gravity.increaseGravity(); }
-    public void drop(Tetromino t) {
-        int dropCells = 0;
-        Tetromino aux = t.createCopy();
-
-        while (!grid.hasCollision(aux)) {
-            aux.moveDown();
-            dropCells += 1;
-        }
-
-        if (dropCells > 0) dropCells -= 1;
-
-        t.drop(dropCells);
-    }
 
     // Controls
     public void moveLeftPressed() { inputMovement.moveLeftPressed(); }

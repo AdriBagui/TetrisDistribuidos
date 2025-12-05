@@ -1,10 +1,13 @@
 package tetris.tetrio.boards;
 
+import tetris.general.boards.BoardGrid;
 import tetris.general.boards.BoardWithPhysics;
 import tetris.general.tetrominoes.Tetromino;
+import tetris.tetrio.boards.physics.TetrioBoardPhysics;
 
 import java.io.*;
 import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import static tetris.Config.BOARD_COLUMNS;
@@ -21,18 +24,26 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
      * - Acción 6 (UPDATE_GARBAGE): le van a seguir 2 bytes significando "LÍNEAS COLUMNA_VACÍA"
      */
     protected DataOutputStream garbageAndUpdatesOutput;
+    // BOARD PHYSICS
+    protected TetrioBoardPhysics tetrioBoardPhysics;
+    // GARBAGE SYSTEM
+    protected Random garbageRandom;
     protected Queue<Byte> garbageRowsToAdd;
     protected Queue<Byte> garbageEmptyColumnsToAdd;
 
-    public TetrioBoardWithPhysics(int x, int y, long seed, OutputStream garbageAndUpdatesOutput) {
-        super(x, y, seed);
+    public TetrioBoardWithPhysics(int x, int y, BoardGrid grid, long seed, OutputStream garbageAndUpdatesOutput) {
+        super(x, y, grid, seed, new TetrioBoardPhysics(grid));
 
         this.garbageAndUpdatesOutput = new DataOutputStream(garbageAndUpdatesOutput);
+
+        tetrioBoardPhysics = (TetrioBoardPhysics) boardPhysics;
+
+        garbageRandom = new Random();
         garbageRowsToAdd = new ConcurrentLinkedDeque<>();
         garbageEmptyColumnsToAdd = new ConcurrentLinkedDeque<>();
     }
 
-    public void addGarbage(byte numberOfGarbageRows, byte emptyGarbageColumn) {
+    public  synchronized void addGarbage(byte numberOfGarbageRows, byte emptyGarbageColumn) {
         garbageRowsToAdd.add(numberOfGarbageRows);
         garbageEmptyColumnsToAdd.add(emptyGarbageColumn);
 
@@ -57,7 +68,7 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
                 (byte) (boardPhysics.isLocked() ? 1 : 0)
         });
     }
-    protected void updateGarbage() {
+    protected synchronized void updateGarbage()  {
         boolean overflow = false;
         int distanceToFloor;
         byte garbageRows;
@@ -66,7 +77,7 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
             garbageRows = garbageRowsToAdd.remove();
 
             // Si no ha sido ya fijado al tablero
-            if (fallingTetromino != null) { // Es null si acaba de ser fijado en el mismo frame
+            if (nextTetromino == null) { // No es null si acaba de ser fijado en el mismo frame
                 distanceToFloor = grid.distanceToFloor(fallingTetromino);
 
                 // Si las filas de basura llegan a la altura del tetromino
@@ -110,6 +121,36 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
         // Acción 5 (HOLD): no le sigue nada
         sendMessage((byte) 5, null);
     }
+
+    // Controls
+    @Override
+    public void moveLeftPressed() { tetrioBoardPhysics.moveLeftPressed(); }
+    @Override
+    public void moveLeftReleased() { tetrioBoardPhysics.moveLeftReleased(); }
+    @Override
+    public void moveRightPressed() { tetrioBoardPhysics.moveRightPressed(); }
+    @Override
+    public void moveRightReleased() { tetrioBoardPhysics.moveRightReleased(); }
+    @Override
+    public void softDropPressed() { tetrioBoardPhysics.moveDownPressed(); }
+    @Override
+    public void softDropReleased() { tetrioBoardPhysics.moveDownReleased(); }
+    @Override
+    public void hardDropPressed() { tetrioBoardPhysics.dropPressed(); }
+    @Override
+    public void hardDropReleased() { tetrioBoardPhysics.dropReleased(); }
+    @Override
+    public void rotateRightPressed() { tetrioBoardPhysics.rotateRightPressed(); }
+    @Override
+    public void rotateRightReleased() { tetrioBoardPhysics.rotateRightReleased(); }
+    @Override
+    public void rotateLeftPressed() { tetrioBoardPhysics.rotateLeftPressed(); }
+    @Override
+    public void rotateLeftReleased() { tetrioBoardPhysics.rotateLeftReleased(); }
+    @Override
+    public void flipPressed() { tetrioBoardPhysics.flipPressed(); }
+    @Override
+    public void flipReleased() { tetrioBoardPhysics.flipReleased(); }
 
     // ---------------------------------------------------------------------------------
     // Métodos auxiliares

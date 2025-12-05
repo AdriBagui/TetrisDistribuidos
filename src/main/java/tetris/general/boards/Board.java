@@ -19,21 +19,18 @@ public abstract class Board {
     protected final BoardGrid grid;
     private final TetrominoesQueue tetrominoesQueue;
     protected boolean holdTetromino;
-    // BOARD PHYSICS
-    protected final BoardPhysics boardPhysics;
     // SCORING SYSTEM
     protected int score, totalClearedLines, level;
     // END OF GAME DETECTION
     protected boolean isAlive;
 
-    public Board(int x, int y, long seed) {
+    public Board(int x, int y, BoardGrid grid, long seed) {
         this.x = x;
         this.y = y;
 
-        grid = new BoardGrid(x + TETROMINO_HOLDER_WIDTH, y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS);
+        this.grid = grid;
         tetrominoesQueue = new TetrominoesQueue(TETROMINOES_QUEUE_SIZE, new RandomBagTetrominoesGenerator(seed), x + TETROMINO_HOLDER_WIDTH + BOARD_WIDTH, y + BOARD_SPAWN_ROWS * CELL_SIZE);
         tetrominoHolder = new TetrominoHolder(x, y + BOARD_SPAWN_ROWS * CELL_SIZE, tetrominoesQueue);
-        boardPhysics = initializeBoardPhysics();
 
         score = 0;
         totalClearedLines = 0;
@@ -44,8 +41,6 @@ public abstract class Board {
         nextTetromino = tetrominoesQueue.getNext(); // Initialize first block
         fallingTetromino = null;
     }
-
-    protected abstract BoardPhysics initializeBoardPhysics();
 
     public void hold() { nextTetromino = tetrominoHolder.hold(fallingTetromino); }
 
@@ -63,10 +58,8 @@ public abstract class Board {
         }
 
         updateFallingTetromino();
-
-        if (boardPhysics.isLocked()) { lockTetromino(); }
     }
-    protected void updateFallingTetromino() { boardPhysics.update(); }
+    protected abstract void updateFallingTetromino();
 
     public void draw(Graphics2D g2) {
         // Dibuja el tablero (con sus bordes y la plantilla)
@@ -96,7 +89,6 @@ public abstract class Board {
         nextTetromino.setXY((BOARD_COLUMNS - nextTetromino.getWidth())/2, 0);
 
         fallingTetromino = nextTetromino;
-        boardPhysics.setFallingTetromino(fallingTetromino);
     }
 
     protected void lockTetromino() {
@@ -127,7 +119,6 @@ public abstract class Board {
         this.totalClearedLines += linesCleared;
 
         nextTetromino = tetrominoesQueue.getNext();
-        fallingTetromino = null;
         tetrominoHolder.unlockHold();
     }
 }

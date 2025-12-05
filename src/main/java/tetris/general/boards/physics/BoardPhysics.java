@@ -11,10 +11,24 @@ public abstract class BoardPhysics {
         this.grid = grid;
     }
 
+    public abstract void update();
+    public abstract boolean isLocked();
+
     public void setFallingTetromino(Tetromino fallingTetromino) {
         this.fallingTetromino = fallingTetromino;
     }
 
-    public abstract void update();
-    public abstract boolean isLocked();
+    public void drop(Tetromino t) {
+        int dropCells = 0;
+        Tetromino aux = t.createCopy();
+
+        while (!grid.hasCollision(aux)) {
+            aux.moveDown();
+            dropCells += 1;
+        }
+
+        if (dropCells > 0) dropCells -= 1;
+
+        t.drop(dropCells);
+    }
 }

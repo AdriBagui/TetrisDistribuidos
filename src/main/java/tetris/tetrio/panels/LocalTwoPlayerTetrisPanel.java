@@ -1,6 +1,7 @@
 package tetris.tetrio.panels;
 
 import main.MainPanel;
+import tetris.general.boards.BoardGrid;
 import tetris.general.boards.BoardInputManager;
 import tetris.tetrio.boards.TetrioBoardWithPhysics;
 import tetris.general.boards.BoardWithPhysics;
@@ -35,7 +36,7 @@ public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
             public void run() {
                 try (ServerSocket tempServerSocket = new ServerSocket(7777)) {
                     board1Socket = tempServerSocket.accept();
-                    board1 = new TetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, seed, board1Socket.getOutputStream());
+                    board1 = new TetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, new BoardGrid(BOARD1_X + TETROMINO_HOLDER_WIDTH, BOARD1_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, board1Socket.getOutputStream());
                     board1InputManager = new BoardInputManager(board1Socket.getInputStream(), (TetrioBoardWithPhysics) board1, null);
                 }
                 catch (IOException ioe) { ioe.printStackTrace(); }
@@ -48,7 +49,7 @@ public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
                 try {
                     Thread.sleep(10);
                     board2Socket = new Socket("localhost", 7777);
-                    board2 = new TetrioBoardWithPhysics(BOARD2_X, BOARD2_Y, seed, board2Socket.getOutputStream());
+                    board2 = new TetrioBoardWithPhysics(BOARD2_X, BOARD2_Y, new BoardGrid(BOARD2_X + TETROMINO_HOLDER_WIDTH, BOARD2_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, board2Socket.getOutputStream());
                     board2InputManager = new BoardInputManager(board2Socket.getInputStream(), (TetrioBoardWithPhysics) board2, null);
                 }
                 catch (IOException ioe) { ioe.printStackTrace(); }

@@ -40,7 +40,7 @@ public class OnlineBoardPhysics extends BoardPhysics {
         try{
             short action = inputStream.readShort();
             int x, y, rotationIndex, lock;
-            switch (action){
+            switch (action) {
                 case 1:
                     x = inputStream.readInt();
                     y = inputStream.readInt();
