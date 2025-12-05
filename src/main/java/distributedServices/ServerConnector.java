@@ -19,6 +19,10 @@ public class ServerConnector {
         }
     }
 
+    /**
+     * Returns the socket obtained from the connection
+     * @return Socket to the server
+     */
     public Socket getSocket() {
         return socket;
     }
