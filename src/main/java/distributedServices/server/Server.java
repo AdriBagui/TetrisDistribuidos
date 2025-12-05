@@ -17,7 +17,7 @@ public class Server {
             while(true){
                 Socket client1 = server.accept();
                 Socket client2 = server.accept();
-
+                pool.execute(new GameComunictionHandler(client1, client2));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
