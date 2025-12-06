@@ -1,6 +1,7 @@
 package tetris.general.boards;
 
 import tetris.general.boards.physics.BoardPhysics;
+import tetris.general.boards.physics.BoardPhysicsFactory;
 
 import java.awt.*;
 
@@ -8,9 +9,9 @@ public abstract class BoardWithPhysics extends Board {
     // BOARD PHYSICS
     protected final BoardPhysics boardPhysics;
 
-    public BoardWithPhysics(int x, int y, BoardGrid grid, long seed, BoardPhysics boardPhysics) {
-        super(x, y, grid, seed);
-        this.boardPhysics = boardPhysics;
+    public BoardWithPhysics(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize, int tetrominoesQueueGeneratorType, long seed, boolean hasHolder, int boardPhysicsType) {
+        super(x, y, gridRows, gridSpawnRows, gridColumns, tetrominoesQueueSize, tetrominoesQueueGeneratorType, seed, hasHolder);
+        this.boardPhysics = BoardPhysicsFactory.createBoardPhysics(boardPhysicsType, grid);
         fallingTetrominoShadow = null;
     }
 
@@ -31,18 +32,18 @@ public abstract class BoardWithPhysics extends Board {
     }
 
     // Controls
-    public abstract void moveLeftPressed();
-    public abstract void moveLeftReleased();
-    public abstract void moveRightPressed();
-    public abstract void moveRightReleased();
-    public abstract void softDropPressed();
-    public abstract void softDropReleased();
-    public abstract void hardDropPressed();
-    public abstract void hardDropReleased();
-    public abstract void rotateRightPressed();
-    public abstract void rotateRightReleased();
-    public abstract void rotateLeftPressed();
-    public abstract void rotateLeftReleased();
-    public abstract void flipPressed();
-    public abstract void flipReleased();
+    public void moveLeftPressed() { boardPhysics.moveLeftPressed(); }
+    public void moveLeftReleased() { boardPhysics.moveLeftReleased(); }
+    public void moveRightPressed() { boardPhysics.moveRightPressed(); }
+    public void moveRightReleased() { boardPhysics.moveRightReleased(); }
+    public void softDropPressed() { boardPhysics.moveDownPressed(); }
+    public void softDropReleased() { boardPhysics.moveDownReleased(); }
+    public void hardDropPressed() { boardPhysics.dropPressed(); }
+    public void hardDropReleased() { boardPhysics.dropReleased(); }
+    public void rotateRightPressed() { boardPhysics.rotateRightPressed(); }
+    public void rotateRightReleased() { boardPhysics.rotateRightReleased(); }
+    public void rotateLeftPressed() { boardPhysics.rotateLeftPressed(); }
+    public void rotateLeftReleased() { boardPhysics.rotateLeftReleased(); }
+    public void flipPressed() { boardPhysics.flipPressed(); }
+    public void flipReleased() { boardPhysics.flipReleased(); }
 }

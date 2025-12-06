@@ -27,13 +27,15 @@ public class StartMenuLocalButtonsPanel extends JPanel {
         // --- BUTTONS ---
 
         ModernButton btnUnJugadorLocalNES = new ModernButton("SOLO (NES)");
+        btnUnJugadorLocalNES.addActionListener(e -> playOnePlayerNESLocalHandler());
         add(btnUnJugadorLocalNES, gbc);
 
         ModernButton btnUnJugadorLocal = new ModernButton("SOLO (MODERN)");
+        btnUnJugadorLocal.addActionListener(e -> playOnePlayerTetrioLocalHandler());
         add(btnUnJugadorLocal, gbc);
 
         ModernButton btnDosJugadoresLocal = new ModernButton("1 VS 1 LOCAL");
-        btnDosJugadoresLocal.addActionListener(e -> playTwoPlayerTetrisLocalHandler());
+        btnDosJugadoresLocal.addActionListener(e -> playTwoPlayerTetrioLocalHandler());
         add(btnDosJugadoresLocal, gbc);
 
         // --- FILLER COMPONENT ---
@@ -44,7 +46,13 @@ public class StartMenuLocalButtonsPanel extends JPanel {
         add(Box.createGlue(), gbcFiller);
     }
 
-    private void playTwoPlayerTetrisLocalHandler() {
+    private void playOnePlayerNESLocalHandler() {
+        mainPanel.startOnePlayerNESGame();
+    }
+    private void playOnePlayerTetrioLocalHandler() {
+        mainPanel.startOnePlayerGame();
+    }
+    private void playTwoPlayerTetrioLocalHandler() {
         mainPanel.start1vs1LocalGame();
     }
 }

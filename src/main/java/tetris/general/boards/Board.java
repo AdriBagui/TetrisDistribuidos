@@ -3,6 +3,8 @@ package tetris.general.boards;
 import tetris.general.tetrominoes.TetrominoShadow;
 import tetris.general.tetrominoes.generators.RandomBagTetrominoesGenerator;
 import tetris.general.tetrominoes.Tetromino;
+import tetris.general.tetrominoes.generators.TetrominoesGenerator;
+import tetris.general.tetrominoes.generators.TetrominoesGeneratorFactory;
 
 import java.awt.*;
 
@@ -17,8 +19,9 @@ public abstract class Board {
     // FALLING TETROMINO SHADOW
     protected TetrominoShadow fallingTetrominoShadow;
     // BOARD COMPONENTS
-    protected final TetrominoHolder tetrominoHolder;
     protected final BoardGrid grid;
+    protected final TetrominoHolder tetrominoHolder;
+    private final int tetrominoHolderWidth;
     private final TetrominoesQueue tetrominoesQueue;
     // SCORING SYSTEM
     protected int score, totalClearedLines, level;
@@ -29,16 +32,24 @@ public abstract class Board {
      * Creates the board to play tetris
      * @param x x coordinate for the top left corner
      * @param y y coordinate for the top left corner
-     * @param grid Container where the game is played
+     * @param gridRows Number of rows in the grid
+     * @param gridSpawnRows Number of rows above the grid to spawn tetrominoes
+     * @param gridColumns Number of columns in the grid
+     * @param tetrominoesQueueSize Size of the queue of tetrominoes that is seen
+     * @param tetrominoesQueueGeneratorType Type of tetrominoes generator to change randomness type
      * @param seed Seed for the tetromino's order
+     * @param hasHolder True if the user can hold pieces false otherwise
      */
-    public Board(int x, int y, BoardGrid grid,  long seed) {
+    public Board(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize, int tetrominoesQueueGeneratorType, long seed, boolean hasHolder) {
         this.x = x;
         this.y = y;
 
-        this.grid = grid;
-        tetrominoesQueue = new TetrominoesQueue(TETROMINOES_QUEUE_SIZE, new RandomBagTetrominoesGenerator(seed), x + TETROMINO_HOLDER_WIDTH + BOARD_WIDTH, y + BOARD_SPAWN_ROWS * CELL_SIZE);
-        tetrominoHolder = new TetrominoHolder(x, y + BOARD_SPAWN_ROWS * CELL_SIZE, tetrominoesQueue);
+        tetrominoHolderWidth = hasHolder ? TETROMINO_HOLDER_WIDTH : 0;
+
+        grid = new BoardGrid(x + tetrominoHolderWidth, y, gridRows, gridSpawnRows, gridColumns);
+        TetrominoesGenerator tetrominoesGenerator = TetrominoesGeneratorFactory.createTetrominoesGenerator(tetrominoesQueueGeneratorType, seed);
+        tetrominoesQueue = new TetrominoesQueue(tetrominoesQueueSize, tetrominoesGenerator, x + tetrominoHolderWidth + gridColumns*CELL_SIZE, y + gridSpawnRows*CELL_SIZE);
+        tetrominoHolder = hasHolder ? new TetrominoHolder(x, y + gridSpawnRows*CELL_SIZE, tetrominoesQueue) : null;
 
         score = 0;
         totalClearedLines = 0;
@@ -46,7 +57,7 @@ public abstract class Board {
 
         isAlive = true;
 
-        nextTetromino = tetrominoesQueue.getNext(); // Initialize first block
+        nextTetromino = tetrominoesQueue.getNext();
         fallingTetromino = null;
     }
 
@@ -54,7 +65,7 @@ public abstract class Board {
     protected abstract void updateFallingTetromino();
 
     public boolean isAlive() { return isAlive; }
-    public void hold() { nextTetromino = tetrominoHolder.hold(fallingTetromino); }
+    public void hold() { if (tetrominoHolder != null) nextTetromino = tetrominoHolder.hold(fallingTetromino); }
     public void update() {
         if (nextTetromino != null) {
             setNextTetrominoAsFallingTetromino();
@@ -81,16 +92,16 @@ public abstract class Board {
         // Draw Level
         g2.setColor(new Color(220, 220 , 220));
         g2.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        g2.drawString("Level: " + level, TETROMINO_HOLDER_WIDTH + x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
+        g2.drawString("Level: " + level, tetrominoHolderWidth + x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
 
         // Draw Score
         g2.setColor(new Color(220, 220 , 220));
-        g2.drawString("Score: " + score, TETROMINO_HOLDER_WIDTH + x + 120, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
+        g2.drawString("Score: " + score, tetrominoHolderWidth + x + 120, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
 
         g2.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
         // Draw Held Piece
-        tetrominoHolder.draw(g2);
+        if (tetrominoHolder != null) tetrominoHolder.draw(g2);
 
         // Draw Next Piece Preview
         tetrominoesQueue.draw(g2);
@@ -134,7 +145,7 @@ public abstract class Board {
         this.totalClearedLines += linesCleared;
 
         nextTetromino = tetrominoesQueue.getNext();
-        tetrominoHolder.unlockHold();
+        if (tetrominoHolder != null) tetrominoHolder.unlockHold();
 
         return linesCleared;
     }

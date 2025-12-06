@@ -8,7 +8,8 @@ public class TetrominoShadow extends Tetromino {
     private Tetromino parent;
 
     public TetrominoShadow(Tetromino parent) {
-        super(parent.getShapeRotations(), parent.rotationIndex, parent.getX(), parent.getY(), new Color(parent.getColor().darker().darker().getRGB() + SHADOW_TRANSPARENCY, true), parent.getParentX(), parent.getParentY());
+        // For same color as parent use the following code: new Color(parent.getColor().darker().darker().getRGB() + SHADOW_TRANSPARENCY, true)
+        super(parent.getShapeRotations(), parent.rotationIndex, parent.getX(), parent.getY(), new Color(255, 255, 255, SHADOW_TRANSPARENCY_OVER_255), parent.getParentX(), parent.getParentY());
         this.parent = parent;
     }
 

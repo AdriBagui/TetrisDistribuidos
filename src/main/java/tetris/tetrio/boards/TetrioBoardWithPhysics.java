@@ -1,13 +1,15 @@
 package tetris.tetrio.boards;
 
-import tetris.general.boards.BoardGrid;
 import tetris.general.boards.BoardWithPhysics;
+import tetris.general.boards.physics.BoardPhysicsFactory;
+import tetris.general.tetrominoes.generators.TetrominoesGeneratorFactory;
 import tetris.tetrio.boards.physics.TetrioBoardPhysics;
 
 import java.io.*;
 import java.util.Random;
 
-import static tetris.Config.BOARD_COLUMNS;
+import static tetris.Config.*;
+import static tetris.Config.TETRIO_TETROMINOES_QUEUE_SIZE;
 
 public class TetrioBoardWithPhysics extends BoardWithPhysics {
     /*
@@ -21,18 +23,14 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
      * - Acción 6 (UPDATE_GARBAGE): le van a seguir 2 bytes significando "LÍNEAS COLUMNA_VACÍA"
      */
     protected DataOutputStream garbageAndUpdatesOutput;
-    // BOARD PHYSICS
-    protected TetrioBoardPhysics tetrioBoardPhysics;
     // GARBAGE SYSTEM
     protected Random garbageRandom;
     protected GarbageRecievingSystem garbageRecievingSystem;
 
-    public TetrioBoardWithPhysics(int x, int y, BoardGrid grid, long seed, OutputStream garbageAndUpdatesOutput) {
-        super(x, y, grid, seed, new TetrioBoardPhysics(grid));
+    public TetrioBoardWithPhysics(int x, int y, long seed, OutputStream garbageAndUpdatesOutput) {
+        super(x, y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS, TETRIO_TETROMINOES_QUEUE_SIZE, TetrominoesGeneratorFactory.BAG_WITH_7, seed, true, BoardPhysicsFactory.TETRIO_BOARD_PHYSICS);
 
-        this.garbageAndUpdatesOutput = new DataOutputStream(garbageAndUpdatesOutput);
-
-        tetrioBoardPhysics = (TetrioBoardPhysics) boardPhysics;
+        this.garbageAndUpdatesOutput = garbageAndUpdatesOutput != null ? new DataOutputStream(garbageAndUpdatesOutput) : null;
 
         garbageRandom = new Random();
         garbageRecievingSystem = new GarbageRecievingSystem();
@@ -92,39 +90,11 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
         sendMessage((byte) 5, null);
     }
 
-    // Controls
-    @Override
-    public void moveLeftPressed() { tetrioBoardPhysics.moveLeftPressed(); }
-    @Override
-    public void moveLeftReleased() { tetrioBoardPhysics.moveLeftReleased(); }
-    @Override
-    public void moveRightPressed() { tetrioBoardPhysics.moveRightPressed(); }
-    @Override
-    public void moveRightReleased() { tetrioBoardPhysics.moveRightReleased(); }
-    @Override
-    public void softDropPressed() { tetrioBoardPhysics.moveDownPressed(); }
-    @Override
-    public void softDropReleased() { tetrioBoardPhysics.moveDownReleased(); }
-    @Override
-    public void hardDropPressed() { tetrioBoardPhysics.dropPressed(); }
-    @Override
-    public void hardDropReleased() { tetrioBoardPhysics.dropReleased(); }
-    @Override
-    public void rotateRightPressed() { tetrioBoardPhysics.rotateRightPressed(); }
-    @Override
-    public void rotateRightReleased() { tetrioBoardPhysics.rotateRightReleased(); }
-    @Override
-    public void rotateLeftPressed() { tetrioBoardPhysics.rotateLeftPressed(); }
-    @Override
-    public void rotateLeftReleased() { tetrioBoardPhysics.rotateLeftReleased(); }
-    @Override
-    public void flipPressed() { tetrioBoardPhysics.flipPressed(); }
-    @Override
-    public void flipReleased() { tetrioBoardPhysics.flipReleased(); }
-
     // ---------------------------------------------------------------------------------
     // Métodos auxiliares
     private synchronized void sendMessage(byte action, byte[] content) {
+        if (garbageAndUpdatesOutput == null) return;
+
         try {
             garbageAndUpdatesOutput.writeByte(action);
 

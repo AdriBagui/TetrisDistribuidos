@@ -8,7 +8,7 @@ import static tetris.Config.*;
 
 public class InputMovement {
     private BoardGrid grid;
-    private RotationSystem superRotationSystem;
+    private RotationSystem rotationSystem;
     private Gravity gravity;
     private Tetromino fallingTetromino;
     private int softDropping;
@@ -19,9 +19,9 @@ public class InputMovement {
     private int rotatedRight;
     private int flipped;
 
-    public InputMovement(BoardGrid grid, RotationSystem superRotationSystem, Gravity gravity) {
+    public InputMovement(BoardGrid grid, RotationSystem rotationSystem, Gravity gravity) {
         this.grid = grid;
-        this.superRotationSystem = superRotationSystem;
+        this.rotationSystem = rotationSystem;
         this.gravity = gravity;
         this.fallingTetromino = null;
 
@@ -73,17 +73,17 @@ public class InputMovement {
         }
 
         if (rotatedRight == 0) {
-            superRotationSystem.rotateRight(fallingTetromino);
+            rotationSystem.rotateRight(fallingTetromino);
             rotatedRight = 1;
         }
 
         if (rotatedLeft == 0) {
-            superRotationSystem.rotateLeft(fallingTetromino);
+            rotationSystem.rotateLeft(fallingTetromino);
             rotatedLeft = 1;
         }
 
         if (flipped == 0) {
-            superRotationSystem.flip(fallingTetromino);
+            rotationSystem.flip(fallingTetromino);
             flipped = 1;
         }
     }

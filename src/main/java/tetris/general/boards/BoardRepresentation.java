@@ -1,11 +1,11 @@
 package tetris.general.boards;
 
-public class BoardRepresentation extends Board {
+public abstract class BoardRepresentation extends Board {
     private int fallingTetrominoNextX, fallingTetrominoNextY, fallingTetrominoNextRotationIndex;
     private boolean isFallingTetrominoLocked;
 
-    public BoardRepresentation(int x, int y, BoardGrid grid, long seed) {
-        super(x, y, grid, seed);
+    public BoardRepresentation(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize, int tetrominoesQueueGeneratorType, long seed, boolean hasHolder) {
+        super(x, y, gridRows, gridSpawnRows, gridColumns, tetrominoesQueueSize, tetrominoesQueueGeneratorType, seed, hasHolder);
 
         fallingTetrominoNextX = -128;
         fallingTetrominoNextY = -128;

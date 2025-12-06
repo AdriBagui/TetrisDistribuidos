@@ -22,21 +22,24 @@ public class Config {
     public static final int BOARD_SPAWN_ROWS = 3;
 
     // QUEUE CONFIGURATION
-    public static final int TETROMINOES_QUEUE_SIZE = 5;
+    public static final int TETRIO_TETROMINOES_QUEUE_SIZE = 5;
+    public static final int NES_TETROMINOES_QUEUE_SIZE = 1;
 
     // GRAVITY CONFIGURATION
-    public static final int SOFT_DROP_FACTOR = 6;
+    public static final int SOFT_DROP_FACTOR = 10;
     public static final int SOFT_DROP_DELAY_QUOTIENT = SOFT_DROP_FACTOR/6;
     public static final int NES_FRAMES_PER_CELL_INITIAL_GRAVITY = 48;
-    public static final double INITIAL_GRAVITY = ((1./ NES_FRAMES_PER_CELL_INITIAL_GRAVITY)*NES_FPS)/ FPS;
+    public static final double NES_INITIAL_GRAVITY = ((1./ NES_FRAMES_PER_CELL_INITIAL_GRAVITY)*NES_FPS)/ FPS;
+    public static final double TETRIO_INITIAL_GRAVITY = 0.02;
 
     // INPUT CONFIGURATION
     public static final int AUTOMATIC_REPEAT_RATE_FRAMES = ((int) FPS) / 30;
     public static final int DELAYED_AUTO_SHIFT_FRAMES = ((int) FPS) / 6;
 
     // SHADOW CONFIGURATION
-    public static final int SHADOW_TRANSPARENCY_PERCENTAGE = 25;
-    public static final int SHADOW_TRANSPARENCY = (SHADOW_TRANSPARENCY_PERCENTAGE *255/100) * 33554432;
+    public static final int SHADOW_TRANSPARENCY_PERCENTAGE = 15;
+    public static final int SHADOW_TRANSPARENCY_OVER_255 = SHADOW_TRANSPARENCY_PERCENTAGE*255/100;
+    public static final int SHADOW_TRANSPARENCY = (SHADOW_TRANSPARENCY_OVER_255) * 33554432;
 
     // GAME DRAW CONFIG
     public static final int CELL_SIZE = 25;
