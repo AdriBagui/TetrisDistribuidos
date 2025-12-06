@@ -3,6 +3,8 @@ package menus;
 import main.MainPanel;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class StartMenuOnlineButtonsPanel extends JPanel {
     private MainPanel mainPanel;
@@ -49,6 +51,26 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
     }
 
     private void playOnline() { mainPanel.connectToOnlineGame(); }
-    private void playOnlineAsHost() { mainPanel.startOnlineGameAsHost(); }
+    // Clase StartMenuOnlineButtonsPanel
+
+    private void playOnlineAsHost() {
+        // 1. Obtener la referencia a la ventana principal (JFrame) para centrar el diálogo
+        JFrame ownerFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+
+        // 2. Crear y mostrar el diálogo modal
+        CreateRoomDialog dialog = new CreateRoomDialog(ownerFrame);
+        dialog.setVisible(true);
+
+        // 3. El flujo del código se detiene aquí hasta que el diálogo se cierra.
+        int roomNumber = dialog.getRoomNumber();
+
+        if (roomNumber != -1) {
+            System.out.println(roomNumber);
+        } else {
+            // El usuario canceló la creación de la sala (roomNumber es -1)
+            System.out.println("Room hosting cancelled.");
+        }
+    }
+
     private void playOnlineAsClient() { mainPanel.startOnlineGameAsClient(); }
 }
