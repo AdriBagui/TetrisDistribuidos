@@ -10,6 +10,7 @@ import tetris.tetrio.boards.TetrioBoardWithPhysics;
 
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -51,6 +52,13 @@ public class OnlineTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
     protected void connectPlayers() {
         serverConnector = new ServerConnector();
         boardsSocket = serverConnector.getSocket();
+        try{
+            DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
+            long seed = dis.readLong();
+            setSeed(seed);
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
     }
 
     @Override
