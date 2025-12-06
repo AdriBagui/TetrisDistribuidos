@@ -28,7 +28,6 @@ public abstract class TwoPlayerTetrioPanel extends JPanel {
     }
 
     public abstract void update();
-    protected abstract void connectPlayers();
     protected abstract void initializeGame();
 
     public void connectPlayersAndStartGame() {
@@ -74,7 +73,6 @@ public abstract class TwoPlayerTetrioPanel extends JPanel {
     }
 
     protected void startGame() {
-        connectPlayers();
         resetGame();
         gameLoopTimer = new Timer();
         gameLoopTimer.scheduleAtFixedRate(new GameLoop(), 0, MILLISECONDS_PER_FRAME);

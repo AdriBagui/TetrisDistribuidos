@@ -48,7 +48,7 @@ public class CustomMessageDialog extends JDialog {
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
         // --- 2. Message ---
-        JLabel messageLabel = new JLabel("<html>" + message + "</html>"); // Permite salto de línea con HTML
+        JLabel messageLabel = new JLabel(message); // Permite salto de línea con HTML
         messageLabel.setFont(MESSAGE_FONT);
         messageLabel.setForeground(TEXT_COLOR);
         messageLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 20));

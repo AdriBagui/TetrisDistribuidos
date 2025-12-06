@@ -36,8 +36,7 @@ public class LocalTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
         }
     }
 
-    @Override
-    protected void connectPlayers() {
+    protected void connectBoards() {
         seed = System.currentTimeMillis();
 
         Thread board1Thread = new Thread(new Runnable() {
@@ -75,6 +74,7 @@ public class LocalTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
     @Override
     protected void initializeGame() {
         try {
+            connectBoards();
             board1 = new TetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, new BoardGrid(BOARD1_X + TETROMINO_HOLDER_WIDTH, BOARD1_Y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS), seed, board1Socket.getOutputStream());
             board1InputManager = new BoardsInputManager(board1Socket.getInputStream(), (TetrioBoardWithPhysics) board1, null);
             board1InputManager.start();

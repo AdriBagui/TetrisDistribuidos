@@ -65,7 +65,7 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
         int roomNumber = dialog.getRoomNumber();
 
         if (roomNumber != -1) {
-            System.out.println(roomNumber);
+            // TODO: iniciar una sala con dicho código
         } else {
             // El usuario canceló la creación de la sala (roomNumber es -1)
             System.out.println("Room hosting cancelled.");

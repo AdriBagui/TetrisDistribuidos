@@ -18,7 +18,6 @@ import static tetris.Config.*;
 import static tetris.Config.BOARD2_Y;
 
 public class OnlineTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
-    private ServerConnector serverConnector;
     private Socket boardsSocket;
     private BoardsInputManager boardsInputManager;
     private long seed;
@@ -26,7 +25,6 @@ public class OnlineTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
     public OnlineTwoPlayerTetrioPanel(MainPanel mainPanel) {
         super(mainPanel);
 
-        serverConnector = null;
         boardsSocket = null;
         boardsInputManager = null;
         seed = -1;
@@ -45,20 +43,6 @@ public class OnlineTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
 
         if (!board1.isAlive() || !board2.isAlive()) {
             gameOver = true;
-        }
-    }
-
-    @Override
-    protected void connectPlayers() {
-        serverConnector = new ServerConnector();
-        boardsSocket = serverConnector.getSocket();
-
-        try{
-            DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
-            long seed = dis.readLong();
-            setSeed(seed);
-        } catch (IOException ioe){
-            ioe.printStackTrace();
         }
     }
 

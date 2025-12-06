@@ -1,6 +1,7 @@
 package main;
 
 import menus.StartMenuPanel;
+import menus.WaitingOpponentPanel;
 import tetris.tetrio.panels.OnlineTwoPlayerTetrioPanel;
 import tetris.tetrio.panels.LocalTwoPlayerTetrioPanel;
 
@@ -21,10 +22,13 @@ public class MainPanel extends JPanel {
     private static final int SERVER_PORT = 7777;
 
     private static final String START_MENU_PANEL = "0";
-    private static final String LOCAL_TETRIS_PANEL = "1";
-    private static final String ONLINE_TETRIS_PANEL = "2";
+    private static final String WAITING_OPPONENT_PANEL = "2";
+    private static final String LOCAL_TETRIS_PANEL = "3";
+    private static final String ONLINE_TETRIS_PANEL = "4";
+
 
     private StartMenuPanel startMenuPanel;
+    private WaitingOpponentPanel waitingOpponentPanel;
     private LocalTwoPlayerTetrioPanel localTwoPlayerTetrioPanel;
     private OnlineTwoPlayerTetrioPanel onlineTwoPlayerTetrioPanel;
     private CardLayout cardLayout;
@@ -44,9 +48,11 @@ public class MainPanel extends JPanel {
         // TODO: Hay que añadir más menús para crear sala y conectarse a sala (igual son el mismo panel)
         localTwoPlayerTetrioPanel = new LocalTwoPlayerTetrioPanel(this);
         onlineTwoPlayerTetrioPanel = new OnlineTwoPlayerTetrioPanel(this);
+        waitingOpponentPanel = new WaitingOpponentPanel(this);
 
         // Añadirlos al panel principal para poder cambiar entre ellos con el CardLayout
         add(startMenuPanel, START_MENU_PANEL);
+        add(waitingOpponentPanel, WAITING_OPPONENT_PANEL);
         add(localTwoPlayerTetrioPanel, LOCAL_TETRIS_PANEL);
         add(onlineTwoPlayerTetrioPanel, ONLINE_TETRIS_PANEL);
 
@@ -79,38 +85,27 @@ public class MainPanel extends JPanel {
     // Muestra el panel de partida online (no sé si empezar las partidas aquí o no, darle una vuelta.
     // Si no empiezo las partidas aquí cambiar el nombre de los métodos a show).
     public void connectToOnlineGame() {
+        cardLayout.show(this, WAITING_OPPONENT_PANEL);
+        waitingOpponentPanel.connect();
+    }
+
+    /**
+     * Starts an online game
+     * @param seed Seed for the game
+     * @param socket Socket received from the server
+     */
+    public void startOnlineGame(long seed, Socket socket){
+        onlineTwoPlayerTetrioPanel.setSeed(seed);
+        onlineTwoPlayerTetrioPanel.setSocket(socket);
         cardLayout.show(this, ONLINE_TETRIS_PANEL);
         onlineTwoPlayerTetrioPanel.connectPlayersAndStartGame();
     }
 
-    // Espera a que otro cliente se conecte a él y cuando se conecta empieza la partida
-    // (cosas a pensar: enviar mensaje de empieza la partida? o simplemente cuando llega el seed
-    // se considera que empieza la partida y ambos jugadores empiezan más o menos a la vez;
-    // también hay que pensar en cómo acaba la partida, no me acuerdo de como lo implemente)
-    // TODO: Este método creo que se pude mover a otra clase cliente que se conecte a un servidor
-    // TODO: este servidor lo conecte con otro cliente (o si es creando una sala, el otro cliente
-    // TODO: decida conectarse conectarse con él) y se cree un socket entre los clientes para jugar
-    // TODO: la partida
-    // Problema de redes del que no nos preocupamos porque solo podemos jugar en LAN, pero si se jugara
-    // en WAN toda la información tendría que pasar por el servidor y el servidor tendría que repartir
-    // la información entre los clientes.
+    /**
+     * Connects to online game showing the host's room id
+     */
     public void startOnlineGameAsHost() {
-        try(ServerSocket server = new ServerSocket(SERVER_PORT)){
-            try {
-                Socket client = server.accept();
-                onlineTwoPlayerTetrioPanel.setSocket(client);
-                // Creating and sending seed
-                long seed = System.currentTimeMillis();
-                onlineTwoPlayerTetrioPanel.setSeed(System.currentTimeMillis());
-                DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-                dos.writeLong(seed);
 
-                cardLayout.show(this, ONLINE_TETRIS_PANEL);
-                onlineTwoPlayerTetrioPanel.connectPlayersAndStartGame();
-            }
-            catch(IOException ioe) { ioe.printStackTrace(); }
-        }
-        catch(IOException ioe) { ioe.printStackTrace(); }
     }
 
     // Parecido al anterior, este es el que se conecta al anterior (si el anterior no se ha ejecutado salta la excepción)
