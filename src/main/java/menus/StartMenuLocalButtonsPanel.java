@@ -11,6 +11,11 @@ public class StartMenuLocalButtonsPanel extends JPanel {
     private MainPanel mainPanel;
     private StartMenuPanel startMenuPanel;
 
+    /**
+     * Creates the Menu to select your local options
+     * @param mainPanel {@code MainPanel} to modify
+     * @param startMenuPanel {@link menus.StartMenuPanel} to create the layout
+     */
     public StartMenuLocalButtonsPanel(MainPanel mainPanel, StartMenuPanel startMenuPanel) {
         super();
 
@@ -69,6 +74,9 @@ public class StartMenuLocalButtonsPanel extends JPanel {
         add(btnDosJugadoresLocal, gbc_btnDosJugadoresLocal);
     }
 
+    /**
+     * Starts a 1vs1 local game
+     */
     private void playLocalHandler() {
         mainPanel.start1vs1LocalGame();
     }

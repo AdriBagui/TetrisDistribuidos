@@ -11,6 +11,10 @@ import java.awt.event.ActionListener;
 public class StartMenuPanel extends JPanel {
     private MainPanel mainPanel;
 
+    /**
+     * Creates the basic layout for the start menu panel
+     * @param mainPanel {@code MainPanel} to modify
+     */
     public StartMenuPanel(MainPanel mainPanel) {
         super();
 

@@ -9,6 +9,10 @@ import static tetris.Config.*;
 public class NESRotationSystem extends RotationSystem {
     public NESRotationSystem(BoardGrid grid) { super(grid); }
 
+    /**
+     * Rotates right using the classic tetris logic
+     * @param tetromino The tetromino which gets rotated to de right
+     */
     @Override
     public void rotateRight(Tetromino tetromino) {
         boolean success = false;
@@ -35,6 +39,10 @@ public class NESRotationSystem extends RotationSystem {
         }
     }
 
+    /**
+     * Rotates left using the classic tetris logic
+     * @param tetromino The tetromino which gets rotated to the left
+     */
     @Override
     public void rotateLeft(Tetromino tetromino) {
         boolean success = false;
@@ -61,6 +69,10 @@ public class NESRotationSystem extends RotationSystem {
         }
     }
 
+    /**
+     * Do nothing (it's not included in classic tetris)
+     * @param tetromino The tetromino which gets rotated (do nothing)
+     */
     @Override
     public void flip(Tetromino tetromino) {
         // Do nothing

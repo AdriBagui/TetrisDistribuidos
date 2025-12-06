@@ -11,6 +11,11 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
     private MainPanel mainPanel;
     private StartMenuPanel startMenuPanel;
 
+    /**
+     * Creates the Menu to select your online options
+     * @param mainPanel {@code MainPanel} to modify
+     * @param startMenuPanel {@link menus.StartMenuPanel} to create the layout
+     */
     public StartMenuOnlineButtonsPanel(MainPanel mainPanel, StartMenuPanel startMenuPanel) {
         super();
 
@@ -83,12 +88,21 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
         add(btnUnirseASala, gbc_btnUnirseASala);
     }
 
+    /**
+     * Connects to a random opponent online
+     */
     private void playOnline() { mainPanel.connectToOnlineGame(); }
 
+    /**
+     * Creates a room for someone to join and play against
+     */
     private void playOnlineAsHost() {
         mainPanel.startOnlineGameAsHost();
     }
 
+    /**
+     * Looks for a room to join and play against
+     */
     private void playOnlineAsClient() {
         mainPanel.startOnlineGameAsClient();
     }
