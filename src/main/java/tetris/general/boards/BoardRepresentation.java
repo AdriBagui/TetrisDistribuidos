@@ -30,4 +30,9 @@ public class BoardRepresentation extends Board {
     protected void updateFallingTetromino() {
         fallingTetromino.setXYRotationIndex(fallingTetrominoNextX, fallingTetrominoNextY, fallingTetrominoNextRotationIndex);
     }
+    @Override
+    protected void setNextTetrominoAsFallingTetromino() {
+        super.setNextTetrominoAsFallingTetromino();
+        isFallingTetrominoLocked = false;
+    }
 }

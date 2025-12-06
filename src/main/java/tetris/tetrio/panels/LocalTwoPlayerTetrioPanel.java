@@ -43,7 +43,7 @@ public class LocalTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
         Thread board1Thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                try (ServerSocket tempServerSocket = new ServerSocket(7777)) {
+                try (ServerSocket tempServerSocket = new ServerSocket(7776)) {
                     board1Socket = tempServerSocket.accept();
                 }
                 catch (IOException ioe) { ioe.printStackTrace(); }
@@ -55,7 +55,7 @@ public class LocalTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
             public void run() {
                 try {
                     Thread.sleep(10);
-                    board2Socket = new Socket("localhost", 7777);
+                    board2Socket = new Socket("localhost", 7776);
                 }
                 catch (IOException ioe) { ioe.printStackTrace(); }
                 catch (InterruptedException ie) { ie.printStackTrace(); }

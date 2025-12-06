@@ -13,7 +13,7 @@ public class ServerConnector {
      */
     public ServerConnector() {
         try{
-            this.socket = new Socket(Server.SERVER_IP, Server.SERVER_PORT);
+            socket = new Socket(Server.SERVER_IP, Server.SERVER_PORT);
         } catch (IOException ioe){
             ioe.printStackTrace();
         }

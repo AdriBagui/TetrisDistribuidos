@@ -28,6 +28,8 @@ public class GameCommunicationHandler implements Runnable{
             long seed = System.currentTimeMillis();
             dosC1.writeLong(seed);
             dosC2.writeLong(seed);
+            dosC1.flush();
+            dosC2.flush();
         } catch (IOException ioe){
             ioe.printStackTrace();
         }

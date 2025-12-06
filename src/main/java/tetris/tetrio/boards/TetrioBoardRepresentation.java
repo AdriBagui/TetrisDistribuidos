@@ -8,9 +8,18 @@ public class TetrioBoardRepresentation extends BoardRepresentation {
 
     public TetrioBoardRepresentation(int x, int y, BoardGrid grid, long seed) {
         super(x, y, grid, seed);
+        garbageRecievingSystem = new GarbageRecievingSystem();
     }
 
     public void addGarbage(byte numberOfGarbageRows, byte emptyGarbageColumn) {
         garbageRecievingSystem.addGarbage(numberOfGarbageRows, emptyGarbageColumn);
+    }
+
+    @Override
+    public void update() {
+        super.update();
+
+        if (garbageRecievingSystem.updateGarbage(grid, fallingTetromino, isFallingTetrominoLocked()))
+            isAlive = false;
     }
 }
