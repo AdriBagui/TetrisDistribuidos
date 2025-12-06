@@ -54,8 +54,6 @@ public class BoardsInputManager extends Thread {
                         rotationIndex = boardsInputReceiver.readByte();
                         isLocked = (boardsInputReceiver.readByte() == 1);
 
-                        if (isLocked) System.out.println("Lock");
-
                         if (updatesReceiverBoard != null)  {
                             updatesReceiverBoard.setFallingTetrominoXYRotationIndex(x,y,rotationIndex);
                             if (isLocked) updatesReceiverBoard.lockFallingTetromino();

@@ -55,11 +55,7 @@ public class OnlineTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
 
         try{
             DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
-
-            System.out.println("Hola");
             long seed = dis.readLong();
-            System.out.println(seed);
-
             setSeed(seed);
         } catch (IOException ioe){
             ioe.printStackTrace();
