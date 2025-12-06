@@ -108,21 +108,8 @@ public class MainPanel extends JPanel {
 
     }
 
-    // Parecido al anterior, este es el que se conecta al anterior (si el anterior no se ha ejecutado salta la excepción)
     public void startOnlineGameAsClient() {
-        try {
-            Socket host = new Socket(SERVER_IP, SERVER_PORT);
-            onlineTwoPlayerTetrioPanel.setSocket(host);
-            // Reading and setting the seed
-            DataInputStream dis = new DataInputStream(host.getInputStream());
-            onlineTwoPlayerTetrioPanel.setSeed(dis.readLong());
 
-            cardLayout.show(this, ONLINE_TETRIS_PANEL);
-            onlineTwoPlayerTetrioPanel.connectPlayersAndStartGame();
-        }
-        catch (IOException ioe){
-            ioe.printStackTrace();
-        }
     }
 
     public void endGame() {
