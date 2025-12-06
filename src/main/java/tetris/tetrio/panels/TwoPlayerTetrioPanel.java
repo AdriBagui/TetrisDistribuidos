@@ -5,22 +5,21 @@ import tetris.general.boards.Board;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import static tetris.Config.*;
 
-public abstract class TwoPlayerTetrisPanel extends JPanel {
+public abstract class TwoPlayerTetrioPanel extends JPanel {
     protected MainPanel mainPanel;
     protected Board board1, board2;
     private java.util.Timer gameLoopTimer;
     protected boolean gameOver;
 
-    public TwoPlayerTetrisPanel(MainPanel mainPanel) {
+    public TwoPlayerTetrioPanel(MainPanel mainPanel) {
         this.mainPanel = mainPanel;
         setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
-        setBackground(Color.DARK_GRAY);
+        setBackground(new Color(22, 22, 22));
         setFocusable(true);
 
         board1 = null;

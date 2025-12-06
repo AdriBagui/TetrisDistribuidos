@@ -9,6 +9,8 @@ import tetris.tetrio.boards.physics.TetrioBoardPhysics;
 public class NESBoard extends BoardWithPhysics {
     public NESBoard(int x, int y, BoardGrid grid, long seed) {
         super(x, y, grid, seed, new TetrioBoardPhysics(grid));
+
+
     }
 
     @Override

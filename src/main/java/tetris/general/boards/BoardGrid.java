@@ -168,7 +168,7 @@ public class BoardGrid {
         g2.fillRect(x, y + BOARD_SPAWN_HEIGHT, BOARD_WIDTH, BOARD_HEIGHT);
 
         // Pinta las líneas de la plantilla
-        g2.setColor(new Color(255, 255, 255, 64));
+        g2.setColor(new Color(110, 110 , 110, 40));
         for (int y = CELL_SIZE; y < BOARD_HEIGHT; y += CELL_SIZE) {
             g2.drawLine(x, this.y + BOARD_SPAWN_HEIGHT + y, x + BOARD_WIDTH, this.y + BOARD_SPAWN_HEIGHT + y);
         }
@@ -185,7 +185,7 @@ public class BoardGrid {
         }
 
         // Dibuja el borde
-        g2.setColor(Color.WHITE);
+        g2.setColor(new Color(110, 110 , 110));
         g2.drawLine(x, y + BOARD_SPAWN_HEIGHT, x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
         g2.drawLine(x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT, x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
         g2.drawLine(x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT, x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);

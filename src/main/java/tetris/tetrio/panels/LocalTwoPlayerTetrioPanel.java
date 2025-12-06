@@ -13,14 +13,14 @@ import java.net.Socket;
 
 import static tetris.Config.*;
 
-public class LocalTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
+public class LocalTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
     private Socket board1Socket;
     private Socket board2Socket;
     private BoardsInputManager board1InputManager;
     private BoardsInputManager board2InputManager;
     private long seed;
 
-    public LocalTwoPlayerTetrisPanel(MainPanel mainPanel) {
+    public LocalTwoPlayerTetrioPanel(MainPanel mainPanel) {
         super(mainPanel);
 
         addKeyListener(new KeyInputHandler());

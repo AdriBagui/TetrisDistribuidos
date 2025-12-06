@@ -46,6 +46,7 @@ public class TetrominoHolder {
     public boolean isLocked() { return locked; }
 
     public void draw(Graphics2D g2) {
+        g2.setColor(new Color(220, 220 , 220));
         g2.drawString("Hold:", x + CELL_SIZE, y + CELL_SIZE);
 
 
@@ -59,7 +60,7 @@ public class TetrominoHolder {
         }
 
         // Draw Border
-        g2.setColor(Color.WHITE);
+        g2.setColor(new Color(110, 110 , 110));
         g2.drawRect(x, y, TETROMINO_HOLDER_WIDTH, TETROMINO_HOLDER_HEIGHT);
     }
 }

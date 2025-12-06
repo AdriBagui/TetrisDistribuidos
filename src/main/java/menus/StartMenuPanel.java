@@ -4,60 +4,116 @@ import main.MainPanel;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-// Es el primer panel que se muestra, contiene los botones para jugar a todas las modalidades
 public class StartMenuPanel extends JPanel {
     private MainPanel mainPanel;
 
-    /**
-     * Creates the basic layout for the start menu panel
-     * @param mainPanel {@code MainPanel} to modify
-     */
     public StartMenuPanel(MainPanel mainPanel) {
         super();
-
         this.mainPanel = mainPanel;
 
-        // CONSTRAINTS FOR LAYOUT (Generados por Eclipse WindowsBuilder)
+        setOpaque(false);
+
+        // --- LAYOUT SETUP ---
+        // We now have 3 rows:
+        // Row 0: "TETRIS DISTRIBUIDOS" (Title)
+        // Row 1: "LOCAL" / "ONLINE" (Sub-headers)
+        // Row 2: Buttons
         GridBagLayout gbl_startMenu = new GridBagLayout();
-        gbl_startMenu.columnWidths = new int[] {0};
-        gbl_startMenu.rowHeights = new int[] {0};
+        gbl_startMenu.columnWidths = new int[] {0, 0};
+        gbl_startMenu.rowHeights = new int[] {0, 0, 0}; // 3 Rows
         gbl_startMenu.columnWeights = new double[]{1.0, 1.0};
-        gbl_startMenu.rowWeights = new double[]{0.0, 1.0};
+        gbl_startMenu.rowWeights = new double[]{0.8, 0.0, 1.0}; // Row 0 gets some space
         setLayout(gbl_startMenu);
 
-        // Título de la sección izquierda para jugar local
+        // --- 1. MAIN TITLE ---
+        // We use a custom label (defined below) for the shadow effect
+        ShadowLabel lblTitle = new ShadowLabel("TETRIS DISTRIBUIDOS");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 48)); // Large Font
+        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+
+        GridBagConstraints gbc_title = new GridBagConstraints();
+        gbc_title.gridwidth = 2; // Span across both columns
+        gbc_title.insets = new Insets(30, 0, 10, 0); // Padding top/bottom
+        gbc_title.fill = GridBagConstraints.HORIZONTAL;
+        gbc_title.gridx = 0;
+        gbc_title.gridy = 0; // Top row
+        add(lblTitle, gbc_title);
+
+        // --- 2. SUB-HEADERS (Local / Online) ---
+        Font subHeaderFont = new Font("Segoe UI", Font.BOLD, 24);
+        Color subHeaderColor = new Color(220, 220, 220); // Light gray
+
         JLabel lblLocal = new JLabel("LOCAL");
-        lblLocal.setFont(new Font("Arial", Font.PLAIN, 30));
+        lblLocal.setFont(subHeaderFont);
+        lblLocal.setForeground(subHeaderColor);
         lblLocal.setHorizontalAlignment(SwingConstants.CENTER);
+
         GridBagConstraints gbc_lblLocal = new GridBagConstraints();
-        gbc_lblLocal.ipady = 50;
-        gbc_lblLocal.ipadx = 50;
+        gbc_lblLocal.insets = new Insets(10, 0, 10, 0);
         gbc_lblLocal.fill = GridBagConstraints.HORIZONTAL;
-        gbc_lblLocal.insets = new Insets(25, 0, 5, 5);
         gbc_lblLocal.gridx = 0;
-        gbc_lblLocal.gridy = 0;
+        gbc_lblLocal.gridy = 1; // Second row
         add(lblLocal, gbc_lblLocal);
 
-        // Título de la sección derecha para jugar online
         JLabel lblOnline = new JLabel("ONLINE");
-        lblOnline.setFont(new Font("Arial", Font.PLAIN, 30));
+        lblOnline.setFont(subHeaderFont);
+        lblOnline.setForeground(subHeaderColor);
         lblOnline.setHorizontalAlignment(SwingConstants.CENTER);
+
         GridBagConstraints gbc_lblOnline = new GridBagConstraints();
-        gbc_lblOnline.ipady = 50;
-        gbc_lblOnline.ipadx = 50;
-        gbc_lblOnline.fill = GridBagConstraints.BOTH;
-        gbc_lblOnline.insets = new Insets(25, 0, 5, 0);
+        gbc_lblOnline.insets = new Insets(10, 0, 10, 0);
+        gbc_lblOnline.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblOnline.gridx = 1;
-        gbc_lblOnline.gridy = 0;
+        gbc_lblOnline.gridy = 1; // Second row
         add(lblOnline, gbc_lblOnline);
 
-        // Panel que contiene los botones para jugar local
-        StartMenuLocalButtonsPanel localButtons = new StartMenuLocalButtonsPanel(mainPanel, this);
+        // --- 3. BUTTON PANELS ---
 
-        // Panel que contiene los botones para jugar online
+        // Pass 'this' as the StartMenuPanel reference
+        StartMenuLocalButtonsPanel localButtons = new StartMenuLocalButtonsPanel(mainPanel, this);
+        GridBagConstraints gbc_localButtons = new GridBagConstraints();
+        gbc_localButtons.fill = GridBagConstraints.BOTH;
+        gbc_localButtons.gridx = 0;
+        gbc_localButtons.gridy = 2; // Third row
+        add(localButtons, gbc_localButtons);
+
         StartMenuOnlineButtonsPanel onlineButtons = new StartMenuOnlineButtonsPanel(mainPanel, this);
+        GridBagConstraints gbc_onlineButtons = new GridBagConstraints();
+        gbc_onlineButtons.fill = GridBagConstraints.BOTH;
+        gbc_onlineButtons.gridx = 1;
+        gbc_onlineButtons.gridy = 2; // Third row
+        add(onlineButtons, gbc_onlineButtons);
+    }
+
+    /**
+     * Internal helper class to create text with a drop-shadow.
+     * This makes the text readable regardless of the background image colors.
+     */
+    private class ShadowLabel extends JLabel {
+        public ShadowLabel(String text) {
+            super(text);
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            Graphics2D g2 = (Graphics2D) g;
+            g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+            String text = getText();
+            FontMetrics metrics = g2.getFontMetrics(getFont());
+            int x = (getWidth() - metrics.stringWidth(text)) / 2;
+            int y = ((getHeight() - metrics.getHeight()) / 2) + metrics.getAscent();
+
+            g2.setFont(getFont());
+
+            // 1. Draw Shadow (Black, offset by 3 pixels)
+            g2.setColor(new Color(0, 0, 0, 180));
+            g2.drawString(text, x + 3, y + 3);
+
+            // 2. Draw Main Text (White)
+            g2.setColor(Color.WHITE);
+            g2.drawString(text, x, y);
+        }
     }
 }

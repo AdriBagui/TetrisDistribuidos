@@ -1,13 +1,15 @@
 package main;
 
 import menus.StartMenuPanel;
-import tetris.tetrio.panels.OnlineTwoPlayerTetrisPanel;
-import tetris.tetrio.panels.LocalTwoPlayerTetrisPanel;
+import tetris.tetrio.panels.OnlineTwoPlayerTetrioPanel;
+import tetris.tetrio.panels.LocalTwoPlayerTetrioPanel;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -23,9 +25,11 @@ public class MainPanel extends JPanel {
     private static final String ONLINE_TETRIS_PANEL = "2";
 
     private StartMenuPanel startMenuPanel;
-    private LocalTwoPlayerTetrisPanel localTwoPlayerTetrisPanel;
-    private OnlineTwoPlayerTetrisPanel onlineTwoPlayerTetrisPanel;
+    private LocalTwoPlayerTetrioPanel localTwoPlayerTetrioPanel;
+    private OnlineTwoPlayerTetrioPanel onlineTwoPlayerTetrioPanel;
     private CardLayout cardLayout;
+
+    private Image imagenFondo;
 
     public MainPanel() {
         super();
@@ -38,13 +42,23 @@ public class MainPanel extends JPanel {
         // Crear los paneles para que estén cargados en memoria
         startMenuPanel = new StartMenuPanel(this);
         // TODO: Hay que añadir más menús para crear sala y conectarse a sala (igual son el mismo panel)
-        localTwoPlayerTetrisPanel = new LocalTwoPlayerTetrisPanel(this);
-        onlineTwoPlayerTetrisPanel = new OnlineTwoPlayerTetrisPanel(this);
+        localTwoPlayerTetrioPanel = new LocalTwoPlayerTetrioPanel(this);
+        onlineTwoPlayerTetrioPanel = new OnlineTwoPlayerTetrioPanel(this);
 
         // Añadirlos al panel principal para poder cambiar entre ellos con el CardLayout
         add(startMenuPanel, START_MENU_PANEL);
-        add(localTwoPlayerTetrisPanel, LOCAL_TETRIS_PANEL);
-        add(onlineTwoPlayerTetrisPanel, ONLINE_TETRIS_PANEL);
+        add(localTwoPlayerTetrioPanel, LOCAL_TETRIS_PANEL);
+        add(onlineTwoPlayerTetrioPanel, ONLINE_TETRIS_PANEL);
+
+        // Cargar imagen de fonde
+        try {
+            // Asegúrate de que la ruta de la imagen es correcta.
+            // Es mejor usar ImageIO.read para evitar problemas de ruta.
+            imagenFondo = ImageIO.read(new File("src/main/resources/images/background.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("No se pudo cargar la imagen: " + "src/main/resources/images/background.png");
+        }
 
         // Mostrar el menú principal
         cardLayout.show(this, START_MENU_PANEL);
@@ -58,7 +72,7 @@ public class MainPanel extends JPanel {
     // Muestra el panel de partida local y empieza el juego
     public void start1vs1LocalGame() {
         cardLayout.show(this, LOCAL_TETRIS_PANEL);
-        localTwoPlayerTetrisPanel.connectPlayersAndStartGame();
+        localTwoPlayerTetrioPanel.connectPlayersAndStartGame();
     }
 
     // PRE: Requiere de que se haya creado un socket para la partida
@@ -66,7 +80,7 @@ public class MainPanel extends JPanel {
     // Si no empiezo las partidas aquí cambiar el nombre de los métodos a show).
     public void connectToOnlineGame() {
         cardLayout.show(this, ONLINE_TETRIS_PANEL);
-        onlineTwoPlayerTetrisPanel.connectPlayersAndStartGame();
+        onlineTwoPlayerTetrioPanel.connectPlayersAndStartGame();
     }
 
     // Espera a que otro cliente se conecte a él y cuando se conecta empieza la partida
@@ -84,15 +98,15 @@ public class MainPanel extends JPanel {
         try(ServerSocket server = new ServerSocket(SERVER_PORT)){
             try {
                 Socket client = server.accept();
-                onlineTwoPlayerTetrisPanel.setSocket(client);
+                onlineTwoPlayerTetrioPanel.setSocket(client);
                 // Creating and sending seed
                 long seed = System.currentTimeMillis();
-                onlineTwoPlayerTetrisPanel.setSeed(System.currentTimeMillis());
+                onlineTwoPlayerTetrioPanel.setSeed(System.currentTimeMillis());
                 DataOutputStream dos = new DataOutputStream(client.getOutputStream());
                 dos.writeLong(seed);
 
                 cardLayout.show(this, ONLINE_TETRIS_PANEL);
-                onlineTwoPlayerTetrisPanel.connectPlayersAndStartGame();
+                onlineTwoPlayerTetrioPanel.connectPlayersAndStartGame();
             }
             catch(IOException ioe) { ioe.printStackTrace(); }
         }
@@ -103,13 +117,13 @@ public class MainPanel extends JPanel {
     public void startOnlineGameAsClient() {
         try {
             Socket host = new Socket(SERVER_IP, SERVER_PORT);
-            onlineTwoPlayerTetrisPanel.setSocket(host);
+            onlineTwoPlayerTetrioPanel.setSocket(host);
             // Reading and setting the seed
             DataInputStream dis = new DataInputStream(host.getInputStream());
-            onlineTwoPlayerTetrisPanel.setSeed(dis.readLong());
+            onlineTwoPlayerTetrioPanel.setSeed(dis.readLong());
 
             cardLayout.show(this, ONLINE_TETRIS_PANEL);
-            onlineTwoPlayerTetrisPanel.connectPlayersAndStartGame();
+            onlineTwoPlayerTetrioPanel.connectPlayersAndStartGame();
         }
         catch (IOException ioe){
             ioe.printStackTrace();
@@ -118,5 +132,21 @@ public class MainPanel extends JPanel {
 
     public void endGame() {
         cardLayout.show(this, START_MENU_PANEL);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        if (imagenFondo != null) {
+            // Convert to Graphics2D for better control
+            Graphics2D g2d = (Graphics2D) g;
+
+            // Optional: This makes the image look smoother when stretched
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+            // Draw the image stretching it to the current width and height of the panel
+            g2d.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
+        }
     }
 }

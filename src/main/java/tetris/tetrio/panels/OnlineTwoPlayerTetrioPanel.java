@@ -16,13 +16,13 @@ import java.net.Socket;
 import static tetris.Config.*;
 import static tetris.Config.BOARD2_Y;
 
-public class OnlineTwoPlayerTetrisPanel extends TwoPlayerTetrisPanel {
+public class OnlineTwoPlayerTetrioPanel extends TwoPlayerTetrioPanel {
     private ServerConnector serverConnector;
     private Socket boardsSocket;
     private BoardsInputManager boardsInputManager;
     private long seed;
 
-    public OnlineTwoPlayerTetrisPanel(MainPanel mainPanel) {
+    public OnlineTwoPlayerTetrioPanel(MainPanel mainPanel) {
         super(mainPanel);
 
         serverConnector = null;

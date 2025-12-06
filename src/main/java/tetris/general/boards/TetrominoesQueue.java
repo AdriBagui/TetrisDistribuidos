@@ -37,6 +37,7 @@ public class TetrominoesQueue {
     public void draw(Graphics2D g2) {
         int queueHeight = CELL_SIZE * (tetrominoesQueue.length * 3 + 2);
 
+        g2.setColor(new Color(220, 220, 220));
         g2.drawString("Next:", x + CELL_SIZE, y + CELL_SIZE);
 
         for (int i = 0; i < tetrominoesQueue.length; i++) {
@@ -44,7 +45,7 @@ public class TetrominoesQueue {
         }
 
         // Draw Border
-        g2.setColor(Color.WHITE);
+        g2.setColor(new Color(110, 110 , 110));
         g2.drawRect(x, y, TETROMINOES_QUEUE_WIDTH, queueHeight);
     }
 

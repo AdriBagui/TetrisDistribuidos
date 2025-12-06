@@ -25,7 +25,14 @@ public abstract class Board {
     // END OF GAME DETECTION
     protected boolean isAlive;
 
-    public Board(int x, int y, BoardGrid grid, long seed) {
+    /**
+     * Creates the board to play tetris
+     * @param x x coordinate for the top left corner
+     * @param y y coordinate for the top left corner
+     * @param grid Container where the game is played
+     * @param seed Seed for the tetromino's order
+     */
+    public Board(int x, int y, BoardGrid grid,  long seed) {
         this.x = x;
         this.y = y;
 
@@ -72,12 +79,15 @@ public abstract class Board {
         if (fallingTetromino != null) drawFallingTetromino(g2);
 
         // Draw Level
-        g2.setColor(Color.WHITE);
-        g2.drawString("Level: " + level, x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 20);
+        g2.setColor(new Color(220, 220 , 220));
+        g2.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        g2.drawString("Level: " + level, TETROMINO_HOLDER_WIDTH + x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
 
         // Draw Score
-        g2.setColor(Color.WHITE);
-        g2.drawString("Score: " + score, x + 50, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 20);
+        g2.setColor(new Color(220, 220 , 220));
+        g2.drawString("Score: " + score, TETROMINO_HOLDER_WIDTH + x + 120, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
+
+        g2.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
         // Draw Held Piece
         tetrominoHolder.draw(g2);
