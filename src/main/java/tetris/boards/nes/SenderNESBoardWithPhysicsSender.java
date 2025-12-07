@@ -1,11 +1,11 @@
 package tetris.boards.nes;
 
-import tetris.boards.BoardOutputHandler;
+import tetris.boards.SenderBoardOutputHandler;
 
-public class NESBoardWithPhysicsSender extends NESBoardWithPhysics {
-    protected BoardOutputHandler updatesOutputHandler;
+public class SenderNESBoardWithPhysicsSender extends NESBoardWithPhysics {
+    protected SenderBoardOutputHandler updatesOutputHandler;
 
-    public NESBoardWithPhysicsSender(int x, int y, long seed, BoardOutputHandler updatesOutputHandler) {
+    public SenderNESBoardWithPhysicsSender(int x, int y, long seed, SenderBoardOutputHandler updatesOutputHandler) {
         super(x, y, seed);
 
         this.updatesOutputHandler = updatesOutputHandler;

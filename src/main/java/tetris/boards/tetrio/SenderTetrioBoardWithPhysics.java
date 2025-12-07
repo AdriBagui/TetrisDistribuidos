@@ -1,15 +1,13 @@
 package tetris.boards.tetrio;
 
-import tetris.boards.BoardOutputHandler;
-
-import java.io.IOException;
+import tetris.boards.SenderBoardOutputHandler;
 
 import static tetris.Config.BOARD_COLUMNS;
 
-public class TetrioBoardWithPhysicsSender extends TetrioBoardWithPhysics {
-    protected BoardOutputHandler garbageAndUpdatesOutputHandler;
+public class SenderTetrioBoardWithPhysics extends TetrioBoardWithPhysics {
+    protected SenderBoardOutputHandler garbageAndUpdatesOutputHandler;
 
-    public TetrioBoardWithPhysicsSender(int x, int y, long seed, BoardOutputHandler garbageAndUpdatesOutputHandler) {
+    public SenderTetrioBoardWithPhysics(int x, int y, long seed, SenderBoardOutputHandler garbageAndUpdatesOutputHandler) {
         super(x, y, seed);
 
         this.garbageAndUpdatesOutputHandler = garbageAndUpdatesOutputHandler;

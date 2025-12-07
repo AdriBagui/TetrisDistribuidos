@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ReceiverTetrioBoardInputHandler extends ReceiverBoardInputHandler {
-    private final TetrioBoardWithPhysicsSender garbageReceiverBoard;
+    private final SenderTetrioBoardWithPhysics garbageReceiverBoard;
     private final ReceiverTetrioBoard updatesReceiverTetrioBoard;
 
-    public ReceiverTetrioBoardInputHandler(InputStream boardsInputReceiver, TetrioBoardWithPhysicsSender garbageReceiverBoard, ReceiverTetrioBoard updatesReceiverTetrioBoard) {
+    public ReceiverTetrioBoardInputHandler(InputStream boardsInputReceiver, SenderTetrioBoardWithPhysics garbageReceiverBoard, ReceiverTetrioBoard updatesReceiverTetrioBoard) {
         super(boardsInputReceiver, updatesReceiverTetrioBoard);
         this.updatesReceiverTetrioBoard = updatesReceiverTetrioBoard;
         this.garbageReceiverBoard = garbageReceiverBoard;
