@@ -3,6 +3,7 @@ package distributedServices.server;
 import distributedServices.ConnectionMode;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Random;
@@ -13,15 +14,13 @@ public class MatchmakingHandler implements Runnable{
     Socket client;
     QuickSocketHandler socketHandler;
     QuickSocketHandler socketHandlerNES;
-    private ConcurrentHashMap<Integer, Socket> lobbies;
-    private static final int MAX_NUMBER_OF_ROOMS = 1000;
+    LobbiesHandler lobbiesHandler;
 
-
-    public MatchmakingHandler(Socket client, QuickSocketHandler socketHandler, QuickSocketHandler socketHandlerNES, ConcurrentHashMap<Integer, Socket> lobbies){
+    public MatchmakingHandler(Socket client, QuickSocketHandler socketHandler, QuickSocketHandler socketHandlerNES, LobbiesHandler lobbiesHandler){
         this.client = client;
         this.socketHandler = socketHandler;
         this.socketHandlerNES = socketHandlerNES;
-        this.lobbies = lobbies;
+        this.lobbiesHandler = lobbiesHandler;
     }
 
     /**
@@ -36,31 +35,16 @@ public class MatchmakingHandler implements Runnable{
             gameModeSelected = ConnectionMode.values()[dis.readInt()];
             switch (gameModeSelected) {
                 case QUICK_MATCH_MODE:
-                    if(!socketHandler.isThereAPlayingWaiting())
-                        socketHandler.setQuickPlayPlayer(client);
-                    else {
-                        new Thread(new GameCommunicationHandler(client, socketHandler.getAndRemoveQuickPlayPlayer())).start();
-                    }
+                    quickMatchSearch();
                     break;
                 case QUICK_MATCH_NES_MODE:
-                    if(!socketHandlerNES.isThereAPlayingWaiting())
-                        socketHandlerNES.setQuickPlayPlayer(client);
-                    else {
-                        new Thread(new GameCommunicationHandler(client, socketHandlerNES.getAndRemoveQuickPlayPlayer())).start();
-                    }
+                    quickMatchNESSearch();
+                    break;
                 case HOST_GAME_MODE:
-                    synchronized (lobbies){
-                        Random random = new Random();
-                        int roomId = random.nextInt(0, MAX_NUMBER_OF_ROOMS);
-                        while(lobbies.containsKey(roomId)){
-                            roomId = random.nextInt(0, MAX_NUMBER_OF_ROOMS);
-                        }
-                        lobbies.put(roomId,client);
-                    };
                     hostGameSearch();
                     break;
                 case JOIN_GAME_MODE:
-                    joinGameSearch();
+                    joinLobbySearch(dis);
                     break;
             }
 
@@ -69,11 +53,44 @@ public class MatchmakingHandler implements Runnable{
         }
     }
 
-    private void hostGameSearch() {
-
+    private void quickMatchSearch() {
+        if(!socketHandler.isThereAPlayingWaiting())
+            socketHandler.setQuickPlayPlayer(client);
+        else {
+            new Thread(new GameCommunicationHandler(client, socketHandler.getAndRemoveQuickPlayPlayer())).start();
+        }
     }
 
-    private void joinGameSearch() {
+    private void quickMatchNESSearch() {
+        if(!socketHandlerNES.isThereAPlayingWaiting())
+            socketHandlerNES.setQuickPlayPlayer(client);
+        else {
+            new Thread(new GameCommunicationHandler(client, socketHandlerNES.getAndRemoveQuickPlayPlayer())).start();
+        }
+    }
 
+    private void hostGameSearch() {
+        int roomId = lobbiesHandler.createLobby(client);
+        try{
+            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+            dos.writeInt(roomId);
+            dos.flush();
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
+    }
+
+    private void joinLobbySearch(DataInputStream dis) {
+        try{
+            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+            int roomId = dis.readInt();
+            if(lobbiesHandler.containsLobby(roomId)){
+                dos.writeBoolean(true);
+                dos.flush();
+                new Thread(new GameCommunicationHandler(client, lobbiesHandler.getAndRemoveLobby(roomId))).start();
+            } else dos.writeBoolean(false);
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
     }
 }

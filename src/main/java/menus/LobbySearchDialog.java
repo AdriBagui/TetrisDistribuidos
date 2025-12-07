@@ -1,12 +1,16 @@
 package menus;
 
+import com.sun.tools.javac.Main;
+import distributedServices.ConnectionMode;
+import main.MainPanel;
+
 import javax.swing.*;
 import java.awt.*;
 
-public class CreateRoomDialog extends JDialog {
-
+public class LobbySearchDialog extends JDialog {
+    private MainPanel mainPanel;
+    private int roomId;
     private JTextField roomNumberField;
-    private int enteredRoomNumber = -1;
     private static final Color BACKGROUND_COLOR = new Color(0, 0, 0, 220);
     private static final Color TEXT_COLOR = Color.WHITE;
     private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 16);
@@ -15,21 +19,22 @@ public class CreateRoomDialog extends JDialog {
 
     /**
      * Creates a RoomDialog to create a room
-     * @param owner {@code JFrame} owner of the dialog
+     * @param mainPanel {@code JFrame} owner of the dialog
      */
-    public CreateRoomDialog(JFrame owner) {
-        // Modal para bloquear la ventana principal hasta que se obtenga el número.
-        super(owner, "Host Game - Enter Room ID", true);
+    public LobbySearchDialog(MainPanel mainPanel) {
+        // Locks the dialog
+        super((JFrame) SwingUtilities.getWindowAncestor(mainPanel),"Lobby Search", true);
 
-        // --- 1. Window config ---
+        this.mainPanel = mainPanel;
+
         setLayout(new BorderLayout());
         setSize(450, 250);
-        setLocationRelativeTo(owner);
+        setLocationRelativeTo(mainPanel);
         setResizable(false);
 
-        // --- 2. Main panel ---
-        JPanel mainPanel = createInputView();
-        add(mainPanel, BorderLayout.CENTER);
+        // Main panel
+        JPanel panel = createInputView();
+        add(panel, BorderLayout.CENTER);
     }
 
     /**
@@ -71,13 +76,12 @@ public class CreateRoomDialog extends JDialog {
         buttonPanel.setOpaque(false);
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 0));
 
-        JButton createButton = new ModernButton("CREATE ROOM");
+        JButton createButton = new ModernButton("JOIN ROOM");
         JButton cancelButton = new ModernButton("CANCEL");
 
         // Listeners
-        createButton.addActionListener(e -> attemptRoomCreation());
+        createButton.addActionListener(e -> attemptToJoinRoom());
         cancelButton.addActionListener(e -> {
-            enteredRoomNumber = -1;
             dispose();
         });
 
@@ -91,15 +95,15 @@ public class CreateRoomDialog extends JDialog {
     }
 
     /**
-     * Attempts the creation of a room
+     * Attempts to join the room in the TextField
      */
-    private void attemptRoomCreation() {
+    private void attemptToJoinRoom() {
         String text = roomNumberField.getText().trim();
 
         try {
             int number = Integer.parseInt(text);
 
-            if (number <= 0) {
+            if (number < 0) {
                 CustomMessageDialog.showMessage(this,
                         "ERROR: Room ID must be a positive number.",
                         "Input Error",
@@ -108,8 +112,7 @@ public class CreateRoomDialog extends JDialog {
                 return;
             }
 
-            // 1. Saves room number
-            enteredRoomNumber = number;
+            roomId = number;
             dispose();
 
         } catch (NumberFormatException ex) {
@@ -121,7 +124,7 @@ public class CreateRoomDialog extends JDialog {
         }
     }
 
-    public int getRoomNumber() {
-        return enteredRoomNumber;
+    public int getRoomId() {
+        return roomId;
     }
 }

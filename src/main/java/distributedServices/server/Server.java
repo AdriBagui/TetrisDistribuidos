@@ -9,9 +9,8 @@ import java.util.concurrent.Executors;
 
 public class Server {
     public static final String SERVER_IP = "localhost";
-    //public static final String SERVER_IP = "88.13.205.169";
-    public static final int SERVER_PORT = 8888;
-    private static ConcurrentHashMap<Integer, Socket> lobbies = new ConcurrentHashMap<>();
+    // public static final String SERVER_IP = "88.13.205.169";
+    public static final int SERVER_PORT = 7777;
 
     /**
      * Creates the server that connects players.
@@ -21,12 +20,13 @@ public class Server {
         ExecutorService pool = Executors.newCachedThreadPool();
         QuickSocketHandler socketHandler = new QuickSocketHandler();
         QuickSocketHandler socketHandlerNES = new QuickSocketHandler();
+        LobbiesHandler lobbiesHandler = new LobbiesHandler();
 
         try (ServerSocket server = new ServerSocket(SERVER_PORT);) {
             while (true) {
                 try {
                     Socket client = server.accept();
-                    pool.execute(new MatchmakingHandler(client, socketHandler, socketHandlerNES, lobbies));
+                    pool.execute(new MatchmakingHandler(client, socketHandler, socketHandlerNES, lobbiesHandler));
                 }
                 catch (IOException ioe) { ioe.printStackTrace(); }
             }

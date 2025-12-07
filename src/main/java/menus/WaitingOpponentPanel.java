@@ -9,17 +9,16 @@ import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ConnectException;
+import java.net.ContentHandler;
 import java.net.Socket;
 
 public class WaitingOpponentPanel extends JPanel {
     private MainPanel mainPanel;
-    private int roomId = -1;
-    private boolean showRoomId = false;
+    JLabel roomIdLabel;
     private static final Color BACKGROUND_COLOR = new Color(22, 22, 22, 255);
     private static final Color TEXT_COLOR = Color.WHITE;
     private static final Font WAITING_FONT = new Font("Segoe UI", Font.BOLD, 18);
-    private static final Font ROOM_ID_FONT = new Font("Segoe UI", Font.PLAIN, 14);
+    private static final Font ROOM_ID_FONT = new Font("Segoe UI", Font.BOLD, 20);
 
 
     /**
@@ -34,7 +33,7 @@ public class WaitingOpponentPanel extends JPanel {
 
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // 1. We use a spinner to give some sense of time passing
+        // We use a spinner to give some sense of time passing
         JProgressBar spinner = new JProgressBar();
         spinner.setIndeterminate(true);
         spinner.setPreferredSize(new Dimension(80, 20));
@@ -46,7 +45,7 @@ public class WaitingOpponentPanel extends JPanel {
         gbc.gridy = 0;
         this.add(spinner, gbc);
 
-        // 2. Waiting message
+        // Waiting message
         JLabel waitingLabel = new JLabel("Waiting for an opponent...");
         waitingLabel.setFont(WAITING_FONT);
         waitingLabel.setForeground(TEXT_COLOR);
@@ -54,21 +53,32 @@ public class WaitingOpponentPanel extends JPanel {
         gbc.gridy = 1;
         this.add(waitingLabel, gbc);
 
-        // 3. Show room ID
-        if(showRoomId){
-            JLabel roomIDLabel = new JLabel("Room ID: " + roomId);
-            roomIDLabel.setFont(ROOM_ID_FONT);
-            roomIDLabel.setForeground(TEXT_COLOR);
+        roomIdLabel = new JLabel();
+        roomIdLabel.setFont(ROOM_ID_FONT);
+        roomIdLabel.setForeground(TEXT_COLOR);
+        roomIdLabel.setVisible(false);
 
-            gbc.gridy = 2;
-            this.add(roomIDLabel, gbc);
+        gbc.gridy = 2;
+        this.add(roomIdLabel, gbc);
+    }
+
+    /**
+     * Connects to the server and starts an online game using the introduced game mode
+     */
+    public void connect(ConnectionMode gameMode){
+        switch (gameMode){
+            case QUICK_MATCH_MODE -> quickModeConnection(ConnectionMode.QUICK_MATCH_MODE);
+            case QUICK_MATCH_NES_MODE -> quickModeConnection(ConnectionMode.QUICK_MATCH_NES_MODE);
+            case HOST_GAME_MODE -> hostConnection();
+            case JOIN_GAME_MODE -> joinConnection();
         }
     }
 
     /**
-     * Connects to the server and starts an online game
+     * Connects to the server using the quick mode logic
+     * @param gameMode Game mode used for the game
      */
-    public void connect(ConnectionMode gameMode){
+    private void quickModeConnection(ConnectionMode gameMode){
         new Thread(){
             @Override
             public void run() {
@@ -96,5 +106,70 @@ public class WaitingOpponentPanel extends JPanel {
             }
         }.start();
     }
-    
+
+    /**
+     * Connects to the server using the host mode logic
+     */
+    private void hostConnection(){
+        new Thread(){
+            @Override
+            public void run() {
+                ServerConnector serverConnector = new ServerConnector();
+                Socket boardsSocket = serverConnector.getSocket();
+                ConnectionMode gameMode = ConnectionMode.HOST_GAME_MODE;
+                long seed;
+                try{
+                    DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
+                    DataOutputStream dos = new DataOutputStream(boardsSocket.getOutputStream());
+                    dos.writeInt(gameMode.ordinal());
+                    dos.flush();
+                    roomIdLabel.setText("Room ID: " + dis.readInt());
+                    roomIdLabel.setVisible(true);
+                    seed = dis.readLong(); // Server sends the seed when a player is found
+                    mainPanel.startOnlineGame(seed,boardsSocket);
+                } catch (IOException ioe){
+                    ioe.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    /**
+     * Connects to the server using the join mode logic
+     */
+    private void joinConnection() {
+        new Thread(){
+            @Override
+            public void run() {
+                LobbySearchDialog lobbySearchDialog = new LobbySearchDialog(mainPanel);
+                lobbySearchDialog.setVisible(true);
+                ServerConnector serverConnector = new ServerConnector();
+                Socket boardsSocket = serverConnector.getSocket();
+                ConnectionMode gameMode = ConnectionMode.JOIN_GAME_MODE;
+                long seed;
+                try{
+                    DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
+                    DataOutputStream dos = new DataOutputStream(boardsSocket.getOutputStream());
+                    dos.writeInt(gameMode.ordinal());
+                    dos.flush();
+                    // Send room ID
+                    dos.writeInt(lobbySearchDialog.getRoomId());
+                    dos.flush();
+                    // Read if it exists
+                    boolean exists = dis.readBoolean();
+                    if(exists){
+                        seed = dis.readLong(); // Server sends the seed when a player is found
+                        mainPanel.startOnlineGame(seed,boardsSocket);
+                    } else {
+                        CustomMessageDialog.showMessage(mainPanel,
+                                "WARNING: The room doesn't exist.",
+                                "No room found",
+                                JOptionPane.WARNING_MESSAGE);
+                    }
+                } catch (IOException ioe){
+                    ioe.printStackTrace();
+                }
+            }
+        }.start();
+    }
 }
