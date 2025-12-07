@@ -92,7 +92,7 @@ public class Gravity {
      * Temporarily increases gravity for a soft drop effect.
      */
     public void softDrop() {
-        appliedGravity = gravity * SOFT_DROP_FACTOR;
+        appliedGravity = gravity + SOFT_DROP_FACTOR_GRAVITY_INCREMENT;
         appliedLockDelayFrames = lockDelayFrames / SOFT_DROP_DELAY_QUOTIENT;
     }
 

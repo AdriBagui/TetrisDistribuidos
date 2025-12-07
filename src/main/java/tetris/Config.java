@@ -32,13 +32,13 @@ public class Config {
     public static final int NES_TETROMINOES_QUEUE_SIZE = 1;
 
     // GRAVITY CONFIGURATION
-    public static final int SOFT_DROP_FACTOR = 10;
-    public static final int SOFT_DROP_DELAY_QUOTIENT = SOFT_DROP_FACTOR/6;
+    public static final double SOFT_DROP_FACTOR_GRAVITY_INCREMENT = 0.2;
+    public static final int SOFT_DROP_DELAY_QUOTIENT = 2;
     public static final int NES_FRAMES_PER_CELL_INITIAL_GRAVITY = 48;
     public static final double NES_INITIAL_GRAVITY = ((1./ NES_FRAMES_PER_CELL_INITIAL_GRAVITY)*NES_FPS)/ FPS;
     public static final double TETRIO_INITIAL_GRAVITY = 0.02;
     public static final int TETRIO_LOCK_DELAY_FRAMES = (int) FPS/2;
-    public static final int NES_LOCK_DELAY_FRAMES = 2;
+    public static final int NES_LOCK_DELAY_FRAMES = 3;
 
     // INPUT CONFIGURATION
     public static final int AUTOMATIC_REPEAT_RATE_FRAMES = ((int) FPS) / 30;
