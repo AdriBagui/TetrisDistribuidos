@@ -32,6 +32,7 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
 
         if (!boards[0].isAlive() || !boards[1].isAlive()) {
             gameOver = true;
+            receiverBoardInputHandler.interrupt();
         }
     }
 

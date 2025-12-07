@@ -35,6 +35,8 @@ public abstract class TetrisPanel extends JPanel {
     public abstract void update();
     protected abstract void initializeBoards();
 
+    public boolean isGameOver() { return gameOver; }
+
     public void startGame() {
         resetGame();
         requestFocusInWindow();

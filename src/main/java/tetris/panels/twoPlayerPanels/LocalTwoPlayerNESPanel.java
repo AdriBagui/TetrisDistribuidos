@@ -13,6 +13,7 @@ public class LocalTwoPlayerNESPanel extends LocalTwoPlayersPanel {
 
     @Override
     protected void initializeBoards() {
+        long seed = System.currentTimeMillis();
         boards[0] = new NESBoardWithPhysics(BOARD1_X, BOARD1_Y, seed);
         boards[1] = new NESBoardWithPhysics(BOARD2_X, BOARD2_Y, seed);
     }
