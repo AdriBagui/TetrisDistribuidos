@@ -1,6 +1,12 @@
 package tetris;
 
 public class Config {
+    // GAME MODE IDENTIFIERS
+    public final static int QUICK_MATCH_MODE = 1;
+    public final static int QUICK_MATCH_NES_MODE = 2;
+    public final static int HOST_GAME_MODE = 3;
+    public final static int JOIN_GAME_MODE = 4;
+
     // FACTS
     public static final int NUMBER_TETROMINOES = 7;
     public static final int I = 0;

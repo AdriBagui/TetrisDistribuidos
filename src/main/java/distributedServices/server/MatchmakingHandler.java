@@ -6,12 +6,10 @@ import java.net.Socket;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static tetris.Config.*;
+
 public class MatchmakingHandler implements Runnable{
     Socket client;
-    private final static int QUICK_MATCH_MODE = 1;
-    private final static int QUICK_MATCH_NES_MODE = 2;
-    private final static int HOST_GAME_MODE = 3;
-    private final static int JOIN_GAME_MODE = 4;
     private Vector<Socket> quickPlayPlayers;
     private Vector<Socket> quickPlayNESPlayers;
     private ConcurrentHashMap<Integer, Socket> lobbies;
