@@ -4,6 +4,7 @@ import main.MainPanel;
 import tetris.boards.nes.NESBoardWithPhysics;
 import tetris.keyMaps.KeyMapFactory;
 
+import static main.MainPanel.*;
 import static tetris.Config.*;
 
 public class LocalTwoPlayerNESPanel extends LocalTwoPlayersPanel {

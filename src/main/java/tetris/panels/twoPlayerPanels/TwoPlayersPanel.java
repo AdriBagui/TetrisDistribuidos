@@ -7,9 +7,7 @@ import tetris.panels.TetrisPanel;
 import java.awt.*;
 import java.awt.event.KeyListener;
 
-import static tetris.Config.CELL_SIZE;
-import static tetris.Config.FRAME_PADDING;
-import static tetris.Config.PANEL_WIDTH;
+import static main.MainPanel.*;
 
 public abstract class TwoPlayersPanel extends TetrisPanel {
     public TwoPlayersPanel(MainPanel mainPanel, KeyListener keyListener) {

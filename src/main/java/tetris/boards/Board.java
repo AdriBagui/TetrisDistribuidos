@@ -1,15 +1,16 @@
 package tetris.boards;
 
 import tetris.boards.components.BoardGrid;
-import tetris.boards.components.TetrominoHolder;
 import tetris.boards.components.TetrominoesQueue;
 import tetris.tetrominoes.TetrominoShadow;
 import tetris.tetrominoes.Tetromino;
 import tetris.tetrominoes.generators.TetrominoesGenerator;
 import tetris.tetrominoes.generators.TetrominoesGeneratorFactory;
+import tetris.tetrominoes.generators.TetrominoesGeneratorType;
 
 import java.awt.*;
 
+import static main.MainPanel.*;
 import static tetris.Config.*;
 
 public abstract class Board {
@@ -23,8 +24,8 @@ public abstract class Board {
     protected TetrominoShadow fallingTetrominoShadow;
     // BOARD COMPONENTS
     protected final BoardGrid grid;
-    private int gridX;
-    private int gridY;
+    private final int gridX;
+    private final int gridY;
     protected final TetrominoesQueue tetrominoesQueue;
     // SCORING SYSTEM
     protected int score, totalClearedLines, level;
@@ -42,7 +43,8 @@ public abstract class Board {
      * @param tetrominoesQueueGeneratorType Type of tetrominoes generator to change randomness type.
      * @param seed Seed for the tetromino's order.
      */
-    public Board(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize, int tetrominoesQueueGeneratorType, long seed) {
+    public Board(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize,
+                 TetrominoesGeneratorType tetrominoesQueueGeneratorType, long seed) {
         this.x = x;
         this.y = y;
         gridX = x;
@@ -54,7 +56,7 @@ public abstract class Board {
 
         score = 0;
         totalClearedLines = 0;
-        level = 1;
+        level = 0;
 
         isAlive = true;
 
@@ -139,14 +141,14 @@ public abstract class Board {
     protected void setNextTetrominoAsFallingTetromino() {
         nextTetromino.setParentXY(grid.getX(), grid.getY());
         // The >> 1 shifts bits one to the right, equivalent to dividing by 2.
-        nextTetromino.setXY((BOARD_COLUMNS - nextTetromino.getWidth()) >> 1, 0);
+        nextTetromino.setXY((grid.getNumberOfColumns() - nextTetromino.getWidth()) >> 1, 0);
 
         fallingTetromino = nextTetromino;
         fallingTetrominoShadow = new TetrominoShadow(fallingTetromino);
     }
 
     /**
-     * Locks the falling tetromino into the grid grid and processes line clears.
+     * Locks the falling tetromino into the grid and processes line clears.
      * Updates score and level based on cleared lines.
      * @return the number of lines cleared.
      */
@@ -169,11 +171,11 @@ public abstract class Board {
                 break;
         }
 
-        if (level < (this.totalClearedLines / 10) + 1) {
+        totalClearedLines += linesCleared;
+
+        while (level < (totalClearedLines / 10)) {
             increaseLevel();
         }
-
-        this.totalClearedLines += linesCleared;
 
         nextTetromino = tetrominoesQueue.getNext();
 

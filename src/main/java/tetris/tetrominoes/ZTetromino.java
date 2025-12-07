@@ -33,7 +33,7 @@ public class ZTetromino extends Tetromino {
     }
 
     @Override
-    public int getType() { return Z; }
+    public TetrominoType getType() { return TetrominoType.Z; }
 
     @Override
     public int getWidth() {

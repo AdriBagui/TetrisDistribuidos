@@ -1,14 +1,16 @@
 package tetris.boards.physics;
 
 import tetris.boards.components.BoardGrid;
+import tetris.panels.TetrisPanel;
 import tetris.tetrominoes.Tetromino;
-
-import static tetris.Config.*;
+import tetris.boards.nes.NESConfig;
 
 public class Gravity {
+    public static final double SOFT_DROP_GRAVITY = (NESConfig.SOFT_DROP_GRAVITY_IN_NES_FPS *TetrisPanel.NES_FPS)/ TetrisPanel.FPS;
+
     private Tetromino fallingTetromino;
     private double decimalY;
-    private BoardGrid grid;
+    private final BoardGrid grid;
     private double gravity; // cells per frame
     private double appliedGravity;
     private double lockDelayFrames;
@@ -27,7 +29,7 @@ public class Gravity {
         this.grid = grid;
         this.gravity = gravity;
         this.appliedGravity = gravity;
-        this.lockDelayFrames = lockDelayFrames;  // approx 500ms
+        this.lockDelayFrames = lockDelayFrames;
         this.appliedLockDelayFrames = lockDelayFrames;
         delayUsed = 0;
     }
@@ -68,7 +70,8 @@ public class Gravity {
      * @return true if the lock delay has expired while touching the floor.
      */
     public boolean isLocked() {
-        boolean isLocked = delayUsed >= appliedLockDelayFrames;
+        boolean isLocked = (delayUsed >= appliedLockDelayFrames);
+        appliedLockDelayFrames = lockDelayFrames;
         return isLocked;
     }
 
@@ -77,7 +80,6 @@ public class Gravity {
      */
     public void resetLockDelay() {
         delayUsed = 0;
-        appliedLockDelayFrames = lockDelayFrames;
     }
 
     /**
@@ -85,23 +87,24 @@ public class Gravity {
      * @param increment the amount to add to the current gravity.
      */
     public void increaseGravity(double increment) {
-        this.gravity += gravity;
-        System.out.println(1/(gravity*FPS/NES_FPS)*NES_FPS);
+        double relativeIncrement = increment/gravity;
+        this.gravity += increment;
+        lockDelayFrames -= lockDelayFrames*(relativeIncrement/2);
     }
 
     /**
      * Temporarily increases gravity for a soft drop effect.
      */
     public void softDrop() {
-        appliedGravity = gravity + SOFT_DROP_FACTOR_GRAVITY_INCREMENT;
-        appliedLockDelayFrames = lockDelayFrames / SOFT_DROP_DELAY_QUOTIENT;
+        appliedGravity = Math.max(gravity*1.1, SOFT_DROP_GRAVITY); // The 1.2 multiplication our my own addition
+        appliedLockDelayFrames = lockDelayFrames * gravity/appliedGravity;
     }
 
     /**
      * Instantly moves the tetromino to the bottom and locks it.
      */
     public void hardDrop() {
-        appliedGravity = BOARD_ROWS + BOARD_SPAWN_ROWS;
+        appliedGravity = grid.getTotalNumberOfRows();
         appliedLockDelayFrames = 0;
     }
 

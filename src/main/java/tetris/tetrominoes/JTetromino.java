@@ -33,7 +33,7 @@ public class JTetromino extends Tetromino {
     }
 
     @Override
-    public int getType() { return J; }
+    public TetrominoType getType() { return TetrominoType.J; }
 
     @Override
     public int getWidth() {

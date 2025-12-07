@@ -9,8 +9,7 @@ import tetris.keyMaps.KeyMapFactory;
 
 import java.io.IOException;
 
-import static tetris.Config.*;
-import static tetris.Config.BOARD2_Y;
+import static main.MainPanel.*;
 
 public class OnlineTwoPlayerTetrioPanel extends OnlineTwoPlayersPanel {
     public OnlineTwoPlayerTetrioPanel(MainPanel mainPanel) {

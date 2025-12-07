@@ -3,15 +3,16 @@ package tetris.boards.components;
 import tetris.tetrominoes.Tetromino;
 import tetris.tetrominoes.TetrominoCell;
 
+import static main.MainPanel.*;
+
 import java.awt.*;
 
-import static tetris.Config.*;
-import static tetris.Config.BOARD_HEIGHT;
-import static tetris.Config.BOARD_SPAWN_HEIGHT;
-import static tetris.Config.BOARD_WIDTH;
-import static tetris.Config.CELL_SIZE;
-
 public class BoardGrid {
+    // BOARD CONFIGURATION
+    public static final int ROWS = 20;
+    public static final int SPAWN_ROWS = 3;
+    public static final int COLUMNS = 10;
+
     // GRID POSITION IN PANEL
     private int x, y;
     // GRID REPRESENTATION (row 0 is the top one and column 0 is the left one)
@@ -209,7 +210,7 @@ public class BoardGrid {
                     tCellY = t.getY() + tShapeRow;
 
                     // Check bounds
-                    if (tCellX < 0 || tCellX >= BOARD_COLUMNS || tCellY < 0 || tCellY >= BOARD_ROWS + BOARD_SPAWN_ROWS)
+                    if (tCellX < 0 || tCellX >= getTotalNumberOfRows() || tCellY < 0 || tCellY >= getTotalNumberOfRows())
                         return true;
 
                     // Check for collision with existing blocks

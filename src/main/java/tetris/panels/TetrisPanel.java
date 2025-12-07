@@ -9,9 +9,15 @@ import java.awt.event.KeyListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static main.MainPanel.PANEL_HEIGHT;
+import static main.MainPanel.PANEL_WIDTH;
 import static tetris.Config.*;
 
 public abstract class TetrisPanel extends JPanel {
+    public static final double FPS = 62.5;
+    public static final int MILLISECONDS_PER_FRAME = (int) (1000/ FPS);
+    public static final double NES_FPS = 50.0070;
+
     protected MainPanel mainPanel;
     protected Board[] boards;
     protected KeyListener keyMap;

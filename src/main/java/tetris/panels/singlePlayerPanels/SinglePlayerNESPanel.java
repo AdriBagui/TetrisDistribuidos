@@ -1,12 +1,10 @@
 package tetris.panels.singlePlayerPanels;
 
 import main.MainPanel;
-import tetris.boards.BoardWithPhysics;
 import tetris.boards.nes.NESBoardWithPhysics;
 import tetris.keyMaps.KeyMapFactory;
-import tetris.keyMaps.SinglePlayerKeyMap;
 
-import static tetris.Config.*;
+import static main.MainPanel.*;
 
 public class SinglePlayerNESPanel extends SinglePlayerPanel {
     public SinglePlayerNESPanel(MainPanel mainPanel) {

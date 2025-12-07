@@ -2,6 +2,7 @@ package tetris.boards.physics.rotationSystems;
 
 import tetris.boards.components.BoardGrid;
 import tetris.tetrominoes.Tetromino;
+import tetris.tetrominoes.TetrominoType;
 
 import static tetris.Config.*;
 
@@ -18,7 +19,7 @@ public class NESRotationSystem extends RotationSystem {
         Tetromino aux = tetromino.createCopy();
         aux.rotateRight();
 
-        if (tetromino.getType() == I || tetromino.getType() == S || tetromino.getType() == Z) {
+        if (tetromino.getType() == TetrominoType.I || tetromino.getType() == TetrominoType.S || tetromino.getType() == TetrominoType.Z) {
             switch (tetromino.getRotationIndex()) {
                 case 0:
                     break;
@@ -48,7 +49,7 @@ public class NESRotationSystem extends RotationSystem {
         Tetromino aux = tetromino.createCopy();
         aux.rotateLeft();
 
-        if (tetromino.getType() == I || tetromino.getType() == S || tetromino.getType() == Z) {
+        if (tetromino.getType() == TetrominoType.I || tetromino.getType() == TetrominoType.S || tetromino.getType() == TetrominoType.Z) {
             switch (tetromino.getRotationIndex()) {
                 case 0:
                     aux.moveRight();

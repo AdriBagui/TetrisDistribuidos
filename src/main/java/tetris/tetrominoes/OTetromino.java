@@ -17,7 +17,7 @@ public class OTetromino extends Tetromino {
     }
 
     @Override
-    public int getType() { return O; }
+    public TetrominoType getType() { return TetrominoType.O; }
 
     @Override
     public int getWidth() { return 2; }
