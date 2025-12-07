@@ -86,6 +86,7 @@ public class Gravity {
      */
     public void increaseGravity(double increment) {
         this.gravity += gravity;
+        System.out.println(1/(gravity*FPS/NES_FPS)*NES_FPS);
     }
 
     /**
