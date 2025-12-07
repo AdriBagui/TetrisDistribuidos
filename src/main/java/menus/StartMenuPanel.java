@@ -23,7 +23,7 @@ public class StartMenuPanel extends JPanel {
         gbl_startMenu.columnWidths = new int[] {0, 0};
         gbl_startMenu.rowHeights = new int[] {0, 0, 0}; // 3 Rows
         gbl_startMenu.columnWeights = new double[]{1.0, 1.0};
-        gbl_startMenu.rowWeights = new double[]{0.8, 0.0, 1.0}; // Row 0 gets some space
+        gbl_startMenu.rowWeights = new double[]{0.8, 0.0, 1.0, 0.2}; // Row 0 gets some space
         setLayout(gbl_startMenu);
 
         // --- 1. MAIN TITLE ---
@@ -84,6 +84,29 @@ public class StartMenuPanel extends JPanel {
         gbc_onlineButtons.gridx = 1;
         gbc_onlineButtons.gridy = 2; // Third row
         add(onlineButtons, gbc_onlineButtons);
+
+        // --- 4. GLOBAL OPTIONS (SETTINGS) ---
+        JPanel globalOptionsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        globalOptionsPanel.setOpaque(false);
+
+        ModernButton btnSettings = new ModernButton("SETTINGS");
+        btnSettings.addActionListener(e -> mainPanel.openSettings());
+
+        ModernButton btnExit = new ModernButton("EXIT");
+        btnExit.addActionListener(e -> System.exit(0));
+
+        globalOptionsPanel.add(btnSettings);
+        globalOptionsPanel.add(Box.createHorizontalStrut(20));
+        globalOptionsPanel.add(btnExit);
+
+        GridBagConstraints gbc_global = new GridBagConstraints();
+        gbc_global.gridwidth = 2; // Span both columns
+        gbc_global.fill = GridBagConstraints.HORIZONTAL;
+        gbc_global.gridx = 0;
+        gbc_global.gridy = 3; // New Row 3
+        gbc_global.insets = new Insets(20, 0, 20, 0); // Margin top/bottom
+
+        add(globalOptionsPanel, gbc_global);
     }
 
     /**

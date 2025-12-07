@@ -1,6 +1,7 @@
 package main;
 
 import distributedServices.ConnectionMode;
+import menus.SettingsPanel;
 import menus.StartMenuPanel;
 import menus.WaitingOpponentPanel;
 import tetris.boards.components.BoardGrid;
@@ -41,14 +42,16 @@ public class MainPanel extends JPanel {
     public static final int PANEL_HEIGHT = 3*FRAME_PADDING + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT;
 
     private static final String START_MENU_PANEL = "0";
-    private static final String WAITING_OPPONENT_PANEL = "1";
-    private static final String SINGLE_PLAYER_TETRIO_PANEL = "2";
-    private static final String LOCAL_TWO_PLAYERS_TETRIO_PANEL = "3";
-    private static final String SINGLE_PLAYER_NES_PANEL = "4";
-    private static final String LOCAL_TWO_PLAYERS_NES_PANEL = "5";
-    private static final String ONLINE_TETRIO_PANEL = "6";
-    private static final String ONLINE_NES_PANEL = "7";
+    private static final String SETTINGS_PANEL = "1";
+    private static final String WAITING_OPPONENT_PANEL = "2";
+    private static final String SINGLE_PLAYER_TETRIO_PANEL = "3";
+    private static final String LOCAL_TWO_PLAYERS_TETRIO_PANEL = "4";
+    private static final String SINGLE_PLAYER_NES_PANEL = "5";
+    private static final String LOCAL_TWO_PLAYERS_NES_PANEL = "6";
+    private static final String ONLINE_TETRIO_PANEL = "7";
+    private static final String ONLINE_NES_PANEL = "8";
 
+    private final SettingsPanel settingsPanel;
     private final WaitingOpponentPanel waitingOpponentPanel;
     private final SinglePlayerTetrioPanel singlePlayerTetrioPanel;
     private final LocalTwoPlayerTetrioPanel localTwoPlayerTetrioPanel;
@@ -74,6 +77,7 @@ public class MainPanel extends JPanel {
         setLayout(cardLayout);
 
         // Crear los paneles para que estén cargados en memoria
+        settingsPanel = new SettingsPanel(this);
         StartMenuPanel startMenuPanel = new StartMenuPanel(this);
         waitingOpponentPanel = new WaitingOpponentPanel(this);
         singlePlayerTetrioPanel = new SinglePlayerTetrioPanel(this);
@@ -85,6 +89,7 @@ public class MainPanel extends JPanel {
 
         // Añadirlos al panel principal para poder cambiar entre ellos con el CardLayout
         add(startMenuPanel, START_MENU_PANEL);
+        add(settingsPanel, SETTINGS_PANEL);
         add(waitingOpponentPanel, WAITING_OPPONENT_PANEL);
         add(singlePlayerTetrioPanel, SINGLE_PLAYER_TETRIO_PANEL);
         add(localTwoPlayerTetrioPanel, LOCAL_TWO_PLAYERS_TETRIO_PANEL);
@@ -107,12 +112,21 @@ public class MainPanel extends JPanel {
     }
 
     public void setKeyInputHandler(KeyInputHandler keyInputHandler) {
+        settingsPanel.setKeyInputHandler(keyInputHandler);
         singlePlayerTetrioPanel.setKeyInputHandler(keyInputHandler);
         localTwoPlayerTetrioPanel.setKeyInputHandler(keyInputHandler);
         singlePlayerNESPanel.setKeyInputHandler(keyInputHandler);
         localTwoPlayerNESPanel.setKeyInputHandler(keyInputHandler);
         onlineTetrioPanel.setKeyInputHandler(keyInputHandler);
         onlineNESPanel.setKeyInputHandler(keyInputHandler);
+    }
+
+    public void openSettings() {
+        // Force a rebuild of the Settings UI to show current keys
+        settingsPanel.refresh();
+
+        cardLayout.show(this, SETTINGS_PANEL);
+        settingsPanel.requestFocusInWindow();
     }
 
     public void startSinglePlayerTetrioGame() {

@@ -53,6 +53,26 @@ public class KeyInputHandler extends KeyAdapter {
         tryToPerformKeyInput(e.getKeyCode(), false);
     }
 
+    /**
+     * Helper method to find the key code currently bound to a specific action.
+     * Needed for the Settings UI to display current bindings.
+     */
+    public int getKeyForAction(InputAction action, boolean player1) {
+        Map<Integer, InputAction> map = player1 ? player1ActionsKeyEventMap : player2ActionsKeyEventMap;
+        for (Map.Entry<Integer, InputAction> entry : map.entrySet()) {
+            if (entry.getValue() == action) {
+                return entry.getKey();
+            }
+        }
+        return -1; // Not bound
+    }
+    public int getGoBackToMenuKey() { return goBackToMenuKeyEvent; }
+    public boolean isKeyBound(int key) {
+        return (key == goBackToMenuKeyEvent
+                || player1ActionsKeyEventMap.containsKey(key)
+                || player2ActionsKeyEventMap.containsKey(key));
+    }
+
     public void bindKeyToPlayerAction(int key, InputAction action, boolean player1) {
         if (player1) player1ActionsKeyEventMap.put(key, action);
         else player2ActionsKeyEventMap.put(key, action);
@@ -64,28 +84,29 @@ public class KeyInputHandler extends KeyAdapter {
             player2ActionsKeyEventMap.remove(key);
     }
     public void unbindPlayerAction(InputAction action, boolean player1) {
-        if (player1) {
-            for (Integer key : player1ActionsKeyEventMap.keySet()) {
-                if (action == player1ActionsKeyEventMap.get(key)) {
-                    player1ActionsKeyEventMap.remove(key);
-                    break;
-                }
-            }
-        }
-        else {
-            for (Integer key : player2ActionsKeyEventMap.keySet()) {
-                if (action == player2ActionsKeyEventMap.get(key)) {
-                    player2ActionsKeyEventMap.remove(key);
-                    break;
-                }
+        Map<Integer, InputAction> map = player1 ? player1ActionsKeyEventMap : player2ActionsKeyEventMap;
+
+        for (Integer key : map.keySet()) {
+            if (action == map.get(key)) {
+                map.remove(key);
+                break;
             }
         }
     }
-    public void unbindGoBackToMenuAction(InputAction action, boolean player1) { goBackToMenuKeyEvent = -1; }
-    public boolean isKeyBound(int key) {
-        return (key == goBackToMenuKeyEvent
-                || player1ActionsKeyEventMap.containsKey(key)
-                || player2ActionsKeyEventMap.containsKey(key));
+    public void unbindGoBackToMenuAction(InputAction action) { goBackToMenuKeyEvent = -1; }
+
+    /**
+     * Removes the old binding for an action and sets a new one (if the key was being used it removes it from the other action).
+     */
+    public void changeKeyBinding(InputAction action, int newKeyCode, boolean player1) {
+        // 1. Remove any existing key bound to this action for this player
+        unbindPlayerAction(action, player1);
+
+        // 2. Remove the new key if it was bound to something else (optional, prevents conflicts)
+        unbindKey(newKeyCode);
+
+        // 3. Bind the new key
+        bindKeyToPlayerAction(newKeyCode, action, player1);
     }
 
     public void setPlayer1Board(BoardWithPhysics player1Board) { this.player1Board = player1Board; }
