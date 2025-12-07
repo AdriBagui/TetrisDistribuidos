@@ -15,6 +15,7 @@ import tetris.panels.twoPlayerPanels.LocalTwoPlayerTetrioPanel;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
@@ -55,6 +56,8 @@ public class MainPanel extends JPanel {
     private final LocalTwoPlayerNESPanel localTwoPlayerNESPanel;
     private final OnlineTwoPlayerTetrioPanel onlineTetrioPanel;
     private final OnlineTwoPlayerNESPanel onlineNESPanel;
+
+    private final byte endGameByte = (byte)127;
 
     private CardLayout cardLayout;
 
@@ -165,6 +168,15 @@ public class MainPanel extends JPanel {
 
     public void backToStartMenu() {
         cardLayout.show(this, START_MENU_PANEL);
+    }
+
+    private void endGame(Socket socket) {
+        try{
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+            dos.writeByte(endGameByte); // Byte that indicates end of game
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
     }
 
     @Override

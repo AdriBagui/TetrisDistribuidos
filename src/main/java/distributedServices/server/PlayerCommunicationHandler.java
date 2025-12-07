@@ -6,6 +6,7 @@ import java.net.Socket;
 public class PlayerCommunicationHandler implements Runnable{
     Socket sender;
     Socket receiver;
+    private final byte endGameByte = (byte) 127;
 
     public PlayerCommunicationHandler(Socket sender, Socket receiver){
         this.sender = sender;
@@ -21,10 +22,11 @@ public class PlayerCommunicationHandler implements Runnable{
             DataInputStream dis = new DataInputStream(sender.getInputStream());
             DataOutputStream dos = new DataOutputStream(receiver.getOutputStream());
             byte byteRead;
-            while (true) { //TODO: modificar para detectar el fin de una partida
-                byteRead = dis.readByte();
+            byteRead = dis.readByte();
+            while (byteRead != endGameByte) { //TODO: modificar para detectar el fin de una partida
                 dos.write(byteRead);
                 dos.flush();
+                byteRead = dis.readByte();
             }
         }
         catch (EOFException eofe) { eofe.printStackTrace(); }
