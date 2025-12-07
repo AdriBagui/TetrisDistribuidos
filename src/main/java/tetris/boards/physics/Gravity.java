@@ -16,6 +16,7 @@ public class Gravity {
     private double lockDelayFrames;
     private double appliedLockDelayFrames;
     private int delayUsed;
+    private boolean isLocked;
 
     /**
      * Manages the gravity physics for the falling tetromino.
@@ -32,6 +33,7 @@ public class Gravity {
         this.lockDelayFrames = lockDelayFrames;
         this.appliedLockDelayFrames = lockDelayFrames;
         delayUsed = 0;
+        isLocked = false;
     }
 
     /**
@@ -51,7 +53,10 @@ public class Gravity {
             }
         }
 
+        isLocked = (delayUsed >= appliedLockDelayFrames);
+
         appliedGravity = gravity;
+        appliedLockDelayFrames = lockDelayFrames;
     }
 
     /**
@@ -62,23 +67,20 @@ public class Gravity {
     public void setFallingTetromino(Tetromino t) {
         fallingTetromino = t;
         decimalY = 0;
-        resetLockDelay();
+        resetLock();
     }
 
     /**
      * Checks if the falling tetromino should be locked in place.
      * @return true if the lock delay has expired while touching the floor.
      */
-    public boolean isLocked() {
-        boolean isLocked = (delayUsed >= appliedLockDelayFrames);
-        appliedLockDelayFrames = lockDelayFrames;
-        return isLocked;
-    }
+    public boolean isLocked() { return isLocked; }
 
     /**
-     * Resets the lock delay timer. Usually called when the tetromino moves or rotates.
+     * Resets the lock and the lock delay timer. Called when a new Tetromino is spawned on the Board
      */
-    public void resetLockDelay() {
+    public void resetLock() {
+        isLocked = false;
         delayUsed = 0;
     }
 

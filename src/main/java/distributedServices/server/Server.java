@@ -8,9 +8,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
-    // public static final String SERVER_IP = "localhost";
-    public static final String SERVER_IP = "88.13.205.169";
-    public static final int SERVER_PORT = 7777;
+    public static final String SERVER_IP = "localhost";
+    //public static final String SERVER_IP = "88.13.205.169";
+    public static final int SERVER_PORT = 8888;
     private static ConcurrentHashMap<Integer, Socket> lobbies = new ConcurrentHashMap<>();
 
     /**
