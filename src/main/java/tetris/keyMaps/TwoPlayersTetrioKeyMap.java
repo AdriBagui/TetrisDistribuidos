@@ -7,8 +7,8 @@ import tetris.panels.TetrisPanel;
 import java.awt.event.KeyEvent;
 
 public class TwoPlayersTetrioKeyMap extends TwoPlayersKeyMap {
-    public TwoPlayersTetrioKeyMap(MainPanel mainPanel, TetrisPanel tetrisPanel) {
-        super(mainPanel, tetrisPanel);
+    public TwoPlayersTetrioKeyMap(MainPanel mainPanel) {
+        super(mainPanel);
     }
 
     @Override
