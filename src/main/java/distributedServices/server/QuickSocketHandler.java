@@ -27,5 +27,5 @@ public class QuickSocketHandler {
         this.quickPlayPlayer = quickPlayPlayer;
     }
 
-    public synchronized boolean isThereAPlayingWaiting() { return quickPlayPlayer==null; }
+    public synchronized boolean isThereAPlayingWaiting() { return quickPlayPlayer!=null; }
 }

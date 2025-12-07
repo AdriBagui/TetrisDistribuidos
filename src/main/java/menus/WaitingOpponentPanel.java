@@ -72,7 +72,6 @@ public class WaitingOpponentPanel extends JPanel {
         new Thread(){
             @Override
             public void run() {
-                System.out.println("Me conecto");
                 ServerConnector serverConnector = new ServerConnector();
                 Socket boardsSocket = serverConnector.getSocket();
                 long seed;

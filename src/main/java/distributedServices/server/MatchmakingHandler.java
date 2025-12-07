@@ -39,14 +39,14 @@ public class MatchmakingHandler implements Runnable{
                     if(!socketHandler.isThereAPlayingWaiting())
                         socketHandler.setQuickPlayPlayer(client);
                     else {
-                        new GameCommunicationHandler(client, socketHandler.getAndRemoveQuickPlayPlayer());
+                        new Thread(new GameCommunicationHandler(client, socketHandler.getAndRemoveQuickPlayPlayer())).start();
                     }
                     break;
                 case QUICK_MATCH_NES_MODE:
                     if(!socketHandlerNES.isThereAPlayingWaiting())
                         socketHandlerNES.setQuickPlayPlayer(client);
                     else {
-                        new GameCommunicationHandler(client, socketHandlerNES.getAndRemoveQuickPlayPlayer());
+                        new Thread(new GameCommunicationHandler(client, socketHandlerNES.getAndRemoveQuickPlayPlayer())).start();
                     }
                 case HOST_GAME_MODE:
                     synchronized (lobbies){

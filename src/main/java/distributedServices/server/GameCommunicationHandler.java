@@ -31,7 +31,6 @@ public class GameCommunicationHandler implements Runnable{
             dosC2.writeLong(seed);
             dosC1.flush();
             dosC2.flush();
-            System.out.println(Thread.currentThread().getName() + " He mandado la seed");
         } catch (IOException ioe){
             ioe.printStackTrace();
         }
