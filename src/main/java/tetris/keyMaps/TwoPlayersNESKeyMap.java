@@ -1,6 +1,7 @@
 package tetris.keyMaps;
 
 import main.MainPanel;
+import tetris.boards.BoardWithPhysics;
 import tetris.boards.tetrio.TetrioBoardWithPhysics;
 import tetris.panels.TetrisPanel;
 
@@ -21,32 +22,32 @@ public class TwoPlayersNESKeyMap extends TwoPlayersKeyMap {
         }
 
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_A -> player1Board.moveLeftPressed();
-            case KeyEvent.VK_D -> player1Board.moveRightPressed();
-            case KeyEvent.VK_S -> player1Board.softDropPressed();
-            case KeyEvent.VK_J -> player1Board.rotateLeftPressed();
-            case KeyEvent.VK_K -> player1Board.rotateRightPressed();
-            case KeyEvent.VK_LEFT -> player2Board.moveLeftPressed();
-            case KeyEvent.VK_RIGHT -> player2Board.moveRightPressed();
-            case KeyEvent.VK_DOWN -> player2Board.softDropPressed();
-            case KeyEvent.VK_NUMPAD1 -> player2Board.rotateLeftPressed();
-            case KeyEvent.VK_NUMPAD2 -> player2Board.rotateRightPressed();
+            case KeyEvent.VK_A -> ((BoardWithPhysics) player1Board).moveLeftPressed();
+            case KeyEvent.VK_D -> ((BoardWithPhysics) player1Board).moveRightPressed();
+            case KeyEvent.VK_S -> ((BoardWithPhysics) player1Board).softDropPressed();
+            case KeyEvent.VK_J -> ((BoardWithPhysics) player1Board).rotateLeftPressed();
+            case KeyEvent.VK_K -> ((BoardWithPhysics) player1Board).rotateRightPressed();
+            case KeyEvent.VK_LEFT -> ((BoardWithPhysics) player2Board).moveLeftPressed();
+            case KeyEvent.VK_RIGHT -> ((BoardWithPhysics) player2Board).moveRightPressed();
+            case KeyEvent.VK_DOWN -> ((BoardWithPhysics) player2Board).softDropPressed();
+            case KeyEvent.VK_NUMPAD1 -> ((BoardWithPhysics) player2Board).rotateLeftPressed();
+            case KeyEvent.VK_NUMPAD2 -> ((BoardWithPhysics) player2Board).rotateRightPressed();
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
         switch (e.getKeyCode()) {
-            case KeyEvent.VK_A -> player1Board.moveLeftReleased();
-            case KeyEvent.VK_D -> player1Board.moveRightReleased();
-            case KeyEvent.VK_S -> player1Board.softDropReleased();
-            case KeyEvent.VK_J -> player1Board.rotateLeftReleased();
-            case KeyEvent.VK_K -> player1Board.rotateRightReleased();
-            case KeyEvent.VK_LEFT -> player2Board.moveLeftReleased();
-            case KeyEvent.VK_RIGHT -> player2Board.moveRightReleased();
-            case KeyEvent.VK_DOWN -> player2Board.softDropReleased();
-            case KeyEvent.VK_NUMPAD1 -> player2Board.rotateLeftReleased();
-            case KeyEvent.VK_NUMPAD2 -> player2Board.rotateRightReleased();
+            case KeyEvent.VK_A -> ((BoardWithPhysics) player1Board).moveLeftReleased();
+            case KeyEvent.VK_D -> ((BoardWithPhysics) player1Board).moveRightReleased();
+            case KeyEvent.VK_S -> ((BoardWithPhysics) player1Board).softDropReleased();
+            case KeyEvent.VK_J -> ((BoardWithPhysics) player1Board).rotateLeftReleased();
+            case KeyEvent.VK_K -> ((BoardWithPhysics) player1Board).rotateRightReleased();
+            case KeyEvent.VK_LEFT -> ((BoardWithPhysics) player2Board).moveLeftReleased();
+            case KeyEvent.VK_RIGHT -> ((BoardWithPhysics) player2Board).moveRightReleased();
+            case KeyEvent.VK_DOWN -> ((BoardWithPhysics) player2Board).softDropReleased();
+            case KeyEvent.VK_NUMPAD1 -> ((BoardWithPhysics) player2Board).rotateLeftReleased();
+            case KeyEvent.VK_NUMPAD2 -> ((BoardWithPhysics) player2Board).rotateRightReleased();
         }
     }
 }

@@ -5,6 +5,7 @@ import tetris.boards.BoardWithPhysics;
 import tetris.boards.ReceiverBoardInputHandler;
 import tetris.keyMaps.KeyMapFactory;
 import tetris.keyMaps.SinglePlayerKeyMap;
+import tetris.keyMaps.TwoPlayersKeyMap;
 
 import java.net.Socket;
 
@@ -39,6 +40,6 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
     @Override
     public void resetGame() {
         super.resetGame();
-        ((SinglePlayerKeyMap) keyMap).setBoard((BoardWithPhysics) boards[0]);
+        ((TwoPlayersKeyMap) keyMap).setBoards(boards[0], boards[1]);
     }
 }

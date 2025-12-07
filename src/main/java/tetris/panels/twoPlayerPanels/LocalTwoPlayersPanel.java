@@ -26,6 +26,6 @@ public abstract class LocalTwoPlayersPanel extends TwoPlayersPanel {
     @Override
     public void resetGame() {
         super.resetGame();
-        ((TwoPlayersKeyMap) keyMap).setBoards((BoardWithPhysics) boards[0], (BoardWithPhysics) boards[1]);
+        ((TwoPlayersKeyMap) keyMap).setBoards(boards[0], boards[1]);
     }
 }
