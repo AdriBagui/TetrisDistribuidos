@@ -35,7 +35,7 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
         add(btnJugarOnline, gbc);
 
         ModernButton btnJugarOnlineNES = new ModernButton("QUICK MATCH (NES)");
-        btnJugarOnline.addActionListener(e -> playOnlineNES());
+        btnJugarOnlineNES.addActionListener(e -> playOnlineNES());
         add(btnJugarOnlineNES, gbc);
 
         ModernButton btnCrearSala = new ModernButton("HOST GAME");
