@@ -8,7 +8,7 @@ import static main.MainPanel.*;
 
 public class LocalTwoPlayerNESPanel extends LocalTwoPlayersPanel {
     public LocalTwoPlayerNESPanel(MainPanel mainPanel) {
-        super(mainPanel, KeyMapFactory.TETRIO_MODE);
+        super(mainPanel, KeyMapFactory.NES_MODE);
     }
 
     @Override

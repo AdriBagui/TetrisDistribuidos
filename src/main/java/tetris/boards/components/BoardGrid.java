@@ -210,7 +210,7 @@ public class BoardGrid {
                     tCellY = t.getY() + tShapeRow;
 
                     // Check bounds
-                    if (tCellX < 0 || tCellX >= getTotalNumberOfRows() || tCellY < 0 || tCellY >= getTotalNumberOfRows())
+                    if (tCellX < 0 || tCellX >= getNumberOfColumns() || tCellY < 0 || tCellY >= getTotalNumberOfRows())
                         return true;
 
                     // Check for collision with existing blocks

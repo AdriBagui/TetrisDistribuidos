@@ -6,6 +6,7 @@ import menus.WaitingOpponentPanel;
 import tetris.boards.components.BoardGrid;
 import tetris.panels.singlePlayerPanels.SinglePlayerNESPanel;
 import tetris.panels.singlePlayerPanels.SinglePlayerTetrioPanel;
+import tetris.panels.twoPlayerPanels.LocalTwoPlayerNESPanel;
 import tetris.panels.twoPlayerPanels.OnlineTwoPlayerNESPanel;
 import tetris.panels.twoPlayerPanels.OnlineTwoPlayerTetrioPanel;
 import tetris.panels.twoPlayerPanels.LocalTwoPlayerTetrioPanel;
@@ -50,7 +51,7 @@ public class MainPanel extends JPanel {
     private final SinglePlayerTetrioPanel singlePlayerTetrioPanel;
     private final LocalTwoPlayerTetrioPanel localTwoPlayerTetrioPanel;
     private final SinglePlayerNESPanel singlePlayerNESPanel;
-    private final LocalTwoPlayerTetrioPanel localTwoPlayerNESPanel;
+    private final LocalTwoPlayerNESPanel localTwoPlayerNESPanel;
     private final OnlineTwoPlayerTetrioPanel onlineTetrioPanel;
     private final OnlineTwoPlayerNESPanel onlineNESPanel;
 
@@ -74,7 +75,7 @@ public class MainPanel extends JPanel {
         singlePlayerTetrioPanel = new SinglePlayerTetrioPanel(this);
         localTwoPlayerTetrioPanel = new LocalTwoPlayerTetrioPanel(this);
         singlePlayerNESPanel = new SinglePlayerNESPanel(this);
-        localTwoPlayerNESPanel = new LocalTwoPlayerTetrioPanel(this);
+        localTwoPlayerNESPanel = new LocalTwoPlayerNESPanel(this);
         onlineTetrioPanel = new OnlineTwoPlayerTetrioPanel(this);
         onlineNESPanel = new OnlineTwoPlayerNESPanel(this);
 
@@ -114,7 +115,7 @@ public class MainPanel extends JPanel {
         singlePlayerNESPanel.startGame();
     }
     public void startTwoPlayersNESGame() {
-        cardLayout.show(this, LOCAL_TWO_PLAYERS_TETRIO_PANEL);
+        cardLayout.show(this, LOCAL_TWO_PLAYERS_NES_PANEL);
         localTwoPlayerNESPanel.startGame();
     }
 
