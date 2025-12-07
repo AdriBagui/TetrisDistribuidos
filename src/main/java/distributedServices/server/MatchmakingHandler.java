@@ -32,6 +32,7 @@ public class MatchmakingHandler implements Runnable{
         try{
             DataInputStream dis = new DataInputStream(client.getInputStream());
             gameModeSelected = dis.readInt();
+            System.out.println(Thread.currentThread().getName() + "He seleccionado el modo: " + gameModeSelected);
             switch (gameModeSelected){
                 case QUICK_MATCH_MODE:
                     quickPlayPlayers.add(client);
@@ -75,8 +76,8 @@ public class MatchmakingHandler implements Runnable{
     }
 
     /**
-     * Looks for a player to connect in quickModeSearch
-     * @return
+     * Looks for a player to connect in quickModeSearch. It removes the {@link this.client} and the opponent if an opponent is found
+     * @return Socket of the opponent to connect and play
      */
     private Socket lookForOpponentQuickMode(){
         Socket opponentSocket = null;

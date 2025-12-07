@@ -102,9 +102,9 @@ public class MainPanel extends JPanel {
     // PRE: Requiere de que se haya creado un socket para la partida
     // Muestra el panel de partida online (no sé si empezar las partidas aquí o no, darle una vuelta.
     // Si no empiezo las partidas aquí cambiar el nombre de los métodos a show).
-    public void connectToOnlineGame() {
+    public void connectToOnlineGame(int gameMode) {
         cardLayout.show(this, WAITING_OPPONENT_PANEL);
-        waitingOpponentPanel.connect();
+        waitingOpponentPanel.connect(gameMode);
     }
 
     /**
@@ -117,17 +117,6 @@ public class MainPanel extends JPanel {
         onlineTetrioPanel.setSocket(socket);
         cardLayout.show(this, ONLINE_TETRIO_PANEL);
         onlineTetrioPanel.startGame();
-    }
-
-    /**
-     * Connects to online game showing the host's room id
-     */
-    public void startOnlineGameAsHost() {
-
-    }
-
-    public void startOnlineGameAsClient() {
-
     }
 
     public void backToStartMenu() {

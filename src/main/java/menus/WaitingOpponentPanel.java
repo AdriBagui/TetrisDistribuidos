@@ -6,6 +6,7 @@ import main.MainPanel;
 import javax.swing.*;
 import java.awt.*;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
@@ -63,7 +64,10 @@ public class WaitingOpponentPanel extends JPanel {
         }
     }
 
-    public void connect(){
+    /**
+     * Connects to the server and starts an online game
+     */
+    public void connect(int gameMode){
         new Thread(){
             @Override
             public void run() {
@@ -72,7 +76,10 @@ public class WaitingOpponentPanel extends JPanel {
                 long seed;
                 try{
                     DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
+                    DataOutputStream dos = new DataOutputStream(boardsSocket.getOutputStream());
                     seed = dis.readLong();
+                    dos.writeInt(gameMode);
+                    dos.flush();
                     mainPanel.startOnlineGame(seed,boardsSocket);
                 } catch (IOException ioe){
                     ioe.printStackTrace();

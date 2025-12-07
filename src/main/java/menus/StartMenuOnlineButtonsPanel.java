@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import static tetris.Config.*;
+
 public class StartMenuOnlineButtonsPanel extends JPanel {
     private MainPanel mainPanel;
     private StartMenuPanel startMenuPanel;
@@ -33,6 +35,7 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
         add(btnJugarOnline, gbc);
 
         ModernButton btnJugarOnlineNES = new ModernButton("QUICK MATCH (NES)");
+        btnJugarOnline.addActionListener(e -> playOnlineNES());
         add(btnJugarOnlineNES, gbc);
 
         ModernButton btnCrearSala = new ModernButton("HOST GAME");
@@ -50,27 +53,14 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
         add(Box.createGlue(), gbcFiller);
     }
 
-    private void playOnline() { mainPanel.connectToOnlineGame(); }
-    // Clase StartMenuOnlineButtonsPanel
+    /**
+     * Used for playing a normal quick game online
+     */
+    private void playOnline() { mainPanel.connectToOnlineGame(QUICK_MATCH_MODE); }
 
-    private void playOnlineAsHost() {
-        // 1. Obtener la referencia a la ventana principal (JFrame) para centrar el diálogo
-        JFrame ownerFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+    private void playOnlineNES() { mainPanel.connectToOnlineGame(QUICK_MATCH_NES_MODE); }
 
-        // 2. Crear y mostrar el diálogo modal
-        CreateRoomDialog dialog = new CreateRoomDialog(ownerFrame);
-        dialog.setVisible(true);
+    private void playOnlineAsHost() { mainPanel.connectToOnlineGame(HOST_GAME_MODE); }
 
-        // 3. El flujo del código se detiene aquí hasta que el diálogo se cierra.
-        int roomNumber = dialog.getRoomNumber();
-
-        if (roomNumber != -1) {
-            // TODO: iniciar una sala con dicho código
-        } else {
-            // El usuario canceló la creación de la sala (roomNumber es -1)
-            System.out.println("Room hosting cancelled.");
-        }
-    }
-
-    private void playOnlineAsClient() { mainPanel.startOnlineGameAsClient(); }
+    private void playOnlineAsClient() { mainPanel.connectToOnlineGame(JOIN_GAME_MODE); }
 }
