@@ -1,9 +1,9 @@
 package distributedServices.server;
 
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Random;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,15 +11,16 @@ import static tetris.Config.*;
 
 public class MatchmakingHandler implements Runnable{
     Socket client;
-    private Vector<Socket> quickPlayPlayers;
-    private Vector<Socket> quickPlayNESPlayers;
+    QuickSocketHandler socketHandler;
+    QuickSocketHandler socketHandlerNES;
     private ConcurrentHashMap<Integer, Socket> lobbies;
+    private static final int MAX_NUMBER_OF_ROOMS = 1000;
 
 
-    public MatchmakingHandler(Socket client, Vector<Socket> quickPlayPlayers, Vector<Socket> quickPlayNESPlayers, ConcurrentHashMap<Integer, Socket> lobbies){
+    public MatchmakingHandler(Socket client, QuickSocketHandler socketHandler, QuickSocketHandler socketHandlerNES, ConcurrentHashMap<Integer, Socket> lobbies){
         this.client = client;
-        this.quickPlayPlayers = quickPlayPlayers;
-        this.quickPlayNESPlayers = quickPlayNESPlayers;
+        this.socketHandler = socketHandler;
+        this.socketHandlerNES = socketHandlerNES;
         this.lobbies = lobbies;
     }
 
@@ -35,15 +36,27 @@ public class MatchmakingHandler implements Runnable{
             gameModeSelected = dis.readInt();
             switch (gameModeSelected){
                 case QUICK_MATCH_MODE:
-                    synchronized (quickPlayPlayers) { quickPlayPlayers.add(client); }
-                    quickModeSearch();
+                    if(!socketHandler.isThereAPlayingWaiting())
+                        socketHandler.setQuickPlayPlayer(client);
+                    else {
+                        new GameCommunicationHandler(client, socketHandler.getAndRemoveQuickPlayPlayer());
+                    }
                     break;
                 case QUICK_MATCH_NES_MODE:
-                    synchronized (quickPlayNESPlayers) { quickPlayNESPlayers.add(client); }
-                    quickModeNESSearch();
-                    break;
+                    if(!socketHandlerNES.isThereAPlayingWaiting())
+                        socketHandlerNES.setQuickPlayPlayer(client);
+                    else {
+                        new GameCommunicationHandler(client, socketHandlerNES.getAndRemoveQuickPlayPlayer());
+                    }
                 case HOST_GAME_MODE:
-                    // TODO: ver como se da una id a la sala antes del search
+                    synchronized (lobbies){
+                        Random random = new Random();
+                        int roomId = random.nextInt(0, MAX_NUMBER_OF_ROOMS);
+                        while(lobbies.containsKey(roomId)){
+                            roomId = random.nextInt(0, MAX_NUMBER_OF_ROOMS);
+                        }
+                        lobbies.put(roomId,client);
+                    };
                     hostGameSearch();
                     break;
                 case JOIN_GAME_MODE:
@@ -54,68 +67,6 @@ public class MatchmakingHandler implements Runnable{
         } catch (IOException ioe){
             ioe.printStackTrace();
         }
-    }
-
-    /**
-     * Searchs for a game of Quick Mode
-     */
-    private void quickModeSearch() {
-        Socket opponentSocket = null;
-        while(opponentSocket == null && quickPlayPlayers.contains(client)){
-            opponentSocket = lookForOpponent(quickPlayPlayers);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        if(opponentSocket != null){
-            new Thread(new GameCommunicationHandler(client, opponentSocket)).start();
-        }
-    }
-
-    /**
-     * Searchs for a game of Quick Mode (NES)
-     */
-    private void quickModeNESSearch() {
-        Socket opponentSocket = null;
-        while(opponentSocket == null && quickPlayNESPlayers.contains(client)){
-            opponentSocket = lookForOpponent(quickPlayNESPlayers);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        if(opponentSocket != null){
-            new Thread(new GameCommunicationHandler(client, opponentSocket)).start();
-        }
-    }
-
-    /**
-     * Looks for a player to connect in quick mode searching. It removes the {@link this.client} and the opponent if an opponent is found
-     * @return Socket of the opponent to connect and play
-     */
-    private Socket lookForOpponent(Vector<Socket> socketsVector){
-        Socket opponentSocket = null;
-        synchronized (socketsVector){
-            if(socketsVector.size()>1){ // There's someone other than you
-                // Get and remove the opponent
-                int i = 0;
-                while(socketsVector.get(i).equals(client)){
-                    i++;
-                }
-                opponentSocket = socketsVector.get(i);
-                socketsVector.remove(i);
-                // Remove the client
-                i = 0;
-                while(!socketsVector.get(i).equals(client)){
-                    i++;
-                }
-                socketsVector.remove(i);
-            }
-        }
-        return opponentSocket;
     }
 
     private void hostGameSearch() {
