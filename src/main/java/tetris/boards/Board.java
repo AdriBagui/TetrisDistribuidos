@@ -133,17 +133,18 @@ public abstract class Board {
                 break;
         }
 
-//        if (level < (this.totalClearedLines / 10) + 1 && level < 21) {
-//            boardPhysics.increaseGravity();
-//        }
-
-        level = (this.totalClearedLines / 10) + 1;
+        if (level < (this.totalClearedLines / 10) + 1) {
+            increaseLevel();
+        }
 
         this.totalClearedLines += linesCleared;
 
         nextTetromino = tetrominoesQueue.getNext();
 
         return linesCleared;
+    }
+    protected void increaseLevel() {
+        level++;
     }
     protected void drawFallingTetromino(Graphics2D g2) { fallingTetromino.draw(g2); }
     private void updateFallingTetrominoShadow() {

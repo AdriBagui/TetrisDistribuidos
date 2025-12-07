@@ -14,11 +14,11 @@ public abstract class BoardWithPhysics extends Board {
     protected PlayerInputHandler playerInputHandler;
 
     public BoardWithPhysics(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize,
-                            int tetrominoesQueueGeneratorType, long seed, int rotationSystemType, double initialGravity) {
+                            int tetrominoesQueueGeneratorType, long seed, int rotationSystemType, double initialGravity, int lockDelayFrames) {
         super(x, y, gridRows, gridSpawnRows, gridColumns, tetrominoesQueueSize, tetrominoesQueueGeneratorType, seed);
 
         rotationSystem = RotationSystemFactory.createRotationSystem(rotationSystemType, grid);
-        gravity = new Gravity(grid, initialGravity);;
+        gravity = new Gravity(grid, initialGravity, lockDelayFrames);
         playerInputHandler = new PlayerInputHandler(grid, rotationSystem, gravity);
     }
 

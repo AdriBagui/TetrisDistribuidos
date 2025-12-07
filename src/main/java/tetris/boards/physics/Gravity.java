@@ -15,13 +15,13 @@ public class Gravity {
     private double appliedLockDelayFrames;
     private int delayUsed;
 
-    public Gravity(BoardGrid grid, double gravity) {
+    public Gravity(BoardGrid grid, double gravity, int lockDelayFrames) {
         this.fallingTetromino = null;
         decimalY = 0;
         this.grid = grid;
         this.gravity = gravity;
         this.appliedGravity = gravity;
-        this.lockDelayFrames = FPS /2;  // aprox 500ms
+        this.lockDelayFrames = lockDelayFrames;  // aprox 500ms
         this.appliedLockDelayFrames = lockDelayFrames;
         delayUsed = 0;
     }
@@ -58,28 +58,8 @@ public class Gravity {
         appliedLockDelayFrames = lockDelayFrames;
     }
 
-    public void increaseGravity() {
-        int framesPerCellSubstracted;
-        double oldGravity = gravity;
-
-        if (gravity > ((1./12.9)*NES_FPS)/ FPS) {
-            if (gravity > ((1./7.9)*NES_FPS)/ FPS) {
-                if (gravity > ((1./1.9)*NES_FPS)/ FPS) {
-                    framesPerCellSubstracted = 0;
-                }
-                else {
-                    framesPerCellSubstracted = 1;
-                }
-            }
-            else {
-                framesPerCellSubstracted = 2;
-            }
-        } else {
-            framesPerCellSubstracted = 5;
-        }
-
-        gravity = 1 / ((1/gravity) - (framesPerCellSubstracted* FPS /NES_FPS));
-        lockDelayFrames *= oldGravity / gravity;
+    public void increaseGravity(double increment) {
+        this.gravity += gravity;
     }
 
     public void softDrop() {
