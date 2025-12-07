@@ -23,13 +23,19 @@ public class PlayerCommunicationHandler implements Runnable{
             DataOutputStream dos = new DataOutputStream(receiver.getOutputStream());
             byte byteRead;
             byteRead = dis.readByte();
-            while (byteRead != endGameByte) { //TODO: modificar para detectar el fin de una partida
+            while (true) { // This finishes when the socket closes because dis.readByte() throws an EOFException
                 dos.write(byteRead);
                 dos.flush();
                 byteRead = dis.readByte();
             }
         }
-        catch (EOFException eofe) { eofe.printStackTrace(); }
+        catch (EOFException eofe) {
+            try {
+                sender.shutdownInput();
+                receiver.shutdownOutput();
+            }
+            catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown output to opponent boards"); } // This should never happen, if it does your computer is broken sry
+        }
         catch (IOException ioe) { ioe.printStackTrace(); }
     }
 }

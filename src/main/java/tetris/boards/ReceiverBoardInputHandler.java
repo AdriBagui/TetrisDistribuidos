@@ -1,6 +1,9 @@
 package tetris.boards;
 
+import tetris.panels.twoPlayerPanels.TwoPlayersPanel;
+
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -15,15 +18,17 @@ public class ReceiverBoardInputHandler extends Thread {
      */
     protected final DataInputStream boardsInputReceiver;
     protected final ReceiverBoard updatesReceiverBoard;
+    protected final TwoPlayersPanel twoPlayersPanel;
 
     /**
      * Creates a thread that listens for game updates from a remote source (player 2 or server).
      * @param boardsInputReceiver the input stream to read from.
      * @param updatesReceiverBoard the board to update based on received messages.
      */
-    public ReceiverBoardInputHandler(InputStream boardsInputReceiver, ReceiverBoard updatesReceiverBoard) {
+    public ReceiverBoardInputHandler(InputStream boardsInputReceiver, ReceiverBoard updatesReceiverBoard, TwoPlayersPanel twoPlayersPanel) {
         this.boardsInputReceiver = new DataInputStream(boardsInputReceiver);
         this.updatesReceiverBoard = updatesReceiverBoard;
+        this.twoPlayersPanel = twoPlayersPanel;
     }
 
     /**
@@ -34,16 +39,19 @@ public class ReceiverBoardInputHandler extends Thread {
         byte action;
 
         // When interrupted, the thread finishes its task and dies
-        while (!isInterrupted()) {
-            try {
+        try {
+            while (true) { // This finishes when the socket closes because readAction() throws an EOFException
                 action = readAction();
                 executeAction(action);
             }
-            catch (IOException ioe){
-                // Entered if the output socket on the other side is closed
-                // Or if this input socket is closed
-                ioe.printStackTrace();
-            }
+        }
+        catch (EOFException eofe) {
+            twoPlayersPanel.closeCommunications();
+        }
+        catch (IOException ioe) {
+            // Entered if the output socket on the other side is closed
+            // Or if this input socket is closed
+            ioe.printStackTrace();
         }
     }
 

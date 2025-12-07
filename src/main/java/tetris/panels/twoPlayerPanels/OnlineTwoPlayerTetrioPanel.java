@@ -21,7 +21,7 @@ public class OnlineTwoPlayerTetrioPanel extends OnlineTwoPlayersPanel {
             keyInputHandler.enableTetrioControls();
             boards[0] = new SenderTetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, seed, new SenderBoardOutputHandler(boardsSocket.getOutputStream()));
             boards[1] = new ReceiverTetrioBoard(BOARD2_X, BOARD2_Y, seed);
-            receiverBoardInputHandler = new ReceiverTetrioBoardInputHandler(boardsSocket.getInputStream(), (SenderTetrioBoardWithPhysics) boards[0], (ReceiverTetrioBoard) boards[1]);
+            receiverBoardInputHandler = new ReceiverTetrioBoardInputHandler(boardsSocket.getInputStream(), (SenderTetrioBoardWithPhysics) boards[0], (ReceiverTetrioBoard) boards[1], this);
             receiverBoardInputHandler.start();
         }
         catch (IOException ioe) { ioe.printStackTrace(); }

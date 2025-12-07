@@ -33,18 +33,11 @@ public class LocalTwoPlayerTetrioPanel extends LocalTwoPlayersPanel {
     }
 
     @Override
-    protected void initializeBoards() {
-        keyInputHandler.enablePlayer2Controls();
-        keyInputHandler.enableTetrioControls();
-
-        connectBoards();
-        boards[0] = new SenderTetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, seed, new SenderBoardOutputHandler(player1OutputStream));
-        player1ReceiverBoardInputHandler = new ReceiverTetrioBoardInputHandler(player1InputStream, (SenderTetrioBoardWithPhysics) boards[0], null);
-        player1ReceiverBoardInputHandler.start();
-
-        boards[1] = new SenderTetrioBoardWithPhysics(BOARD2_X, BOARD2_Y, seed, new SenderBoardOutputHandler(player2OutputStream));
-        player2ReceiverBoardInputHandler = new ReceiverTetrioBoardInputHandler(player2InputStream, (SenderTetrioBoardWithPhysics) boards[1], null);
-        player2ReceiverBoardInputHandler.start();
+    public void closeCommunications() {
+        try {
+            player1InputStream.close();
+            player2InputStream.close();
+        } catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown inputs from opponent boards"); } // This should never happen, if it does your computer is broken sry
     }
 
     @Override
@@ -52,9 +45,26 @@ public class LocalTwoPlayerTetrioPanel extends LocalTwoPlayersPanel {
         super.update();
 
         if (gameOver) {
-            player1ReceiverBoardInputHandler.interrupt();
-            player2ReceiverBoardInputHandler.interrupt();
+            try {
+                player1OutputStream.close();
+                player2OutputStream.close();
+            } catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown outputs to opponent boards"); } // This should never happen, if it does your computer is broken sry
         }
+    }
+
+    @Override
+    protected void initializeBoards() {
+        keyInputHandler.enablePlayer2Controls();
+        keyInputHandler.enableTetrioControls();
+
+        connectBoards();
+        boards[0] = new SenderTetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, seed, new SenderBoardOutputHandler(player1OutputStream));
+        player1ReceiverBoardInputHandler = new ReceiverTetrioBoardInputHandler(player1InputStream, (SenderTetrioBoardWithPhysics) boards[0], null, this);
+        player1ReceiverBoardInputHandler.start();
+
+        boards[1] = new SenderTetrioBoardWithPhysics(BOARD2_X, BOARD2_Y, seed, new SenderBoardOutputHandler(player2OutputStream));
+        player2ReceiverBoardInputHandler = new ReceiverTetrioBoardInputHandler(player2InputStream, (SenderTetrioBoardWithPhysics) boards[1], null, this);
+        player2ReceiverBoardInputHandler.start();
     }
 
     protected void connectBoards() {

@@ -11,6 +11,11 @@ public class LocalTwoPlayerNESPanel extends LocalTwoPlayersPanel {
     }
 
     @Override
+    public void closeCommunications() {
+        // Does nothing because there are no communications
+    }
+
+    @Override
     protected void initializeBoards() {
         keyInputHandler.enablePlayer2Controls();
         keyInputHandler.enableNESControls();

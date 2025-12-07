@@ -22,7 +22,7 @@ public class OnlineTwoPlayerNESPanel extends OnlineTwoPlayersPanel {
             keyInputHandler.enableNESControls();
             boards[0] = new SenderNESBoardWithPhysicsSender(BOARD1_X, BOARD1_Y, seed, new SenderBoardOutputHandler(boardsSocket.getOutputStream()));
             boards[1] = new ReceiverNESBoard(BOARD2_X, BOARD2_Y, seed);
-            receiverBoardInputHandler = new ReceiverBoardInputHandler(boardsSocket.getInputStream(), (ReceiverBoard) boards[1]);
+            receiverBoardInputHandler = new ReceiverBoardInputHandler(boardsSocket.getInputStream(), (ReceiverBoard) boards[1], this);
             receiverBoardInputHandler.start();
         }
         catch (IOException ioe) { ioe.printStackTrace(); }

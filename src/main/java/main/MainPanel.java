@@ -184,15 +184,6 @@ public class MainPanel extends JPanel {
         cardLayout.show(this, START_MENU_PANEL);
     }
 
-    private void endGame(Socket socket) {
-        try{
-            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-            dos.writeByte(endGameByte); // Byte that indicates end of game
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-        }
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

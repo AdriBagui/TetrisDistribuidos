@@ -1,6 +1,7 @@
 package tetris.boards.tetrio;
 
 import tetris.boards.ReceiverBoardInputHandler;
+import tetris.panels.twoPlayerPanels.TwoPlayersPanel;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,8 +10,8 @@ public class ReceiverTetrioBoardInputHandler extends ReceiverBoardInputHandler {
     private final SenderTetrioBoardWithPhysics garbageReceiverBoard;
     private final ReceiverTetrioBoard updatesReceiverTetrioBoard;
 
-    public ReceiverTetrioBoardInputHandler(InputStream boardsInputReceiver, SenderTetrioBoardWithPhysics garbageReceiverBoard, ReceiverTetrioBoard updatesReceiverTetrioBoard) {
-        super(boardsInputReceiver, updatesReceiverTetrioBoard);
+    public ReceiverTetrioBoardInputHandler(InputStream boardsInputReceiver, SenderTetrioBoardWithPhysics garbageReceiverBoard, ReceiverTetrioBoard updatesReceiverTetrioBoard, TwoPlayersPanel twoPlayersPanel) {
+        super(boardsInputReceiver, updatesReceiverTetrioBoard, twoPlayersPanel);
         this.updatesReceiverTetrioBoard = updatesReceiverTetrioBoard;
         this.garbageReceiverBoard = garbageReceiverBoard;
     }
