@@ -25,18 +25,21 @@ public class StartMenuLocalButtonsPanel extends JPanel {
         gbc.weighty = 0; // Buttons should not stretch vertically
 
         // --- BUTTONS ---
+        ModernButton btnSinglePlayerTetrio = new ModernButton("SOLO");
+        btnSinglePlayerTetrio.addActionListener(e -> btnSinglePlayerTetrioHandler());
+        add(btnSinglePlayerTetrio, gbc);
 
-        ModernButton btnUnJugadorLocalNES = new ModernButton("SOLO (NES)");
-        btnUnJugadorLocalNES.addActionListener(e -> playOnePlayerNESLocalHandler());
-        add(btnUnJugadorLocalNES, gbc);
+        ModernButton btnTwoPlayersTetrio = new ModernButton("1 VS 1");
+        btnTwoPlayersTetrio.addActionListener(e -> btnTwoPlayersTetrioHandler());
+        add(btnTwoPlayersTetrio, gbc);
 
-        ModernButton btnUnJugadorLocal = new ModernButton("SOLO (MODERN)");
-        btnUnJugadorLocal.addActionListener(e -> playOnePlayerTetrioLocalHandler());
-        add(btnUnJugadorLocal, gbc);
+        ModernButton btnSinglePlayerNES = new ModernButton("SOLO (NES)");
+        btnSinglePlayerNES.addActionListener(e -> btnSinglePlayerNESHandler());
+        add(btnSinglePlayerNES, gbc);
 
-        ModernButton btnDosJugadoresLocal = new ModernButton("1 VS 1 LOCAL");
-        btnDosJugadoresLocal.addActionListener(e -> playTwoPlayerTetrioLocalHandler());
-        add(btnDosJugadoresLocal, gbc);
+        ModernButton btnTwoPlayersNES = new ModernButton("   1 VS 1 (NES)   ");
+        btnTwoPlayersNES.addActionListener(e -> btnTwoPlayersNESHandler());
+        add(btnTwoPlayersNES, gbc);
 
         // --- FILLER COMPONENT ---
         // This component consumes all remaining vertical space, pushing buttons up
@@ -46,13 +49,16 @@ public class StartMenuLocalButtonsPanel extends JPanel {
         add(Box.createGlue(), gbcFiller);
     }
 
-    private void playOnePlayerNESLocalHandler() {
-        mainPanel.startOnePlayerNESGame();
+    private void btnSinglePlayerTetrioHandler() {
+        mainPanel.startSinglePlayerTetrioGame();
     }
-    private void playOnePlayerTetrioLocalHandler() {
-        mainPanel.startOnePlayerGame();
+    private void btnTwoPlayersTetrioHandler() {
+        mainPanel.startTwoPlayersTetrioGame();
     }
-    private void playTwoPlayerTetrioLocalHandler() {
-        mainPanel.start1vs1LocalGame();
+    private void btnSinglePlayerNESHandler() {
+        mainPanel.startSinglePlayerNESGame();
+    }
+    private void btnTwoPlayersNESHandler() {
+        mainPanel.startTwoPlayersNESGame();
     }
 }

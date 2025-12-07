@@ -2,10 +2,11 @@ package main;
 
 import menus.StartMenuPanel;
 import menus.WaitingOpponentPanel;
-import tetris.nes.panels.OnePlayerNESPanel;
-import tetris.tetrio.panels.OnePlayerTetrioPanel;
-import tetris.tetrio.panels.OnlineTwoPlayerTetrioPanel;
-import tetris.tetrio.panels.LocalTwoPlayerTetrioPanel;
+import tetris.panels.singlePlayerPanels.SinglePlayerNESPanel;
+import tetris.panels.singlePlayerPanels.SinglePlayerTetrioPanel;
+import tetris.panels.twoPlayerPanels.OnlineTwoPlayerNESPanel;
+import tetris.panels.twoPlayerPanels.OnlineTwoPlayerTetrioPanel;
+import tetris.panels.twoPlayerPanels.LocalTwoPlayerTetrioPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -19,17 +20,20 @@ import java.net.Socket;
 public class MainPanel extends JPanel {
     private static final String START_MENU_PANEL = "0";
     private static final String WAITING_OPPONENT_PANEL = "1";
-    private static final String ONE_PLAYER_TETRIO_PANEL = "2";
-    private static final String ONE_PLAYER_NES_PANEL = "3";
-    private static final String LOCAL_TETRIS_PANEL = "4";
-    private static final String ONLINE_TETRIS_PANEL = "5";
+    private static final String SINGLE_PLAYER_TETRIO_PANEL = "2";
+    private static final String LOCAL_TWO_PLAYERS_TETRIO_PANEL = "3";
+    private static final String SINGLE_PLAYER_NES_PANEL = "4";
+    private static final String LOCAL_TWO_PLAYERS_NES_PANEL = "5";
+    private static final String ONLINE_TETRIO_PANEL = "6";
+    private static final String ONLINE_NES_PANEL = "7";
 
-    private StartMenuPanel startMenuPanel;
-    private WaitingOpponentPanel waitingOpponentPanel;
-    private OnePlayerTetrioPanel onePlayerTetrioPanel;
-    private OnePlayerNESPanel onePlayerNESPanel;
-    private LocalTwoPlayerTetrioPanel localTwoPlayerTetrioPanel;
-    private OnlineTwoPlayerTetrioPanel onlineTwoPlayerTetrioPanel;
+    private final WaitingOpponentPanel waitingOpponentPanel;
+    private final SinglePlayerTetrioPanel singlePlayerTetrioPanel;
+    private final LocalTwoPlayerTetrioPanel localTwoPlayerTetrioPanel;
+    private final SinglePlayerNESPanel singlePlayerNESPanel;
+    private final LocalTwoPlayerTetrioPanel localTwoPlayerNESPanel;
+    private final OnlineTwoPlayerTetrioPanel onlineTetrioPanel;
+    private final OnlineTwoPlayerNESPanel onlineNESPanel;
 
     private CardLayout cardLayout;
 
@@ -38,26 +42,32 @@ public class MainPanel extends JPanel {
     public MainPanel() {
         super();
 
+        setBackground(new Color(22, 22, 22));
+
         // Este layout será el que usa el MainPanel. Es como una baraja de paneles (en vez de de cartas) y puedes
         // cambiar de uno a otro fácilmente
         cardLayout = new CardLayout();
         setLayout(cardLayout);
 
         // Crear los paneles para que estén cargados en memoria
-        startMenuPanel = new StartMenuPanel(this);
-        onePlayerTetrioPanel = new OnePlayerTetrioPanel(this);
-        onePlayerNESPanel = new OnePlayerNESPanel(this);
-        localTwoPlayerTetrioPanel = new LocalTwoPlayerTetrioPanel(this);
-        onlineTwoPlayerTetrioPanel = new OnlineTwoPlayerTetrioPanel(this);
+        StartMenuPanel startMenuPanel = new StartMenuPanel(this);
         waitingOpponentPanel = new WaitingOpponentPanel(this);
+        singlePlayerTetrioPanel = new SinglePlayerTetrioPanel(this);
+        localTwoPlayerTetrioPanel = new LocalTwoPlayerTetrioPanel(this);
+        singlePlayerNESPanel = new SinglePlayerNESPanel(this);
+        localTwoPlayerNESPanel = new LocalTwoPlayerTetrioPanel(this);
+        onlineTetrioPanel = new OnlineTwoPlayerTetrioPanel(this);
+        onlineNESPanel = new OnlineTwoPlayerNESPanel(this);
 
         // Añadirlos al panel principal para poder cambiar entre ellos con el CardLayout
         add(startMenuPanel, START_MENU_PANEL);
         add(waitingOpponentPanel, WAITING_OPPONENT_PANEL);
-        add(onePlayerTetrioPanel, ONE_PLAYER_TETRIO_PANEL);
-        add(onePlayerNESPanel, ONE_PLAYER_NES_PANEL);
-        add(localTwoPlayerTetrioPanel, LOCAL_TETRIS_PANEL);
-        add(onlineTwoPlayerTetrioPanel, ONLINE_TETRIS_PANEL);
+        add(singlePlayerTetrioPanel, SINGLE_PLAYER_TETRIO_PANEL);
+        add(localTwoPlayerTetrioPanel, LOCAL_TWO_PLAYERS_TETRIO_PANEL);
+        add(singlePlayerNESPanel, SINGLE_PLAYER_NES_PANEL);
+        add(localTwoPlayerNESPanel, LOCAL_TWO_PLAYERS_NES_PANEL);
+        add(onlineTetrioPanel, ONLINE_TETRIO_PANEL);
+        add(onlineNESPanel, ONLINE_NES_PANEL);
 
         // Cargar imagen de fondo
         try {
@@ -65,7 +75,6 @@ public class MainPanel extends JPanel {
             // Es mejor usar ImageIO.read para evitar problemas de ruta.
             backgroundImage = ImageIO.read(new File("src/main/resources/images/background.png"));
         } catch (IOException e) {
-            e.printStackTrace();
             System.out.println("No se pudo cargar la imagen: " + "src/main/resources/images/background.png");
         }
 
@@ -73,21 +82,21 @@ public class MainPanel extends JPanel {
         cardLayout.show(this, START_MENU_PANEL);
     }
 
-    // Muestra el panel de partida local de un jugador y empieza el juego
-    public void startOnePlayerGame() {
-        cardLayout.show(this, ONE_PLAYER_TETRIO_PANEL);
-        onePlayerTetrioPanel.startGame();
+    public void startSinglePlayerTetrioGame() {
+        cardLayout.show(this, SINGLE_PLAYER_TETRIO_PANEL);
+        singlePlayerTetrioPanel.startGame();
     }
-
-    public void startOnePlayerNESGame() {
-        cardLayout.show(this, ONE_PLAYER_NES_PANEL);
-        onePlayerNESPanel.startGame();
-    }
-
-    // Muestra el panel de partida local y empieza el juego
-    public void start1vs1LocalGame() {
-        cardLayout.show(this, LOCAL_TETRIS_PANEL);
+    public void startTwoPlayersTetrioGame() {
+        cardLayout.show(this, LOCAL_TWO_PLAYERS_TETRIO_PANEL);
         localTwoPlayerTetrioPanel.startGame();
+    }
+    public void startSinglePlayerNESGame() {
+        cardLayout.show(this, SINGLE_PLAYER_NES_PANEL);
+        singlePlayerNESPanel.startGame();
+    }
+    public void startTwoPlayersNESGame() {
+        cardLayout.show(this, LOCAL_TWO_PLAYERS_TETRIO_PANEL);
+        localTwoPlayerNESPanel.startGame();
     }
 
     // PRE: Requiere de que se haya creado un socket para la partida
@@ -104,10 +113,10 @@ public class MainPanel extends JPanel {
      * @param socket Socket received from the server
      */
     public void startOnlineGame(long seed, Socket socket){
-        onlineTwoPlayerTetrioPanel.setSeed(seed);
-        onlineTwoPlayerTetrioPanel.setSocket(socket);
-        cardLayout.show(this, ONLINE_TETRIS_PANEL);
-        onlineTwoPlayerTetrioPanel.startGame();
+        onlineTetrioPanel.setSeed(seed);
+        onlineTetrioPanel.setSocket(socket);
+        cardLayout.show(this, ONLINE_TETRIO_PANEL);
+        onlineTetrioPanel.startGame();
     }
 
     /**
@@ -121,7 +130,7 @@ public class MainPanel extends JPanel {
 
     }
 
-    public void endGame() {
+    public void backToStartMenu() {
         cardLayout.show(this, START_MENU_PANEL);
     }
 
