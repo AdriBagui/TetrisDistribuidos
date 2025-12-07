@@ -21,8 +21,9 @@ public class SinglePlayerNESKeyMap extends SinglePlayerKeyMap {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A, KeyEvent.VK_LEFT -> board.moveLeftPressed();
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> board.moveRightPressed();
-            case KeyEvent.VK_W, KeyEvent.VK_UP -> board.rotateRightPressed();
             case KeyEvent.VK_S, KeyEvent.VK_DOWN -> board.softDropPressed();
+            case KeyEvent.VK_J, KeyEvent.VK_NUMPAD1 -> board.rotateLeftPressed();
+            case KeyEvent.VK_K, KeyEvent.VK_NUMPAD2 -> board.rotateRightPressed();
         }
     }
 
@@ -31,8 +32,9 @@ public class SinglePlayerNESKeyMap extends SinglePlayerKeyMap {
         switch (e.getKeyCode()) {
             case KeyEvent.VK_A, KeyEvent.VK_LEFT -> board.moveLeftReleased();
             case KeyEvent.VK_D, KeyEvent.VK_RIGHT -> board.moveRightReleased();
-            case KeyEvent.VK_W, KeyEvent.VK_UP -> board.rotateRightReleased();
             case KeyEvent.VK_S, KeyEvent.VK_DOWN -> board.softDropReleased();
+            case KeyEvent.VK_J, KeyEvent.VK_NUMPAD1 -> board.rotateLeftReleased();
+            case KeyEvent.VK_K, KeyEvent.VK_NUMPAD2 -> board.rotateRightReleased();
         }
     }
 }
