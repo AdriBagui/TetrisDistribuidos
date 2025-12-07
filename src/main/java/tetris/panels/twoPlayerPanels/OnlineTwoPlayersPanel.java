@@ -15,7 +15,7 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
     protected long seed;
 
     public OnlineTwoPlayersPanel(MainPanel mainPanel, int tetrisMode) {
-        super(mainPanel, KeyMapFactory.createSinglePlayerKeyMap(tetrisMode, mainPanel));
+        super(mainPanel, KeyMapFactory.createTwoPlayersKeyMap(tetrisMode, mainPanel));
 
         boardsSocket = null;
         receiverBoardInputHandler = null;
