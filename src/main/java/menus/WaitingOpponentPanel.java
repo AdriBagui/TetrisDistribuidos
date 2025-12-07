@@ -127,6 +127,8 @@ public class WaitingOpponentPanel extends JPanel {
                     roomIdLabel.setVisible(true);
                     seed = dis.readLong(); // Server sends the seed when a player is found
                     mainPanel.startOnlineGame(seed,boardsSocket);
+                    roomIdLabel.setText("");
+                    roomIdLabel.setVisible(false);
                 } catch (IOException ioe){
                     ioe.printStackTrace();
                 }
