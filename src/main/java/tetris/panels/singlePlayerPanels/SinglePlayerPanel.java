@@ -8,12 +8,8 @@ import tetris.keyMaps.SinglePlayerKeyMap;
 import tetris.panels.TetrisPanel;
 
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 
-import static tetris.Config.*;
-import static tetris.Config.FRAME_PADDING;
-import static tetris.Config.PANEL_WIDTH;
+import static main.MainPanel.*;
 
 public abstract class SinglePlayerPanel extends TetrisPanel {
     public SinglePlayerPanel(MainPanel mainPanel, int tetrisMode) {

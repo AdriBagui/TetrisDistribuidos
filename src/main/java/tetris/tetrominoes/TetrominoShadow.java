@@ -1,10 +1,15 @@
 package tetris.tetrominoes;
 
+import tetris.tetrominoes.generators.TetrominoesGeneratorType;
+
 import java.awt.*;
 
-import static tetris.Config.*;
-
 public class TetrominoShadow extends Tetromino {
+    // SHADOW CONFIGURATION
+    public static final int SHADOW_TRANSPARENCY_PERCENTAGE = 15;
+    public static final int SHADOW_TRANSPARENCY_OVER_255 = SHADOW_TRANSPARENCY_PERCENTAGE*255/100;
+    public static final int SHADOW_TRANSPARENCY = (SHADOW_TRANSPARENCY_OVER_255) * 33554432;
+
     private Tetromino parent;
 
     public TetrominoShadow(Tetromino parent) {
@@ -14,7 +19,7 @@ public class TetrominoShadow extends Tetromino {
     }
 
     @Override
-    public int getType() { return parent.getType(); }
+    public TetrominoType getType() { return parent.getType(); }
 
     @Override
     public int getWidth() {

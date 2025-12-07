@@ -1,5 +1,6 @@
 package menus;
 
+import distributedServices.ConnectionMode;
 import distributedServices.ServerConnector;
 import main.MainPanel;
 
@@ -8,9 +9,8 @@ import java.awt.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
-import java.util.concurrent.ExecutionException;
-import static tetris.Config.*;
 
 public class WaitingOpponentPanel extends JPanel {
     private MainPanel mainPanel;
@@ -68,7 +68,7 @@ public class WaitingOpponentPanel extends JPanel {
     /**
      * Connects to the server and starts an online game
      */
-    public void connect(int gameMode){
+    public void connect(ConnectionMode gameMode){
         new Thread(){
             @Override
             public void run() {
@@ -79,7 +79,7 @@ public class WaitingOpponentPanel extends JPanel {
                 try{
                     DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
                     DataOutputStream dos = new DataOutputStream(boardsSocket.getOutputStream());
-                    dos.writeInt(gameMode);
+                    dos.writeInt(gameMode.ordinal());
                     dos.flush();
                     seed = dis.readLong(); // Server sends the seed when a player is found
                     switch (gameMode){

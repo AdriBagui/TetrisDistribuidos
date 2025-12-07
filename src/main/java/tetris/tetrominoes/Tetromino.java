@@ -2,13 +2,15 @@ package tetris.tetrominoes;
 
 import java.awt.*;
 
-import static tetris.Config.*;
+import static main.MainPanel.*;
 
 // ==========================================
 // ABSTRACT CLASS: Tetromino
 // Base class for all Tetris shapes
 // ==========================================
 public abstract class Tetromino {
+    public static final int NUMBER_OF_TETROMINOES = TetrominoType.values().length;
+
     private boolean[][][] shapeRotations;
     protected int rotationIndex;
     private double x, y;
@@ -42,7 +44,7 @@ public abstract class Tetromino {
      * Gets the type of tetromino.
      * @return value of the type of the piece set in {@link tetris.Config}.
      */
-    public abstract int getType();
+    public abstract TetrominoType getType();
     /**
      * Gets the width of the container of the piece (for example, for I piece we have a 4x4 container while T piece has
      * a 3x3 container).

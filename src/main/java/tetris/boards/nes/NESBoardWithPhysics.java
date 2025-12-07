@@ -1,38 +1,39 @@
 package tetris.boards.nes;
 
 import tetris.boards.BoardWithPhysics;
-import tetris.boards.physics.rotationSystems.RotationSystemFactory;
-import tetris.tetrominoes.generators.TetrominoesGeneratorFactory;
+import tetris.boards.components.BoardGrid;
+import tetris.boards.physics.rotationSystems.RotationSystemType;
+import tetris.tetrominoes.generators.TetrominoesGeneratorType;
 
-import static tetris.Config.*;
-import static tetris.Config.NES_TETROMINOES_QUEUE_SIZE;
+import static tetris.boards.nes.NESConfig.*;
 
 public class NESBoardWithPhysics extends BoardWithPhysics {
     public NESBoardWithPhysics(int x, int y, long seed) {
-        super(x, y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS, NES_TETROMINOES_QUEUE_SIZE, TetrominoesGeneratorFactory.COMPLETELY_RANDOM, seed, RotationSystemFactory.NES_ROTATION_SYSTEM, NES_INITIAL_GRAVITY, NES_LOCK_DELAY_FRAMES);
+        super(x, y, BoardGrid.ROWS, BoardGrid.SPAWN_ROWS, BoardGrid.COLUMNS, TETROMINOES_QUEUE_SIZE,
+                TetrominoesGeneratorType.NES_TETROMINOES_GENERATOR, seed, RotationSystemType.NES_ROTATION_SYSTEM,
+                INITIAL_GRAVITY, LOCK_DELAY_FRAMES);
     }
 
     @Override
-    public void increaseLevel() {
+    protected void increaseLevel() {
         super.increaseLevel();
 
         double increment = 0;
 
         switch (level) {
-            case 1 -> increment = 0.002329411;
-            case 2 -> increment = 0.002942414;
-            case 3 -> increment = 0.003834054;
-            case 4 -> increment = 0.005203359;
-            case 5 -> increment = 0.007465689;
-            case 6 -> increment = 0.011613295;
-            case 7 -> increment = 0.020546598;
-            case 8 -> increment = 0.046229846;
-            case 9 -> increment = 0.040065867;
-            case 10 -> increment = 0.032052693;
-            case 13 -> increment = 0.04807904;
-            case 16 -> increment = 0.080131733;
-            case 19 -> increment = 0.160263467;
-            case 29 -> increment = 0.4807904;
+            case 1 -> increment = 0.002778167;
+            case 2 -> increment = 0.002586569;
+            case 3 -> increment = 0.004414411;
+            case 4 -> increment = 0.004364247;
+            case 5 -> increment = 0.008081939;
+            case 6 -> increment = 0.008890133;
+            case 7 -> increment = 0.019396655;
+            case 8 -> increment = 0.04156426;
+            case 9 -> increment = 0.045720686;
+            case 10 -> increment = 0.0400056;
+            case 13 -> increment = 0.066676;
+            case 16 -> increment = 0.133352;
+            case 19 -> increment = 0.400056;
         }
 
         gravity.increaseGravity(increment);

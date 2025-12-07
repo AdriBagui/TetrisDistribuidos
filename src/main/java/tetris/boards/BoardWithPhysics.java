@@ -4,6 +4,8 @@ import tetris.boards.physics.Gravity;
 import tetris.boards.physics.PlayerInputHandler;
 import tetris.boards.physics.rotationSystems.RotationSystem;
 import tetris.boards.physics.rotationSystems.RotationSystemFactory;
+import tetris.boards.physics.rotationSystems.RotationSystemType;
+import tetris.tetrominoes.generators.TetrominoesGeneratorType;
 
 import java.awt.*;
 
@@ -14,7 +16,8 @@ public abstract class BoardWithPhysics extends Board {
     protected PlayerInputHandler playerInputHandler;
 
     public BoardWithPhysics(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize,
-                            int tetrominoesQueueGeneratorType, long seed, int rotationSystemType, double initialGravity, int lockDelayFrames) {
+                            TetrominoesGeneratorType tetrominoesQueueGeneratorType, long seed, RotationSystemType rotationSystemType,
+                            double initialGravity, int lockDelayFrames) {
         super(x, y, gridRows, gridSpawnRows, gridColumns, tetrominoesQueueSize, tetrominoesQueueGeneratorType, seed);
 
         rotationSystem = RotationSystemFactory.createRotationSystem(rotationSystemType, grid);

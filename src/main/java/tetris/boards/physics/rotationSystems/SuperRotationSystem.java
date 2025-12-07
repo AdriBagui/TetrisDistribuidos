@@ -2,8 +2,7 @@ package tetris.boards.physics.rotationSystems;
 
 import tetris.boards.components.BoardGrid;
 import tetris.tetrominoes.Tetromino;
-
-import static tetris.Config.*;
+import tetris.tetrominoes.TetrominoType;
 
 public class SuperRotationSystem extends RotationSystem {
     // J, L, S, T, Z Tetromino Wall Kick Data
@@ -70,9 +69,9 @@ public class SuperRotationSystem extends RotationSystem {
         Tetromino aux = tetromino.createCopy();
         aux.rotateRight();
 
-        if (tetromino.getType() == I) {
+        if (tetromino.getType() == TetrominoType.I) {
             success = tryAndApplyKickData(aux, I_ROTATE_RIGHT_KICK_DATA[tetromino.getRotationIndex()]);
-        } else if (tetromino.getType() != O) {
+        } else if (tetromino.getType() != TetrominoType.O) {
             success = tryAndApplyKickData(aux, ROTATE_RIGHT_KICK_DATA[tetromino.getRotationIndex()]);
         }
 
@@ -87,9 +86,9 @@ public class SuperRotationSystem extends RotationSystem {
         Tetromino aux = tetromino.createCopy();
         aux.rotateLeft();
 
-        if (tetromino.getType() == I) {
+        if (tetromino.getType() == TetrominoType.I) {
             success = tryAndApplyKickData(aux, I_ROTATE_LEFT_KICK_DATA[tetromino.getRotationIndex()]);
-        } else if (tetromino.getType() != O) {
+        } else if (tetromino.getType() != TetrominoType.O) {
             success = tryAndApplyKickData(aux, ROTATE_LEFT_KICK_DATA[tetromino.getRotationIndex()]);
         }
 

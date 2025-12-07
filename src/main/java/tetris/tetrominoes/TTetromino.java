@@ -2,8 +2,6 @@ package tetris.tetrominoes;
 
 import java.awt.*;
 
-import static tetris.Config.*;
-
 public class TTetromino extends Tetromino {
     private static final boolean[][] T_ROTATION_0 = {
             {false, true , false},
@@ -33,7 +31,7 @@ public class TTetromino extends Tetromino {
     }
 
     @Override
-    public int getType() { return T; }
+    public TetrominoType getType() { return TetrominoType.T; }
 
     @Override
     public int getWidth() {

@@ -1,15 +1,10 @@
 package tetris.panels.singlePlayerPanels;
 
 import main.MainPanel;
-import tetris.boards.BoardWithPhysics;
 import tetris.boards.tetrio.TetrioBoardWithPhysics;
 import tetris.keyMaps.KeyMapFactory;
-import tetris.keyMaps.SinglePlayerKeyMap;
 
-import java.awt.event.KeyEvent;
-
-import static tetris.Config.*;
-import static tetris.Config.BOARD1_Y;
+import static main.MainPanel.*;
 
 public class SinglePlayerTetrioPanel extends SinglePlayerPanel {
     public SinglePlayerTetrioPanel(MainPanel mainPanel) {

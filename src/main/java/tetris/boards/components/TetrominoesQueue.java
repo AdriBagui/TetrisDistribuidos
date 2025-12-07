@@ -5,8 +5,8 @@ import tetris.tetrominoes.Tetromino;
 
 import java.awt.*;
 
-import static tetris.Config.CELL_SIZE;
-import static tetris.Config.TETROMINOES_QUEUE_WIDTH;
+import static main.MainPanel.CELL_SIZE;
+import static main.MainPanel.TETROMINOES_QUEUE_WIDTH;
 
 public class TetrominoesQueue {
     private Tetromino[] tetrominoesQueue;

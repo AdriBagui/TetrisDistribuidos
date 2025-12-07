@@ -1,8 +1,7 @@
 package tetris.boards.tetrio;
 
 import tetris.boards.SenderBoardOutputHandler;
-
-import static tetris.Config.BOARD_COLUMNS;
+import tetris.boards.components.BoardGrid;
 
 public class SenderTetrioBoardWithPhysics extends TetrioBoardWithPhysics {
     protected SenderBoardOutputHandler garbageAndUpdatesOutputHandler;
@@ -38,13 +37,13 @@ public class SenderTetrioBoardWithPhysics extends TetrioBoardWithPhysics {
 
         switch (clearedLines) {
             case 2:
-                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 1, (byte) garbageRandom.nextInt(BOARD_COLUMNS));
+                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 1, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
                 break;
             case 3:
-                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 2, (byte) garbageRandom.nextInt(BOARD_COLUMNS));
+                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 2, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
                 break;
             case 4:
-                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 4, (byte) garbageRandom.nextInt(BOARD_COLUMNS));
+                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 4, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
                 break;
         }
 

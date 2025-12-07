@@ -11,8 +11,7 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 
-import static tetris.Config.*;
-import static tetris.Config.BOARD2_Y;
+import static main.MainPanel.*;
 
 public class LocalTwoPlayerTetrioPanel extends LocalTwoPlayersPanel {
     private PipedOutputStream player1OutputStream;

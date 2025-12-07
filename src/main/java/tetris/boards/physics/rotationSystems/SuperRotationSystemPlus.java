@@ -2,8 +2,7 @@ package tetris.boards.physics.rotationSystems;
 
 import tetris.boards.components.BoardGrid;
 import tetris.tetrominoes.Tetromino;
-
-import static tetris.Config.*;
+import tetris.tetrominoes.TetrominoType;
 
 public class SuperRotationSystemPlus extends SuperRotationSystem {
     // I Tetromino Wall Kick Data (Updated for TETR.IO SRS+)
@@ -37,7 +36,7 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
         boolean success;
         Tetromino aux;
 
-        if (tetromino.getType() != I) {
+        if (tetromino.getType() != TetrominoType.I) {
             super.rotateRight(tetromino);
         } else  {
             aux = tetromino.createCopy();
@@ -57,7 +56,7 @@ public class SuperRotationSystemPlus extends SuperRotationSystem {
         Tetromino aux;
 
 
-        if (tetromino.getType() != I) {
+        if (tetromino.getType() != TetrominoType.I) {
             super.rotateLeft(tetromino);
         } else  {
             aux = tetromino.createCopy();

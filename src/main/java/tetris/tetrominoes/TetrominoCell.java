@@ -2,7 +2,8 @@ package tetris.tetrominoes;
 
 import java.awt.*;
 
-import static tetris.Config.*;
+import static main.MainPanel.CELL_SIZE;
+import static main.MainPanel.TETROMINO_BORDER_WIDTH;
 
 public class TetrominoCell {
     private static final int[][] XPOINTS = {

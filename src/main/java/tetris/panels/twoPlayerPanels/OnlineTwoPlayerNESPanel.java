@@ -10,7 +10,7 @@ import tetris.keyMaps.KeyMapFactory;
 
 import java.io.IOException;
 
-import static tetris.Config.*;
+import static main.MainPanel.*;
 
 public class OnlineTwoPlayerNESPanel extends OnlineTwoPlayersPanel {
     public OnlineTwoPlayerNESPanel(MainPanel mainPanel) {

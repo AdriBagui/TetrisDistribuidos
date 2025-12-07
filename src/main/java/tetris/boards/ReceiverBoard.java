@@ -1,10 +1,13 @@
 package tetris.boards;
 
+import tetris.tetrominoes.generators.TetrominoesGeneratorType;
+
 public abstract class ReceiverBoard extends Board {
     private int fallingTetrominoNextX, fallingTetrominoNextY, fallingTetrominoNextRotationIndex;
     private boolean isFallingTetrominoLocked;
 
-    public ReceiverBoard(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize, int tetrominoesQueueGeneratorType, long seed) {
+    public ReceiverBoard(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize,
+                         TetrominoesGeneratorType tetrominoesQueueGeneratorType, long seed) {
         super(x, y, gridRows, gridSpawnRows, gridColumns, tetrominoesQueueSize, tetrominoesQueueGeneratorType, seed);
 
         fallingTetrominoNextX = -128;

@@ -1,9 +1,12 @@
 package main;
 
+import distributedServices.ConnectionMode;
 import menus.StartMenuPanel;
 import menus.WaitingOpponentPanel;
+import tetris.boards.components.BoardGrid;
 import tetris.panels.singlePlayerPanels.SinglePlayerNESPanel;
 import tetris.panels.singlePlayerPanels.SinglePlayerTetrioPanel;
+import tetris.panels.twoPlayerPanels.LocalTwoPlayerNESPanel;
 import tetris.panels.twoPlayerPanels.OnlineTwoPlayerNESPanel;
 import tetris.panels.twoPlayerPanels.OnlineTwoPlayerTetrioPanel;
 import tetris.panels.twoPlayerPanels.LocalTwoPlayerTetrioPanel;
@@ -18,6 +21,23 @@ import java.net.Socket;
 // El MainPanel es el panel (contenido del frame (ventana)). Contiene el resto de paneles en un CardLayout y estos se
 // pintan sobre el
 public class MainPanel extends JPanel {
+    // GAME DRAW CONFIG
+    public static final int CELL_SIZE = 25;
+    public static final int TETROMINO_BORDER_WIDTH = CELL_SIZE/6;
+    public static final int FRAME_PADDING = 2*CELL_SIZE;
+    public static final int TETROMINOES_QUEUE_WIDTH = 5*CELL_SIZE;
+    public static final int TETROMINO_HOLDER_WIDTH = 5*CELL_SIZE;
+    public static final int TETROMINO_HOLDER_HEIGHT = 5*CELL_SIZE;
+    public static final int BOARD_WIDTH = BoardGrid.COLUMNS*CELL_SIZE;
+    public static final int BOARD_HEIGHT = BoardGrid.ROWS*CELL_SIZE;
+    public static final int BOARD_SPAWN_HEIGHT = BoardGrid.SPAWN_ROWS*CELL_SIZE;
+    public static final int BOARD1_X = FRAME_PADDING;
+    public static final int BOARD1_Y = FRAME_PADDING;
+    public static final int BOARD2_X = FRAME_PADDING + TETROMINO_HOLDER_WIDTH + BOARD_WIDTH + TETROMINOES_QUEUE_WIDTH + FRAME_PADDING;
+    public static final int BOARD2_Y = BOARD1_Y;
+    public static final int PANEL_WIDTH = 3*FRAME_PADDING + 2* TETROMINO_HOLDER_WIDTH + 2*BOARD_WIDTH + 2* TETROMINOES_QUEUE_WIDTH;
+    public static final int PANEL_HEIGHT = 3*FRAME_PADDING + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT;
+
     private static final String START_MENU_PANEL = "0";
     private static final String WAITING_OPPONENT_PANEL = "1";
     private static final String SINGLE_PLAYER_TETRIO_PANEL = "2";
@@ -31,7 +51,7 @@ public class MainPanel extends JPanel {
     private final SinglePlayerTetrioPanel singlePlayerTetrioPanel;
     private final LocalTwoPlayerTetrioPanel localTwoPlayerTetrioPanel;
     private final SinglePlayerNESPanel singlePlayerNESPanel;
-    private final LocalTwoPlayerTetrioPanel localTwoPlayerNESPanel;
+    private final LocalTwoPlayerNESPanel localTwoPlayerNESPanel;
     private final OnlineTwoPlayerTetrioPanel onlineTetrioPanel;
     private final OnlineTwoPlayerNESPanel onlineNESPanel;
 
@@ -55,7 +75,7 @@ public class MainPanel extends JPanel {
         singlePlayerTetrioPanel = new SinglePlayerTetrioPanel(this);
         localTwoPlayerTetrioPanel = new LocalTwoPlayerTetrioPanel(this);
         singlePlayerNESPanel = new SinglePlayerNESPanel(this);
-        localTwoPlayerNESPanel = new LocalTwoPlayerTetrioPanel(this);
+        localTwoPlayerNESPanel = new LocalTwoPlayerNESPanel(this);
         onlineTetrioPanel = new OnlineTwoPlayerTetrioPanel(this);
         onlineNESPanel = new OnlineTwoPlayerNESPanel(this);
 
@@ -95,14 +115,14 @@ public class MainPanel extends JPanel {
         singlePlayerNESPanel.startGame();
     }
     public void startTwoPlayersNESGame() {
-        cardLayout.show(this, LOCAL_TWO_PLAYERS_TETRIO_PANEL);
+        cardLayout.show(this, LOCAL_TWO_PLAYERS_NES_PANEL);
         localTwoPlayerNESPanel.startGame();
     }
 
     // PRE: Requiere de que se haya creado un socket para la partida
     // Muestra el panel de partida online (no sé si empezar las partidas aquí o no, darle una vuelta.
     // Si no empiezo las partidas aquí cambiar el nombre de los métodos a show).
-    public void connectToOnlineGame(int gameMode) {
+    public void connectToOnlineGame(ConnectionMode gameMode) {
         cardLayout.show(this, WAITING_OPPONENT_PANEL);
         waitingOpponentPanel.connect(gameMode);
     }

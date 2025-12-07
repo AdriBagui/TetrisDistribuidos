@@ -4,7 +4,7 @@ import tetris.tetrominoes.Tetromino;
 
 import java.awt.*;
 
-import static tetris.Config.*;
+import static main.MainPanel.*;
 
 public class TetrominoHolder {
     private boolean locked;
