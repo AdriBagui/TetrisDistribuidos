@@ -32,12 +32,11 @@ public class MatchmakingHandler implements Runnable{
         
         try{
             DataInputStream dis = new DataInputStream(client.getInputStream());
-            System.out.println(Thread.currentThread().getName() + "He mandado la seed");
             gameModeSelected = dis.readInt();
             System.out.println(Thread.currentThread().getName() + "He seleccionado el modo: " + gameModeSelected);
             switch (gameModeSelected){
                 case QUICK_MATCH_MODE:
-                    quickPlayPlayers.add(client);
+                    synchronized (quickPlayPlayers) { quickPlayPlayers.add(client); }
                     System.out.println(Thread.currentThread().getName() + "He añadido el cliente a la lista");
                     quickModeSearch();
                     break;
@@ -61,27 +60,18 @@ public class MatchmakingHandler implements Runnable{
 
     private void quickModeSearch() {
         Socket opponentSocket = null;
-        while(opponentSocket==null && quickPlayPlayers.contains(client)){
-            System.out.println(Thread.currentThread().getName() + "Pruebo a buscar");
-            lookForOpponentQuickMode();
+        while(opponentSocket == null && quickPlayPlayers.contains(client)){
+            System.out.println(Thread.currentThread().getName() + " Pruebo a buscar");
+            opponentSocket = lookForOpponentQuickMode();
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
         if(opponentSocket != null){
             new Thread(new GameCommunicationHandler(client, opponentSocket)).start();
-            System.out.println(Thread.currentThread().getName() + "Comienzo partida");
-        }
-
-        try{
-            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-            long seed = System.currentTimeMillis();
-            dos.writeLong(seed);
-            dos.flush();
-        } catch (IOException ioe){
-            ioe.printStackTrace();
+            System.out.println(Thread.currentThread().getName() + " Comienzo partida");
         }
     }
 
@@ -93,14 +83,14 @@ public class MatchmakingHandler implements Runnable{
         Socket opponentSocket = null;
         synchronized (quickPlayPlayers){
             if(quickPlayPlayers.size()>1){ // There's someone other than you
-                System.out.println(Thread.currentThread().getName() + "He encontrado rival");
+                System.out.println(Thread.currentThread().getName() + " He encontrado rival");
                 // Get and remove the opponent
                 int i = 0;
                 while(quickPlayPlayers.get(i).equals(client)){
                     i++;
                 }
                 opponentSocket = quickPlayPlayers.get(i);
-                System.out.println(Thread.currentThread().getName() + "He cogido el rival");
+                System.out.println(Thread.currentThread().getName() + " He cogido el rival");
                 quickPlayPlayers.remove(i);
                 // Remove the client
                 i = 0;
@@ -108,7 +98,7 @@ public class MatchmakingHandler implements Runnable{
                     i++;
                 }
                 quickPlayPlayers.remove(i);
-                System.out.println(Thread.currentThread().getName() + "Me eliminé de la lista");
+                System.out.println(Thread.currentThread().getName() + " Me eliminé de la lista");
             }
         }
         return opponentSocket;

@@ -14,7 +14,7 @@ import java.util.concurrent.Executors;
 
 public class Server {
     public static final String SERVER_IP = "localhost";
-    public static final int SERVER_PORT = 6666;
+    public static final int SERVER_PORT = 7777;
 
     private static Vector<Socket> quickPlayPlayers = new Vector<>();
     private static Vector<Socket> quickPlayNESPlayers = new Vector<>();

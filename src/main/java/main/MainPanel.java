@@ -112,7 +112,7 @@ public class MainPanel extends JPanel {
      * @param seed Seed for the game
      * @param socket Socket received from the server
      */
-    public void startOnlineGame(long seed, Socket socket){
+    public void startOnlineGame(long seed, Socket socket) {
         onlineTetrioPanel.setSeed(seed);
         onlineTetrioPanel.setSocket(socket);
         cardLayout.show(this, ONLINE_TETRIO_PANEL);
