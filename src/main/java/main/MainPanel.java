@@ -113,10 +113,10 @@ public class MainPanel extends JPanel {
      * @param socket Socket received from the server
      */
     public void startOnlineGame(long seed, Socket socket) {
-        onlineNESPanel.setSeed(seed);
-        onlineNESPanel.setSocket(socket);
+        onlineTetrioPanel.setSeed(seed);
+        onlineTetrioPanel.setSocket(socket);
         cardLayout.show(this, ONLINE_TETRIO_PANEL);
-        onlineNESPanel.startGame();
+        onlineTetrioPanel.startGame();
     }
 
     /**
@@ -125,10 +125,10 @@ public class MainPanel extends JPanel {
      * @param socket Socket received from the server
      */
     public void startOnlineNESGame(long seed, Socket socket) {
-        onlineTetrioPanel.setSeed(seed);
-        onlineTetrioPanel.setSocket(socket);
-        cardLayout.show(this, ONLINE_TETRIO_PANEL);
-        onlineTetrioPanel.startGame();
+        onlineNESPanel.setSeed(seed);
+        onlineNESPanel.setSocket(socket);
+        cardLayout.show(this, ONLINE_NES_PANEL);
+        onlineNESPanel.startGame();
     }
 
     public void backToStartMenu() {
