@@ -1,6 +1,7 @@
 package distributedServices;
 
 import distributedServices.server.Server;
+import menus.CustomMessageDialog;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -15,7 +16,7 @@ public class ServerConnector {
         try{
             socket = new Socket(Server.SERVER_IP, Server.SERVER_PORT);
         } catch (IOException ioe){
-            ioe.printStackTrace();
+            socket = null; // No server to connect
         }
     }
 

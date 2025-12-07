@@ -66,24 +66,34 @@ public class WaitingOpponentPanel extends JPanel {
      * Connects to the server and starts an online game using the introduced game mode
      */
     public void connect(ConnectionMode gameMode){
-        switch (gameMode){
-            case QUICK_MATCH_MODE -> quickModeConnection(ConnectionMode.QUICK_MATCH_MODE);
-            case QUICK_MATCH_NES_MODE -> quickModeConnection(ConnectionMode.QUICK_MATCH_NES_MODE);
-            case HOST_GAME_MODE -> hostConnection();
-            case JOIN_GAME_MODE -> joinConnection();
+        ServerConnector serverConnector = new ServerConnector();
+        Socket boardsSocket = serverConnector.getSocket();
+
+        if(boardsSocket != null){
+            switch (gameMode){
+                case QUICK_MATCH_MODE -> quickModeConnection(ConnectionMode.QUICK_MATCH_MODE, boardsSocket);
+                case QUICK_MATCH_NES_MODE -> quickModeConnection(ConnectionMode.QUICK_MATCH_NES_MODE, boardsSocket);
+                case HOST_GAME_MODE -> hostConnection(boardsSocket);
+                case JOIN_GAME_MODE -> joinConnection(boardsSocket);
+            }
         }
+        else{
+            CustomMessageDialog.showMessage(mainPanel,
+                    "ERROR: Unable to connect to the server.",
+                    "Unable to connect",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     /**
      * Connects to the server using the quick mode logic
      * @param gameMode Game mode used for the game
      */
-    private void quickModeConnection(ConnectionMode gameMode){
+    private void quickModeConnection(ConnectionMode gameMode, Socket boardsSocket){
         new Thread(){
             @Override
             public void run() {
-                ServerConnector serverConnector = new ServerConnector();
-                Socket boardsSocket = serverConnector.getSocket();
                 long seed;
                 try{
                     DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
@@ -110,12 +120,10 @@ public class WaitingOpponentPanel extends JPanel {
     /**
      * Connects to the server using the host mode logic
      */
-    private void hostConnection(){
+    private void hostConnection(Socket boardsSocket){
         new Thread(){
             @Override
             public void run() {
-                ServerConnector serverConnector = new ServerConnector();
-                Socket boardsSocket = serverConnector.getSocket();
                 ConnectionMode gameMode = ConnectionMode.HOST_GAME_MODE;
                 long seed;
                 try{
@@ -139,14 +147,12 @@ public class WaitingOpponentPanel extends JPanel {
     /**
      * Connects to the server using the join mode logic
      */
-    private void joinConnection() {
+    private void joinConnection(Socket boardsSocket) {
         new Thread(){
             @Override
             public void run() {
                 LobbySearchDialog lobbySearchDialog = new LobbySearchDialog(mainPanel);
                 lobbySearchDialog.setVisible(true);
-                ServerConnector serverConnector = new ServerConnector();
-                Socket boardsSocket = serverConnector.getSocket();
                 ConnectionMode gameMode = ConnectionMode.JOIN_GAME_MODE;
                 long seed;
                 try{
