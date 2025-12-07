@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Server {
+    // public static final String SERVER_IP = "localhost";
     public static final String SERVER_IP = "localhost";
     public static final int SERVER_PORT = 7777;
 
@@ -32,7 +33,6 @@ public class Server {
                 try {
                     Socket client = server.accept();
                     pool.execute(new MatchmakingHandler(client, quickPlayPlayers, quickPlayNESPlayers, lobbies));
-                    System.out.println("Cliente enviado a matchmaking");
                 }
                 catch (IOException ioe) { ioe.printStackTrace(); }
             }

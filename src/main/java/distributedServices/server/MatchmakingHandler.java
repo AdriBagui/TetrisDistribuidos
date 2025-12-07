@@ -33,15 +33,13 @@ public class MatchmakingHandler implements Runnable{
         try{
             DataInputStream dis = new DataInputStream(client.getInputStream());
             gameModeSelected = dis.readInt();
-            System.out.println(Thread.currentThread().getName() + "He seleccionado el modo: " + gameModeSelected);
             switch (gameModeSelected){
                 case QUICK_MATCH_MODE:
                     synchronized (quickPlayPlayers) { quickPlayPlayers.add(client); }
-                    System.out.println(Thread.currentThread().getName() + "He añadido el cliente a la lista");
                     quickModeSearch();
                     break;
                 case QUICK_MATCH_NES_MODE:
-                    quickPlayNESPlayers.add(client);
+                    synchronized (quickPlayNESPlayers) { quickPlayNESPlayers.add(client); }
                     quickModeNESSearch();
                     break;
                 case HOST_GAME_MODE:
@@ -58,11 +56,13 @@ public class MatchmakingHandler implements Runnable{
         }
     }
 
+    /**
+     * Searchs for a game of Quick Mode
+     */
     private void quickModeSearch() {
         Socket opponentSocket = null;
         while(opponentSocket == null && quickPlayPlayers.contains(client)){
-            System.out.println(Thread.currentThread().getName() + " Pruebo a buscar");
-            opponentSocket = lookForOpponentQuickMode();
+            opponentSocket = lookForOpponent(quickPlayPlayers);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -71,41 +71,51 @@ public class MatchmakingHandler implements Runnable{
         }
         if(opponentSocket != null){
             new Thread(new GameCommunicationHandler(client, opponentSocket)).start();
-            System.out.println(Thread.currentThread().getName() + " Comienzo partida");
         }
     }
 
     /**
-     * Looks for a player to connect in quickModeSearch. It removes the {@link this.client} and the opponent if an opponent is found
+     * Searchs for a game of Quick Mode (NES)
+     */
+    private void quickModeNESSearch() {
+        Socket opponentSocket = null;
+        while(opponentSocket == null && quickPlayNESPlayers.contains(client)){
+            opponentSocket = lookForOpponent(quickPlayNESPlayers);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        if(opponentSocket != null){
+            new Thread(new GameCommunicationHandler(client, opponentSocket)).start();
+        }
+    }
+
+    /**
+     * Looks for a player to connect in quick mode searching. It removes the {@link this.client} and the opponent if an opponent is found
      * @return Socket of the opponent to connect and play
      */
-    private Socket lookForOpponentQuickMode(){
+    private Socket lookForOpponent(Vector<Socket> socketsVector){
         Socket opponentSocket = null;
-        synchronized (quickPlayPlayers){
-            if(quickPlayPlayers.size()>1){ // There's someone other than you
-                System.out.println(Thread.currentThread().getName() + " He encontrado rival");
+        synchronized (socketsVector){
+            if(socketsVector.size()>1){ // There's someone other than you
                 // Get and remove the opponent
                 int i = 0;
-                while(quickPlayPlayers.get(i).equals(client)){
+                while(socketsVector.get(i).equals(client)){
                     i++;
                 }
-                opponentSocket = quickPlayPlayers.get(i);
-                System.out.println(Thread.currentThread().getName() + " He cogido el rival");
-                quickPlayPlayers.remove(i);
+                opponentSocket = socketsVector.get(i);
+                socketsVector.remove(i);
                 // Remove the client
                 i = 0;
-                while(!quickPlayPlayers.get(i).equals(client)){
+                while(!socketsVector.get(i).equals(client)){
                     i++;
                 }
-                quickPlayPlayers.remove(i);
-                System.out.println(Thread.currentThread().getName() + " Me eliminé de la lista");
+                socketsVector.remove(i);
             }
         }
         return opponentSocket;
-    }
-
-    private void quickModeNESSearch() {
-
     }
 
     private void hostGameSearch() {

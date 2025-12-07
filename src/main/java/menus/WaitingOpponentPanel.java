@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutionException;
+import static tetris.Config.*;
 
 public class WaitingOpponentPanel extends JPanel {
     private MainPanel mainPanel;
@@ -81,7 +82,15 @@ public class WaitingOpponentPanel extends JPanel {
                     dos.writeInt(gameMode);
                     dos.flush();
                     seed = dis.readLong(); // Server sends the seed when a player is found
-                    mainPanel.startOnlineGame(seed,boardsSocket);
+                    switch (gameMode){
+                        case QUICK_MATCH_MODE:
+                            mainPanel.startOnlineGame(seed,boardsSocket);
+                            break;
+                        case QUICK_MATCH_NES_MODE:
+                            mainPanel.startOnlineNESGame(seed,boardsSocket);
+                            break;
+                    }
+
                 } catch (IOException ioe){
                     ioe.printStackTrace();
                 }

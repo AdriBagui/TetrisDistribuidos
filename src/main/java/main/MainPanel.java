@@ -108,11 +108,23 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Starts an online game
+     * Starts a modern tetris online game
      * @param seed Seed for the game
      * @param socket Socket received from the server
      */
     public void startOnlineGame(long seed, Socket socket) {
+        onlineNESPanel.setSeed(seed);
+        onlineNESPanel.setSocket(socket);
+        cardLayout.show(this, ONLINE_TETRIO_PANEL);
+        onlineNESPanel.startGame();
+    }
+
+    /**
+     * Starts a classic tetris online game
+     * @param seed Seed for the game
+     * @param socket Socket received from the server
+     */
+    public void startOnlineNESGame(long seed, Socket socket) {
         onlineTetrioPanel.setSeed(seed);
         onlineTetrioPanel.setSocket(socket);
         cardLayout.show(this, ONLINE_TETRIO_PANEL);
