@@ -4,6 +4,7 @@ import distributedServices.ConnectionMode;
 import menus.StartMenuPanel;
 import menus.WaitingOpponentPanel;
 import tetris.boards.components.BoardGrid;
+import tetris.keyMaps.KeyInputHandler;
 import tetris.panels.singlePlayerPanels.SinglePlayerNESPanel;
 import tetris.panels.singlePlayerPanels.SinglePlayerTetrioPanel;
 import tetris.panels.twoPlayerPanels.LocalTwoPlayerNESPanel;
@@ -35,7 +36,7 @@ public class MainPanel extends JPanel {
     public static final int BOARD1_Y = FRAME_PADDING;
     public static final int BOARD2_X = FRAME_PADDING + TETROMINO_HOLDER_WIDTH + BOARD_WIDTH + TETROMINOES_QUEUE_WIDTH + FRAME_PADDING;
     public static final int BOARD2_Y = BOARD1_Y;
-    public static final int PANEL_WIDTH = 3*FRAME_PADDING + 2* TETROMINO_HOLDER_WIDTH + 2*BOARD_WIDTH + 2* TETROMINOES_QUEUE_WIDTH;
+    public static final int PANEL_WIDTH = 3*FRAME_PADDING + 2*TETROMINO_HOLDER_WIDTH + 2*BOARD_WIDTH + 2* TETROMINOES_QUEUE_WIDTH;
     public static final int PANEL_HEIGHT = 3*FRAME_PADDING + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT;
 
     private static final String START_MENU_PANEL = "0";
@@ -100,6 +101,15 @@ public class MainPanel extends JPanel {
 
         // Mostrar el menú principal
         cardLayout.show(this, START_MENU_PANEL);
+    }
+
+    public void setKeyInputHandler(KeyInputHandler keyInputHandler) {
+        singlePlayerTetrioPanel.setKeyInputHandler(keyInputHandler);
+        localTwoPlayerTetrioPanel.setKeyInputHandler(keyInputHandler);
+        singlePlayerNESPanel.setKeyInputHandler(keyInputHandler);
+        localTwoPlayerNESPanel.setKeyInputHandler(keyInputHandler);
+        onlineTetrioPanel.setKeyInputHandler(keyInputHandler);
+        onlineNESPanel.setKeyInputHandler(keyInputHandler);
     }
 
     public void startSinglePlayerTetrioGame() {

@@ -91,15 +91,16 @@ public class Gravity {
     public void increaseGravity(double increment) {
         double relativeIncrement = increment/gravity;
         this.gravity += increment;
-        lockDelayFrames -= lockDelayFrames*(relativeIncrement/2);
+        lockDelayFrames -= lockDelayFrames*(relativeIncrement/30);
     }
 
     /**
      * Temporarily increases gravity for a soft drop effect.
      */
     public void softDrop() {
-        appliedGravity = Math.max(gravity*1.1, SOFT_DROP_GRAVITY); // The 1.2 multiplication our my own addition
-        appliedLockDelayFrames = lockDelayFrames * gravity/appliedGravity;
+        appliedGravity = Math.max(gravity*1.05, SOFT_DROP_GRAVITY); // The 1.05 multiplication is our own addition
+        double relativeIncrement = (appliedGravity-gravity)/gravity;
+        appliedLockDelayFrames = lockDelayFrames*(1 - relativeIncrement/30);
     }
 
     /**

@@ -5,7 +5,6 @@ import tetris.boards.SenderBoardOutputHandler;
 import tetris.boards.ReceiverBoardInputHandler;
 import tetris.boards.tetrio.ReceiverTetrioBoardInputHandler;
 import tetris.boards.tetrio.SenderTetrioBoardWithPhysics;
-import tetris.keyMaps.KeyMapFactory;
 
 import java.io.IOException;
 import java.io.PipedInputStream;
@@ -23,7 +22,7 @@ public class LocalTwoPlayerTetrioPanel extends LocalTwoPlayersPanel {
     private long seed;
 
     public LocalTwoPlayerTetrioPanel(MainPanel mainPanel) {
-        super(mainPanel, KeyMapFactory.TETRIO_MODE);
+        super(mainPanel);
 
         player1OutputStream = null;
         player2OutputStream = null;
@@ -35,6 +34,9 @@ public class LocalTwoPlayerTetrioPanel extends LocalTwoPlayersPanel {
 
     @Override
     protected void initializeBoards() {
+        keyInputHandler.enablePlayer2Controls();
+        keyInputHandler.enableTetrioControls();
+
         connectBoards();
         boards[0] = new SenderTetrioBoardWithPhysics(BOARD1_X, BOARD1_Y, seed, new SenderBoardOutputHandler(player1OutputStream));
         player1ReceiverBoardInputHandler = new ReceiverTetrioBoardInputHandler(player1InputStream, (SenderTetrioBoardWithPhysics) boards[0], null);

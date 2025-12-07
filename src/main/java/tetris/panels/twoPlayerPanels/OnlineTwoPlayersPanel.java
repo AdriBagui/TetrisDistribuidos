@@ -3,9 +3,7 @@ package tetris.panels.twoPlayerPanels;
 import main.MainPanel;
 import tetris.boards.BoardWithPhysics;
 import tetris.boards.ReceiverBoardInputHandler;
-import tetris.keyMaps.KeyMapFactory;
-import tetris.keyMaps.SinglePlayerKeyMap;
-import tetris.keyMaps.TwoPlayersKeyMap;
+import tetris.keyMaps.KeyInputHandler;
 
 import java.net.Socket;
 
@@ -14,8 +12,8 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
     protected ReceiverBoardInputHandler receiverBoardInputHandler;
     protected long seed;
 
-    public OnlineTwoPlayersPanel(MainPanel mainPanel, int tetrisMode) {
-        super(mainPanel, KeyMapFactory.createTwoPlayersKeyMap(tetrisMode, mainPanel));
+    public OnlineTwoPlayersPanel(MainPanel mainPanel) {
+        super(mainPanel);
 
         boardsSocket = null;
         receiverBoardInputHandler = null;
@@ -40,6 +38,6 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
     @Override
     public void resetGame() {
         super.resetGame();
-        ((TwoPlayersKeyMap) keyMap).setBoards(boards[0], boards[1]);
+        keyInputHandler.setPlayer1Board((BoardWithPhysics) boards[0]);
     }
 }

@@ -2,16 +2,10 @@ package tetris.panels.twoPlayerPanels;
 
 import main.MainPanel;
 import tetris.boards.BoardWithPhysics;
-import tetris.keyMaps.KeyMapFactory;
-import tetris.keyMaps.TwoPlayersKeyMap;
-
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 
 public abstract class LocalTwoPlayersPanel extends TwoPlayersPanel {
-    public LocalTwoPlayersPanel(MainPanel mainPanel, int tetrisMode) {
-        super(mainPanel, KeyMapFactory.createTwoPlayersKeyMap(tetrisMode, mainPanel));
+    public LocalTwoPlayersPanel(MainPanel mainPanel) {
+        super(mainPanel);
     }
 
     @Override
@@ -26,6 +20,7 @@ public abstract class LocalTwoPlayersPanel extends TwoPlayersPanel {
     @Override
     public void resetGame() {
         super.resetGame();
-        ((TwoPlayersKeyMap) keyMap).setBoards(boards[0], boards[1]);
+        keyInputHandler.setPlayer1Board((BoardWithPhysics) boards[0]);
+        keyInputHandler.setPlayer2Board((BoardWithPhysics) boards[1]);
     }
 }

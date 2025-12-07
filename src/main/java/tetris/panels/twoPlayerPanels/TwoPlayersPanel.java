@@ -10,8 +10,8 @@ import java.awt.event.KeyListener;
 import static main.MainPanel.*;
 
 public abstract class TwoPlayersPanel extends TetrisPanel {
-    public TwoPlayersPanel(MainPanel mainPanel, KeyListener keyListener) {
-        super(mainPanel, keyListener);
+    public TwoPlayersPanel(MainPanel mainPanel) {
+        super(mainPanel);
         boards = new Board[2];
     }
 

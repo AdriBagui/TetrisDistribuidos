@@ -8,5 +8,6 @@ public enum InputAction {
     ROTATE_LEFT,
     ROTATE_RIGHT,
     FLIP,
-    HOLD
+    HOLD,
+    GO_BACK_TO_START_MENU
 }

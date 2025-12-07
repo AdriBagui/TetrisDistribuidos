@@ -1,6 +1,10 @@
 package main;
 
+import tetris.keyMaps.InputAction;
+import tetris.keyMaps.KeyInputHandler;
+
 import javax.swing.*;
+import java.awt.event.KeyEvent;
 
 // El MainFrame es el frame (la ventana) de la aplicación
 public class MainFrame extends JFrame {
@@ -22,5 +26,29 @@ public class MainFrame extends JFrame {
 
         // Centra el frame en el centro de la pantalla
         setLocationRelativeTo(null);
+
+        KeyInputHandler keyInputHandler = new KeyInputHandler(mainPanel);
+
+        keyInputHandler.bindGoBackToMenuKey(KeyEvent.VK_ENTER);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_A, InputAction.MOVE_LEFT, true);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_D, InputAction.MOVE_RIGHT, true);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_S, InputAction.SOFT_DROP, true);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_W, InputAction.HARD_DROP, true);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_J, InputAction.ROTATE_LEFT, true);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_K, InputAction.ROTATE_RIGHT, true);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_L, InputAction.FLIP, true);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_SHIFT, InputAction.HOLD, true);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_LEFT, InputAction.MOVE_LEFT, false);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_RIGHT, InputAction.MOVE_RIGHT, false);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_DOWN, InputAction.SOFT_DROP, false);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_UP, InputAction.HARD_DROP, false);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_NUMPAD1, InputAction.ROTATE_LEFT, false);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_NUMPAD2, InputAction.ROTATE_RIGHT, false);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_NUMPAD3, InputAction.FLIP, false);
+        keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_CONTROL, InputAction.HOLD, false);
+
+        mainPanel.setKeyInputHandler(keyInputHandler);
+        setFocusable(true);
+        addKeyListener(keyInputHandler);
     }
 }

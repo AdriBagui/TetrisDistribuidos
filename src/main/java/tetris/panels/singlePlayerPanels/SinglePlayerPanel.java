@@ -3,8 +3,7 @@ package tetris.panels.singlePlayerPanels;
 import main.MainPanel;
 import tetris.boards.Board;
 import tetris.boards.BoardWithPhysics;
-import tetris.keyMaps.KeyMapFactory;
-import tetris.keyMaps.SinglePlayerKeyMap;
+import tetris.keyMaps.KeyInputHandler;
 import tetris.panels.TetrisPanel;
 
 import java.awt.*;
@@ -12,8 +11,8 @@ import java.awt.*;
 import static main.MainPanel.*;
 
 public abstract class SinglePlayerPanel extends TetrisPanel {
-    public SinglePlayerPanel(MainPanel mainPanel, int tetrisMode) {
-        super(mainPanel, KeyMapFactory.createSinglePlayerKeyMap(tetrisMode, mainPanel));
+    public SinglePlayerPanel(MainPanel mainPanel) {
+        super(mainPanel);
         boards = new Board[1];
     }
 
@@ -53,6 +52,6 @@ public abstract class SinglePlayerPanel extends TetrisPanel {
     @Override
     protected void resetGame() {
         super.resetGame();
-        ((SinglePlayerKeyMap) keyMap).setBoard((BoardWithPhysics) boards[0]);
+        keyInputHandler.setPlayer1Board((BoardWithPhysics) boards[0]);
     }
 }
