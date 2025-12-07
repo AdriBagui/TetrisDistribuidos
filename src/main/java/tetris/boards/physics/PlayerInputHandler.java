@@ -11,6 +11,11 @@ public class PlayerInputHandler {
     private RotationSystem rotationSystem;
     private Gravity gravity;
     private Tetromino fallingTetromino;
+
+    // INPUT STATE COUNTERS
+    // -1: Released
+    // 0: Just Pressed
+    // >0: Held down (counting frames)
     private int softDropping;
     private int movingLeft;
     private int movingRight;
@@ -19,6 +24,13 @@ public class PlayerInputHandler {
     private int rotatedRight;
     private int flipped;
 
+    /**
+     * Handles player input and applies it to the falling tetromino.
+     * Manages DAS (Delayed Auto Shift) and ARR (Automatic Repeat Rate).
+     * @param grid the game grid.
+     * @param rotationSystem the system used to calculate rotations.
+     * @param gravity the gravity controller.
+     */
     public PlayerInputHandler(BoardGrid grid, RotationSystem rotationSystem, Gravity gravity) {
         this.grid = grid;
         this.rotationSystem = rotationSystem;
@@ -34,10 +46,18 @@ public class PlayerInputHandler {
         flipped = -1;
     }
 
+    /**
+     * Sets the tetromino that will receive inputs.
+     * @param fallingTetromino the active tetromino.
+     */
     public void setFallingTetromino(Tetromino fallingTetromino) {
         this.fallingTetromino = fallingTetromino;
     }
 
+    /**
+     * Processes input states and updates the tetromino's position or orientation.
+     * Should be called every frame.
+     */
     public void update() {
         if (hardDropped == 0) {
             gravity.hardDrop();
@@ -46,12 +66,14 @@ public class PlayerInputHandler {
             return;
         }
 
+        // Handle Horizontal Movement (Left/Right) with DAS/ARR logic
         if (movingLeft < 0) {
             movingRightUpdate();
         } else {
             if (movingRight < 0) {
                 movingLeftUpdate();
             } else {
+                // If both are held, prioritize the most recently pressed or handle simultaneously
                 if (movingRight < movingLeft) {
                     movingRightUpdate();
 
@@ -88,6 +110,11 @@ public class PlayerInputHandler {
         }
     }
 
+    // INPUT EVENT METHODS
+
+    /**
+     * Registers that the move left key has been pressed.
+     */
     public void moveLeftPressed() {
         if (movingLeft < 0) {
             movingLeft = 0;
@@ -98,10 +125,16 @@ public class PlayerInputHandler {
         }
     }
 
+    /**
+     * Registers that the move left key has been released.
+     */
     public void moveLeftReleased() {
         movingLeft = -1;
     }
 
+    /**
+     * Registers that the move right key has been pressed.
+     */
     public void moveRightPressed() {
         if (movingRight < 0) {
             movingRight = 0;
@@ -112,59 +145,94 @@ public class PlayerInputHandler {
         }
     }
 
+    /**
+     * Registers that the move right key has been released.
+     */
     public void moveRightReleased() {
         movingRight = -1;
     }
 
+    /**
+     * Registers that the soft drop key has been pressed.
+     */
     public void softDropPressed() {
         if (softDropping < 0) {
             softDropping = 0;
         }
     }
 
+    /**
+     * Registers that the soft drop key has been released.
+     */
     public void softDropReleased() {
         softDropping = -1;
     }
 
+    /**
+     * Registers that the hard drop key has been pressed.
+     */
     public void hardDropPressed() {
         if (hardDropped < 0) {
             hardDropped = 0;
         }
     }
 
+    /**
+     * Registers that the hard drop key has been released.
+     */
     public void hardDropReleased() {
         hardDropped = -1;
     }
 
+    /**
+     * Registers that the rotate right key has been pressed.
+     */
     public void rotateRightPressed() {
         if (rotatedRight < 0) {
             rotatedRight = 0;
         }
     }
 
+    /**
+     * Registers that the rotate right key has been released.
+     */
     public void rotateRightReleased() {
         rotatedRight = -1;
     }
 
+    /**
+     * Registers that the rotate left key has been pressed.
+     */
     public void rotateLeftPressed() {
         if (rotatedLeft < 0) {
             rotatedLeft = 0;
         }
     }
 
+    /**
+     * Registers that the rotate left key has been released.
+     */
     public void rotateLeftReleased() {
         rotatedLeft = -1;
     }
 
+    /**
+     * Registers that the flip (180 rotation) key has been pressed.
+     */
     public void flipPressed() {
         if (flipped < 0) {
             flipped = 0;
         }
     }
 
+    /**
+     * Registers that the flip key has been released.
+     */
     public void flipReleased() {
         flipped = -1;
     }
+
+    // INTERNAL MOVEMENT LOGIC
 
     private void tryAndApplyMoveLeft() {
         Tetromino aux = fallingTetromino.createCopy();
@@ -196,6 +264,9 @@ public class PlayerInputHandler {
         }
     }
 
+    /**
+     * Updates logic for moving right, including handling DAS and ARR.
+     */
     private void movingRightUpdate() {
         if (movingRight == 0) {
             tryAndApplyMoveRight();
@@ -210,6 +281,9 @@ public class PlayerInputHandler {
         }
     }
 
+    /**
+     * Updates logic for moving left, including handling DAS and ARR.
+     */
     private void movingLeftUpdate() {
         if (movingLeft == 0) {
             tryAndApplyMoveLeft();
@@ -224,7 +298,10 @@ public class PlayerInputHandler {
         }
     }
 
-    private void fastMovingDownUpdate() {
+    /**
+     * Updates logic for soft dropping, including handling DAS and ARR.
+     */
+    private void softDroppingUpdate() {
         if (softDropping < AUTOMATIC_REPEAT_RATE_FRAMES + DELAYED_AUTO_SHIFT_FRAMES) {
             softDropping++;
         } else {

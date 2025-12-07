@@ -32,15 +32,15 @@ public abstract class Board {
     protected boolean isAlive;
 
     /**
-     * Creates the board to play tetris
-     * @param x x coordinate for the top left corner of the grid
-     * @param y y coordinate for the top left corner of the grid
-     * @param gridRows Number of rows in the grid
-     * @param gridSpawnRows Number of rows above the grid to spawn tetrominoes
-     * @param gridColumns Number of columns in the grid
-     * @param tetrominoesQueueSize Size of the queue of tetrominoes that is seen
-     * @param tetrominoesQueueGeneratorType Type of tetrominoes generator to change randomness type
-     * @param seed Seed for the tetromino's order
+     * Creates the board to play tetris.
+     * @param x x coordinate for the top left corner of the grid.
+     * @param y y coordinate for the top left corner of the grid.
+     * @param gridRows Number of rows in the grid.
+     * @param gridSpawnRows Number of rows above the grid to spawn tetrominoes.
+     * @param gridColumns Number of columns in the grid.
+     * @param tetrominoesQueueSize Size of the queue of tetrominoes that is seen.
+     * @param tetrominoesQueueGeneratorType Type of tetrominoes generator to change randomness type.
+     * @param seed Seed for the tetromino's order.
      */
     public Board(int x, int y, int gridRows, int gridSpawnRows, int gridColumns, int tetrominoesQueueSize, int tetrominoesQueueGeneratorType, long seed) {
         this.x = x;
@@ -62,10 +62,31 @@ public abstract class Board {
         fallingTetromino = null;
     }
 
+    // ABSTRACT METHODS
+
+    /**
+     * Checks if the falling tetromino has been locked in place (e.g., by gravity or hard drop).
+     * @return true if locked, false otherwise.
+     */
     protected abstract boolean isFallingTetrominoLocked();
+
+    /**
+     * Updates the logic for the falling tetromino (movement, gravity, input).
+     */
     protected abstract void updateFallingTetromino();
 
+    // PUBLIC INTERFACE
+
+    /**
+     * Checks if the game is still running (player hasn't topped out).
+     * @return true if alive, false if game over.
+     */
     public boolean isAlive() { return isAlive; }
+
+    /**
+     * Main update loop for the board.
+     * Handles spawning new pieces, checking collisions, updating physics, and locking pieces.
+     */
     public void update() {
         if (nextTetromino != null) {
             setNextTetrominoAsFallingTetromino();
@@ -82,11 +103,16 @@ public abstract class Board {
 
         if (isFallingTetrominoLocked()) { lockFallingTetrominoAndClearLines(); }
     }
+
+    /**
+     * Renders the board and all its components (grid, active piece, UI).
+     * @param g2 the Graphics2D context.
+     */
     public void draw(Graphics2D g2) {
-        // Dibuja el tablero (con sus bordes y la plantilla)
+        // Draws the board (with its borders and template)
         grid.draw(g2);
 
-        // Dibuja el tetromino que está cayendo
+        // Draws the falling tetromino
         if (fallingTetromino != null) drawFallingTetromino(g2);
 
         // Draw Level
@@ -104,16 +130,26 @@ public abstract class Board {
         tetrominoesQueue.draw(g2);
     }
 
-    // Auxiliary methods
+    // AUXILIARY METHODS
+
+    /**
+     * Promotes the next tetromino in the queue to be the currently falling one.
+     * Resets its position to the spawn point.
+     */
     protected void setNextTetrominoAsFallingTetromino() {
         nextTetromino.setParentXY(grid.getX(), grid.getY());
-        // El >> 1 lo ha sugerido IntelIJ (es como el SHR 1 de ensamblador),
-        // es decir, mueve los bits uno para la derecha que es equivalente a dividir entre 2.
+        // The >> 1 shifts bits one to the right, equivalent to dividing by 2.
         nextTetromino.setXY((BOARD_COLUMNS - nextTetromino.getWidth()) >> 1, 0);
 
         fallingTetromino = nextTetromino;
         fallingTetrominoShadow = new TetrominoShadow(fallingTetromino);
     }
+
+    /**
+     * Locks the falling tetromino into the grid grid and processes line clears.
+     * Updates score and level based on cleared lines.
+     * @return the number of lines cleared.
+     */
     protected int lockFallingTetrominoAndClearLines() {
         int linesCleared = grid.lockTetrominoAndClearLines(fallingTetromino);
 
@@ -143,10 +179,23 @@ public abstract class Board {
 
         return linesCleared;
     }
+
+    /**
+     * Increases the game level. Can be overridden for mode-specific behavior.
+     */
     protected void increaseLevel() {
         level++;
     }
+
+    /**
+     * Draws the currently falling tetromino.
+     * @param g2 the Graphics2D context.
+     */
     protected void drawFallingTetromino(Graphics2D g2) { fallingTetromino.draw(g2); }
+
+    /**
+     * Calculates and updates the position of the ghost piece (shadow).
+     */
     private void updateFallingTetrominoShadow() {
         int shadowDistanceToFloor;
         fallingTetrominoShadow.setXYRotationIndex(fallingTetromino.getX(), fallingTetromino.getY(), fallingTetromino.getRotationIndex());
