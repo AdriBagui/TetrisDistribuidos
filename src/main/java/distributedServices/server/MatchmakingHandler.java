@@ -1,6 +1,7 @@
 package distributedServices.server;
 
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Vector;
@@ -31,6 +32,7 @@ public class MatchmakingHandler implements Runnable{
         
         try{
             DataInputStream dis = new DataInputStream(client.getInputStream());
+            System.out.println(Thread.currentThread().getName() + "He mandado la seed");
             gameModeSelected = dis.readInt();
             System.out.println(Thread.currentThread().getName() + "He seleccionado el modo: " + gameModeSelected);
             switch (gameModeSelected){
@@ -72,7 +74,15 @@ public class MatchmakingHandler implements Runnable{
             new Thread(new GameCommunicationHandler(client, opponentSocket)).start();
             System.out.println(Thread.currentThread().getName() + "Comienzo partida");
         }
-        System.out.println(Thread.currentThread().getName() + "Me encontró otro jugador");
+
+        try{
+            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+            long seed = System.currentTimeMillis();
+            dos.writeLong(seed);
+            dos.flush();
+        } catch (IOException ioe){
+            ioe.printStackTrace();
+        }
     }
 
     /**

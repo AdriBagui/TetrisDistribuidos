@@ -78,9 +78,9 @@ public class WaitingOpponentPanel extends JPanel {
                 try{
                     DataInputStream dis = new DataInputStream(boardsSocket.getInputStream());
                     DataOutputStream dos = new DataOutputStream(boardsSocket.getOutputStream());
-                    seed = dis.readLong();
                     dos.writeInt(gameMode);
                     dos.flush();
+                    seed = dis.readLong(); // Server sends the seed when a player is found
                     mainPanel.startOnlineGame(seed,boardsSocket);
                 } catch (IOException ioe){
                     ioe.printStackTrace();

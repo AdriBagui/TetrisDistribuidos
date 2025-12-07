@@ -22,17 +22,6 @@ public class GameCommunicationHandler implements Runnable{
     @Override
     public void run() {
         ExecutorService pool = Executors.newFixedThreadPool(2);
-        try{
-            DataOutputStream dosC1 = new DataOutputStream(client1.getOutputStream());
-            DataOutputStream dosC2 = new DataOutputStream(client2.getOutputStream());
-            long seed = System.currentTimeMillis();
-            dosC1.writeLong(seed);
-            dosC2.writeLong(seed);
-            dosC1.flush();
-            dosC2.flush();
-        } catch (IOException ioe){
-            ioe.printStackTrace();
-        }
         pool.execute(new PlayerCommunicationHandler(client1, client2));
         pool.execute(new PlayerCommunicationHandler(client2, client1));
     }
