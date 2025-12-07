@@ -21,7 +21,7 @@ public class TetrioBoardWithPhysics extends BoardWithPhysics {
     protected ReceivedGarbageHandler receivedGarbageHandler;
 
     public TetrioBoardWithPhysics(int x, int y, long seed) {
-        super(x + TETROMINO_HOLDER_WIDTH, y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS, TETRIO_TETROMINOES_QUEUE_SIZE, TetrominoesGeneratorFactory.BAG_WITH_7, seed, RotationSystemFactory.SUPER_ROTATION_SYSTEM, TETRIO_INITIAL_GRAVITY, (int) FPS/1);
+        super(x + TETROMINO_HOLDER_WIDTH, y, BOARD_ROWS, BOARD_SPAWN_ROWS, BOARD_COLUMNS, TETRIO_TETROMINOES_QUEUE_SIZE, TetrominoesGeneratorFactory.BAG_WITH_7, seed, RotationSystemFactory.SUPER_ROTATION_SYSTEM, TETRIO_INITIAL_GRAVITY, TETRIO_LOCK_DELAY_FRAMES);
 
         tetrominoHolder = new TetrominoHolder(x, y + BOARD_SPAWN_ROWS*CELL_SIZE, tetrominoesQueue);
         this.x = x; // Restore the correct x (when calling super I add the width of the holder so that the rest of the components
