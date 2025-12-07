@@ -1,5 +1,6 @@
 package main;
 
+import distributedServices.ConnectionMode;
 import menus.StartMenuPanel;
 import menus.WaitingOpponentPanel;
 import tetris.boards.components.BoardGrid;
@@ -120,7 +121,7 @@ public class MainPanel extends JPanel {
     // PRE: Requiere de que se haya creado un socket para la partida
     // Muestra el panel de partida online (no sé si empezar las partidas aquí o no, darle una vuelta.
     // Si no empiezo las partidas aquí cambiar el nombre de los métodos a show).
-    public void connectToOnlineGame(int gameMode) {
+    public void connectToOnlineGame(ConnectionMode gameMode) {
         cardLayout.show(this, WAITING_OPPONENT_PANEL);
         waitingOpponentPanel.connect(gameMode);
     }

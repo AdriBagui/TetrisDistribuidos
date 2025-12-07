@@ -1,13 +1,12 @@
 package distributedServices.server;
 
+import distributedServices.ConnectionMode;
+
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
-
-import static tetris.Config.*;
 
 public class MatchmakingHandler implements Runnable{
     Socket client;
@@ -28,12 +27,12 @@ public class MatchmakingHandler implements Runnable{
      */
     @Override
     public void run() {
-        int gameModeSelected;
+        ConnectionMode gameModeSelected;
         
         try{
             DataInputStream dis = new DataInputStream(client.getInputStream());
-            gameModeSelected = dis.readInt();
-            switch (gameModeSelected){
+            gameModeSelected = ConnectionMode.values()[dis.readInt()];
+            switch (gameModeSelected) {
                 case QUICK_MATCH_MODE:
                     synchronized (quickPlayPlayers) { quickPlayPlayers.add(client); }
                     quickModeSearch();

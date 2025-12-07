@@ -1,12 +1,9 @@
 package menus;
 
+import distributedServices.ConnectionMode;
 import main.MainPanel;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import static tetris.Config.*;
 
 public class StartMenuOnlineButtonsPanel extends JPanel {
     private MainPanel mainPanel;
@@ -56,11 +53,11 @@ public class StartMenuOnlineButtonsPanel extends JPanel {
     /**
      * Used for playing a normal quick game online
      */
-    private void playOnline() { mainPanel.connectToOnlineGame(QUICK_MATCH_MODE); }
+    private void playOnline() { mainPanel.connectToOnlineGame(ConnectionMode.QUICK_MATCH_MODE); }
 
-    private void playOnlineNES() { mainPanel.connectToOnlineGame(QUICK_MATCH_NES_MODE); }
+    private void playOnlineNES() { mainPanel.connectToOnlineGame(ConnectionMode.QUICK_MATCH_NES_MODE); }
 
-    private void playOnlineAsHost() { mainPanel.connectToOnlineGame(HOST_GAME_MODE); }
+    private void playOnlineAsHost() { mainPanel.connectToOnlineGame(ConnectionMode.HOST_GAME_MODE); }
 
-    private void playOnlineAsClient() { mainPanel.connectToOnlineGame(JOIN_GAME_MODE); }
+    private void playOnlineAsClient() { mainPanel.connectToOnlineGame(ConnectionMode.JOIN_GAME_MODE); }
 }

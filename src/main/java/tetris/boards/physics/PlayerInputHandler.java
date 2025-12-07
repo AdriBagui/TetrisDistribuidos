@@ -5,8 +5,6 @@ import tetris.boards.physics.rotationSystems.RotationSystem;
 import tetris.panels.TetrisPanel;
 import tetris.tetrominoes.Tetromino;
 
-import static tetris.Config.*;
-
 public class PlayerInputHandler {
     // INPUT CONFIGURATION
     public static final int AUTOMATIC_REPEAT_RATE_FRAMES = ((int) TetrisPanel.FPS) / 30;

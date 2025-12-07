@@ -4,8 +4,6 @@ import tetris.boards.components.BoardGrid;
 import tetris.tetrominoes.Tetromino;
 import tetris.tetrominoes.TetrominoType;
 
-import static tetris.Config.*;
-
 public class SuperRotationSystem extends RotationSystem {
     // J, L, S, T, Z Tetromino Wall Kick Data
     private static final int[][][] ROTATE_RIGHT_KICK_DATA = {

@@ -11,7 +11,6 @@ import java.util.TimerTask;
 
 import static main.MainPanel.PANEL_HEIGHT;
 import static main.MainPanel.PANEL_WIDTH;
-import static tetris.Config.*;
 
 public abstract class TetrisPanel extends JPanel {
     public static final double FPS = 62.5;

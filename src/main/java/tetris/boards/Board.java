@@ -11,7 +11,6 @@ import tetris.tetrominoes.generators.TetrominoesGeneratorType;
 import java.awt.*;
 
 import static main.MainPanel.*;
-import static tetris.Config.*;
 
 public abstract class Board {
     // BOARD POSITION IN PANEL

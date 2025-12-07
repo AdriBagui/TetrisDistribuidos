@@ -5,7 +5,6 @@ import tetris.tetrominoes.Tetromino;
 import java.awt.*;
 
 import static main.MainPanel.*;
-import static tetris.Config.*;
 
 public class TetrominoHolder {
     private boolean locked;

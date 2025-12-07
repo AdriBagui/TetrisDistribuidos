@@ -10,7 +10,6 @@ import java.awt.*;
 
 import static main.MainPanel.CELL_SIZE;
 import static main.MainPanel.TETROMINO_HOLDER_WIDTH;
-import static tetris.Config.*;
 import static tetris.boards.tetrio.TetrioConfig.TETROMINOES_QUEUE_SIZE;
 
 public class ReceiverTetrioBoard extends ReceiverBoard {

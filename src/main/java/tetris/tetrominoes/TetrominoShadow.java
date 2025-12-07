@@ -4,8 +4,6 @@ import tetris.tetrominoes.generators.TetrominoesGeneratorType;
 
 import java.awt.*;
 
-import static tetris.Config.*;
-
 public class TetrominoShadow extends Tetromino {
     // SHADOW CONFIGURATION
     public static final int SHADOW_TRANSPARENCY_PERCENTAGE = 15;

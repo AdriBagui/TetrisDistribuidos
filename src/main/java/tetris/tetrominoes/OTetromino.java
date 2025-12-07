@@ -2,8 +2,6 @@ package tetris.tetrominoes;
 
 import java.awt.*;
 
-import static tetris.Config.*;
-
 public class OTetromino extends Tetromino {
     private static final boolean[][] O_ROTATION_0 = {
             {true , true },

@@ -4,8 +4,6 @@ import tetris.boards.components.BoardGrid;
 import tetris.tetrominoes.Tetromino;
 import tetris.tetrominoes.TetrominoType;
 
-import static tetris.Config.*;
-
 public class NESRotationSystem extends RotationSystem {
     public NESRotationSystem(BoardGrid grid) { super(grid); }
 
