@@ -3,8 +3,12 @@ package main;
 import tetris.keyMaps.InputAction;
 import tetris.keyMaps.KeyInputHandler;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 // El MainFrame es el frame (la ventana) de la aplicación
 public class MainFrame extends JFrame {
@@ -17,6 +21,13 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         // Impide que se pueda modificar el tamaño de la ventana
         setResizable(false);
+
+        try {
+            BufferedImage icon = ImageIO.read(Objects.requireNonNull(getClass().getResource("/images/icon.png")));
+            setIconImage(icon);
+        } catch (IOException | NullPointerException e) {
+            System.out.println("Could not load application icon.");
+        }
 
         mainPanel = new MainPanel();
         add(mainPanel);
