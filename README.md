@@ -1,87 +1,194 @@
-# **Tetris Project Documentation**
+Tetris Distribuidos
 
-## **1\. Project Overview**
+Tetris Distribuidos is a robust, Java-based Tetris implementation featuring a custom Swing UI, distinct game modes (Modern vs. Classic NES), and full multiplayer capabilities (Local & Online).
 
-This is a clone of Tetris built using **Java Swing** for the UI. It features:
+The project demonstrates a distributed system architecture using TCP sockets for online matchmaking and real-time gameplay synchronization.
 
-* **Single/Local Multiplayer:** Two boards rendered side-by-side.  
-* **Online Multiplayer:** A Host/Client TCP architecture.  
-* **Mechanics:** Implements the Super Rotation System (SRS) and NES-style gravity/scoring.
+🎮 Features
 
-## **2\. Architecture & Package Structure**
+Game Modes
 
-The project is divided into logical layers separating the View (UI) from the Model (Logic/Physics).
+Modern Tetris:
 
-### **src (Root)**
+Mechanics: Super Rotation System (SRS), Hard Drop, Hold Piece, 7-Bag Random Generator.
 
-* **Main.java**: The entry point. It initializes the MainFrame on the Swing Event Dispatch Thread (EDT).  
-* **MainFrame.java**: The top-level JFrame window.  
-* **MainPanel.java**: Acts as the central controller using a CardLayout. It switches between the Menu, Local Game, and Online Game client.panels. It also handles the initial TCP ServerSocket and Socket connection setup.
+Garbage System: Competitive play where clearing lines sends garbage rows to the opponent.
 
-### **client.userInterface.panels**
+Classic (NES) Tetris:
 
-* **StartMenuPanel.java**: Simple UI for selecting game modes (Local, Host, Client).
+Mechanics: Nintendo Rotation System (no wall kicks), Classic gravity curve, NES Random Generator, no Hold piece.
 
-### **tetris**
+Goal: Score-based competition.
 
-* **Config.java**: A centralized configuration file containing constants for:  
-  * **Facts:** Tetromino IDs.  
-  * **Game Loop:** FPS (62.5), Frame timing.  
-  * **Dimensions:** Board rows/cols, cell sizes.  
-  * **Physics:** Gravity calculations, DAS (Delayed Auto Shift), ARR (Auto Repeat Rate).
+Multiplayer Types
 
-### **tetris.boards (The Data Model)**
+Local Multiplayer: Play 1v1 on the same keyboard/screen.
 
-* **Board.java (Abstract)**: Represents the game state (the grid, score, level, current piece). It handles the drawing of the grid and UI overlays.  
-* **ClassicBoard.java**: Extends Board to add standard Tetris logic (shadows, specific garbage calculation, key input handling).  
-* **LocalBoard.java**: Extends ClassicBoard. Used by the local player. It **sends** game state updates to the output stream (for online play).  
-* **OnlineBoard.java**: Extends Board. Used to represent the *opponent*. It **receives** state updates from an input stream.  
-* **TetrominoesQueue.java**: Manages the "Next Piece" preview using a generator.  
-* **TetrominoHolder.java**: Manages the "Hold" mechanic.
+Online Multiplayer:
 
-### **tetris.client.panels (The View/Controller)**
+Quick Match: Automatically pair with a random opponent.
 
-* **TwoPlayerTetrisPanel.java**: Base class for rendering two boards. Contains the **Game Loop** (java.util.Timer).  
-* **LocalTwoPlayerTetrisPanel.java**: Handles input for two players on the same keyboard (WASD vs Arrow Keys).  
-* **OnlineTwoPlayerTetrisPanel.java**: Handles input for one local player and updates the second board based on network data.
+Private Lobby: Host a game and share the Room ID with a friend.
 
-### **tetris.boards.physics (The Logic Engine)**
+Join Lobby: Connect to a specific room via ID.
 
-* **BoardPhysics.java**: Abstract base for movement logic.  
-* **LocalBoardPhysics.java**: Calculates movement, collision, and gravity for the player currently controlling the keyboard.  
-* **OnlineBoardPhysics.java**: Instead of calculating physics, this class **decodes** the network stream to update the opponent's piece position blindly.  
-* **CollisionDetector.java**: Static utility to check if a piece overlaps with the grid or boundaries.  
-* **Gravity.java**: Handles the falling speed, "Soft Drop", and "Hard Drop" calculations.  
-* **InputMovement.java**: Handles the complex DAS/ARR (key repeat) logic for smooth movement.
+Technical Highlights
 
-### **tetris.tetrominoes**
+Custom UI: A dark-themed, specialized Swing interface with custom components (ModernButton, ModernScrollBar).
 
-* **Tetromino.java**: Abstract definition of a piece (shape, color, rotation state, coordinates).  
-* **TetrominoCell.java**: Static helper to draw individual blocks (squares) using Graphics2D.  
-* **TetrominoFactory.java**: Factory pattern to generate pieces based on IDs.  
-* **generators/**: Contains RandomBagTetrominoesGenerator (standard 7-bag randomization) and CompletelyRandom....
+Input System: Configurable key bindings saved to XML with KeyInputHandler supporting DAS (Delayed Auto Shift) and ARR (Automatic Repeat Rate).
 
-## **3\. Network Protocol (Custom TCP)**
+Physics Engine: Accurate implementation of gravity, lock delays, and rotation rules (SRS & NES).
 
-The application uses a custom byte-based protocol to synchronize state between the Host and Client.
+Networking: Multithreaded server handling matchmaking queues and relaying game state between clients.
 
-### **Communication Flow**
+🚀 Getting Started
 
-1. **Handshake:** The Host generates a seed (long) and sends it to the Client so both random number generators produce the same sequence of pieces.  
-2. **Game Loop:** The LocalBoard sends bytes, and the OnlineBoard reads bytes.
+Prerequisites
 
-### **Protocol Codes**
+Java Development Kit (JDK) 17 or higher.
 
-The protocol uses a header byte to determine the action, followed by data bytes.
+Maven or Gradle (optional, if building from source).
 
-| Header Byte | Action | Payload (Following Bytes) | Description |
-| :---- | :---- | :---- | :---- |
-| **1** | **MOVE** | \[X, Y, Rotation, Locked\] | Updates the opponent's falling piece position. X/Y: Coordinates (0-255). Rot: Rotation Index (0-3). Locked: 1 if piece locked, 0 otherwise. |
-| **2** | **HOLD** | *None* | Opponent swapped the held piece. |
-| **3** | **GARBAGE** | \[Lines, EmptyCol\] | Opponent cleared lines and sent garbage. Lines: Count. EmptyCol: The hole in the garbage line. |
+Running the Application
 
-## **4\. Key Mechanics Implementation**
+This project consists of two main entry points: the Server (for online play) and the Client (the game itself).
 
-* **Gravity:** Calculated as "Cells per Frame". It accumulates a decimal decimalY until it exceeds 1.0, triggering a drop.  
-* **Rotation (SRS+):** The SuperRotationSystemPlus class defines "Kick Data". If a rotation results in a collision, the system tries offset positions (kicks) to find a valid spot.  
-* **Garbage:** Standard "cheese" garbage. When lines are cleared, garbage is sent to the enemyBoard. The garbage rises from the bottom with a hole in a specific column.
+1. Start the Server
+
+If you want to play online, the server must be running first.
+
+# Compile and run the Server class
+java server.Server
+
+
+The server listens on port 7777 by default.
+
+2. Start the Client
+
+Run the main client application. You can optionally pass the Server IP and Port as arguments.
+
+# Run the Client (defaults to localhost:7777)
+java client.Main
+
+# Or specify a remote server IP
+java client.Main 192.168.1.50 7777
+
+
+🕹️ Controls
+
+Default controls can be customized in the Settings menu.
+
+Player 1 (Default)
+
+Action
+
+Key
+
+Move Left
+
+A
+
+Move Right
+
+D
+
+Soft Drop
+
+S
+
+Hard Drop
+
+W
+
+Rotate Left
+
+J
+
+Rotate Right
+
+K
+
+Flip (180°)
+
+L
+
+Hold Piece
+
+Shift
+
+Player 2 (Local Multiplayer)
+
+Action
+
+Key
+
+Move Left
+
+Left Arrow
+
+Move Right
+
+Right Arrow
+
+Soft Drop
+
+Down Arrow
+
+Hard Drop
+
+Up Arrow
+
+Rotate Left
+
+Numpad 1
+
+Rotate Right
+
+Numpad 2
+
+Flip (180°)
+
+Numpad 3
+
+Hold Piece
+
+Ctrl
+
+Global Controls:
+
+Back to Menu: Enter
+
+🏗️ Architecture
+
+Package Structure
+
+client: Contains the Swing GUI (MainFrame, MainPanel), input handling, and the client-side logic for connecting to the server.
+
+server: Contains the Server socket listener, MatchmakingHandler (queues and lobbies), and GameCommunicationHandler (relays input between players).
+
+tetris: The core game library.
+
+boards: Logic for the game grid, including BoardWithPhysics (local simulation) and ReceiverBoard (network replication).
+
+tetrominoes: Definitions for the 7 pieces (I, J, L, O, S, T, Z) and generation logic.
+
+physics: Gravity calculations, rotation systems (SRS/NES), and garbage handling.
+
+Networking Protocol
+
+The game uses a custom byte-based protocol for efficiency:
+
+Handshake: Client sends ConnectionMode (Quick Play, Host, etc.).
+
+Game Start: Server sends a synchronized random seed (long) to both clients.
+
+Gameplay Loop:
+
+Movement: [X, Y, Rotation, LockedStatus] is broadcasted to the opponent.
+
+Attacks: [Lines, HoleIndex] sent when clearing lines in Modern mode.
+
+⚙️ Customization
+
+Key bindings are stored in src/main/resources/config/keybindings.xml. If this file is missing, the application generates it with default values on startup.
