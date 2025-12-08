@@ -11,9 +11,11 @@ import client.keyMaps.KeyInputHandler;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Objects;
 
 import static server.Server.SERVER_IP;
 import static server.Server.SERVER_PORT;
@@ -88,7 +90,7 @@ public class MainPanel extends JPanel {
     private final ServerConnector serverConnector;
 
     private final CardLayout cardLayout;
-    private Image backgroundImage;
+    private BufferedImage backgroundImage;
 
     /**
      * Constructs the MainPanel, initializes all sub-panels, sets up the CardLayout,
@@ -131,10 +133,11 @@ public class MainPanel extends JPanel {
 
         // Load background image
         try {
-            backgroundImage = ImageIO.read(new File("src/main/resources/images/background.png"));
-        } catch (IOException e) {
+            backgroundImage = ImageIO.read(Objects.requireNonNull(getClass().getResource("/images/background.png")));
+        } catch (IOException | NullPointerException e) {
             System.out.println("Could not load background image: " + "src/main/resources/images/background.png");
         }
+
 
         // Show start menu by default
         cardLayout.show(this, START_MENU_PANEL);
