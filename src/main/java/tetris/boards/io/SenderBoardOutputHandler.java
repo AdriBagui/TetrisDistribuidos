@@ -6,24 +6,24 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Handles the encoding and transmission of game events to an output stream.
+ * <p>
+ * This class acts as the "server" side of the communication protocol (from the perspective
+ * of the local client). It provides high-level methods to send game actions, which are
+ * then serialized into the byte protocol defined in {@link BoardMessageType}.
+ * </p>
+ */
 public class SenderBoardOutputHandler {
-    /*
-     * Protocol Definition:
-     * Messages: ModernTetrisBoardWithPhysics messages
-     * - SEND_GARBAGE_ROWS: followed by 2 bytes [LINES, EMPTY_COLUMN]
-     * Messages: Updates to representations
-     * - UPDATE_FALLING_TETROMINO: followed by 4 bytes [X, Y, ROT, LOCK]
-     * - UPDATE_TETROMINO_HOLDER: no payload
-     * - UPDATE_GARBAGE_ROWS: followed by 2 bytes [LINES, EMPTY_COLUMN]
-     */
-
-    private TwoPlayersTetrisPanel twoPlayersTetrisPanel;
-    private DataOutputStream dataOutputStream;
+    private final TwoPlayersTetrisPanel twoPlayersTetrisPanel;
+    private final DataOutputStream dataOutputStream;
     private boolean connectionLost;
 
     /**
-     * Handles sending encoded game events over an output stream (e.g., network or pipe).
-     * @param outputStream the destination stream.
+     * Creates a new output handler.
+     *
+     * @param outputStream          The stream (socket or pipe) to write to.
+     * @param twoPlayersTetrisPanel The game panel, used to report connection errors.
      */
     public SenderBoardOutputHandler(OutputStream outputStream, TwoPlayersTetrisPanel twoPlayersTetrisPanel) {
         this.twoPlayersTetrisPanel = twoPlayersTetrisPanel;
@@ -32,10 +32,10 @@ public class SenderBoardOutputHandler {
     }
 
     /**
-     * Sends a command to add garbage lines to the opponent.
-     * Protocol: [SEND_GARBAGE] [Lines] [Empty Column]
-     * @param numberOfGarbageRows number of lines to add.
-     * @param emptyGarbageColumn the column index that is empty in the garbage lines.
+     * Sends a command to attack the opponent with garbage lines.
+     *
+     * @param numberOfGarbageRows Count of lines to send.
+     * @param emptyGarbageColumn  Column index for the hole.
      */
     public void sendAddGarbageMessage(byte numberOfGarbageRows, byte emptyGarbageColumn) {
         sendMessage(BoardMessageType.SEND_GARBAGE_ROWS, new byte[] {
@@ -45,12 +45,13 @@ public class SenderBoardOutputHandler {
     }
 
     /**
-     * Sends the current state of the falling tetromino.
-     * Protocol: [UPDATE_FALLING_TETROMINO_POSITION] [X] [Y] [Rotation] [LockStatus]
-     * @param x x coordinate of the piece.
-     * @param y y coordinate of the piece.
-     * @param rotationIndex rotation state.
-     * @param isFallingTetrominoLocked true if the piece has locked.
+     * Sends the current position and state of the falling tetromino.
+     * This is typically called every frame or every update cycle.
+     *
+     * @param x                        X coordinate.
+     * @param y                        Y coordinate.
+     * @param rotationIndex            Rotation state (0-3).
+     * @param isFallingTetrominoLocked Whether the piece has locked into the grid.
      */
     public void sendUpdateMessage(byte x, byte y, byte rotationIndex, boolean isFallingTetrominoLocked) {
         sendMessage(BoardMessageType.UPDATE_FALLING_TETROMINO, new byte[] {
@@ -62,16 +63,17 @@ public class SenderBoardOutputHandler {
     }
 
     /**
-     * Sends a notification that the player used the hold function.
-     * Protocol: [UPDATE_TETROMINO_HOLDER]
+     * Sends a signal that the local player has performed a Hold action.
      */
-    public void sendHoldMessage() { sendMessage(BoardMessageType.UPDATE_TETROMINO_HOLDER, null); }
+    public void sendHoldMessage() {
+        sendMessage(BoardMessageType.UPDATE_TETROMINO_HOLDER, null);
+    }
 
     /**
-     * Sends an update about garbage lines waiting in the buffer.
-     * Protocol: [UPDATE_GARBAGE_ROWS] [Lines] [Empty Column]
-     * @param numberOfGarbageRows number of pending garbage rows.
-     * @param emptyGarbageColumn the empty column index.
+     * Sends an update about the garbage currently pending in the local buffer.
+     *
+     * @param numberOfGarbageRows Count of pending lines.
+     * @param emptyGarbageColumn  Column index for the hole.
      */
     public void sendUpdateGarbageMessage(byte numberOfGarbageRows, byte emptyGarbageColumn) {
         sendMessage(BoardMessageType.UPDATE_GARBAGE_ROWS, new byte[] {
@@ -80,24 +82,30 @@ public class SenderBoardOutputHandler {
         });
     }
 
+    /**
+     * Marks the connection as broken to prevent further write attempts.
+     */
     public void notifyConnectionLost() { this.connectionLost = true; }
 
     // ---------------------------------------------------------------------------------
     // Auxiliary methods
 
     /**
-     * Thread-safe method to write bytes to the stream.
-     * @param action the protocol action byte.
-     * @param content the payload bytes (can be null).
+     * Thread-safe method to serialize and write a message to the stream.
+     *
+     * @param action  The message type.
+     * @param content The payload bytes (can be null for signal-only messages).
      */
     private synchronized void sendMessage(BoardMessageType action, byte[] content) {
-        if (connectionLost) return; // Allows for two players NES games to continue once a player has disconnected so that the
-                                    // other player can improve its score and win (or lose if it can't reach the points the
-                                    // rival had when he lost connection)
+        // If the connection is known to be dead, do not attempt to write.
+        // This allows games (like NES mode) to continue locally even if the opponent disconnects.
+        if (connectionLost) return;
 
         try {
+            // Write Message Type ID
             dataOutputStream.writeByte((byte) action.ordinal());
 
+            // Write Payload
             if (content != null) {
                 for (byte b : content) {
                     dataOutputStream.writeByte(b);
@@ -107,9 +115,9 @@ public class SenderBoardOutputHandler {
             dataOutputStream.flush();
         }
         catch (IOException ioe) {
-            System.out.println("Tengo esperanza de que el hilo del input ha cerrado el socket :D");
+            // If writing fails, we assume the connection is broken.
+            // We notify the panel to handle the error UI/logic.
             twoPlayersTetrisPanel.handleConnectionError();
-            System.out.println("Nah, en realidad estoy seguro ;P");
         }
     }
 }

@@ -7,105 +7,81 @@ import static client.userInterface.panels.MainPanel.*;
 
 import java.awt.*;
 
+/**
+ * Represents the grid (playfield) of the Tetris board.
+ * <p>
+ * This class handles the low-level data structure of the game: a 2D array of cells.
+ * It provides core functionality for:
+ * <ul>
+ * <li>Collision detection (walls, floor, other blocks).</li>
+ * <li>Locking pieces into the grid.</li>
+ * <li>Detecting and clearing full lines.</li>
+ * <li>Adding garbage lines for multiplayer.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * <b>Coordinate System:</b><br>
+ * The grid includes "Spawn Rows" (invisible buffer rows at the top).
+ * Row 0 is the very top (invisible), increasing downwards.
+ * </p>
+ */
 public class BoardGrid {
-    // BOARD CONFIGURATION
+    // --- BOARD CONFIGURATION ---
     public static final int ROWS = 20;
     public static final int SPAWN_ROWS = 3;
     public static final int COLUMNS = 10;
 
-    // GRID POSITION IN PANEL
-    private int x, y;
-    // GRID REPRESENTATION (row 0 is the top one and column 0 is the left one)
+    // --- GRID POSITION IN PANEL ---
+    private final int x;
+    private final int y;
+
+    // --- DATA REPRESENTATION ---
+    // grid[row][col] -> true if occupied
     protected boolean[][] grid;
+    // gridColor[row][col] -> Color of the block if occupied
     protected Color[][] gridColor;
     protected int numberOfSpawnRows;
 
     /**
-     * Creates the grid where the game takes place.
-     * @param x x coordinate for the top left corner of the grid.
-     * @param y y coordinate for the top left corner of the grid.
-     * @param numberOfRows number of visible rows in the grid.
-     * @param numberOfSpawnRows number of invisible rows above the grid used for spawning tetrominoes.
-     * @param numberOfColumns number of columns in the grid.
+     * Creates a new empty grid.
+     *
+     * @param x                 X screen coordinate.
+     * @param y                 Y screen coordinate.
+     * @param numberOfRows      Visible rows.
+     * @param numberOfSpawnRows Hidden spawn rows.
+     * @param numberOfColumns   Columns.
      */
     public BoardGrid(int x, int y, int numberOfRows, int numberOfSpawnRows, int numberOfColumns) {
         this.x = x;
         this.y = y;
 
+        // Total rows = visible + spawn
         grid = new boolean[numberOfRows + numberOfSpawnRows][numberOfColumns];
         gridColor = new Color[numberOfRows + numberOfSpawnRows][numberOfColumns];
 
         this.numberOfSpawnRows = numberOfSpawnRows;
     }
 
-    // GETTERS
+    // --- GETTERS ---
 
-    /**
-     * Gets the x coordinate of the grid.
-     * @return x coordinate.
-     */
     public int getX() { return x; }
-
-    /**
-     * Gets the y coordinate of the grid.
-     * @return y coordinate.
-     */
     public int getY() { return y; }
-
-    /**
-     * Gets the number of visible rows (excluding spawn rows).
-     * @return number of visible rows.
-     */
     public int getNumberOfRows() { return grid.length - numberOfSpawnRows; }
-
-    /**
-     * Gets the number of spawn rows (invisible rows at the top).
-     * @return number of spawn rows.
-     */
     public int getNumberOfSpawnRows() { return numberOfSpawnRows; }
-
-    /**
-     * Gets the total number of rows (visible + spawn).
-     * @return total number of rows.
-     */
-    public int getTotalNumberOfRows() { return grid.length; }
-
-    /**
-     * Gets the number of columns in the grid.
-     * @return number of columns.
-     */
+    public int getTotalNumberOfRows() { return getNumberOfRows() + getNumberOfSpawnRows(); }
     public int getNumberOfColumns() { return grid[0].length; }
 
-    /**
-     * Checks if a specific cell is filled.
-     * @param row row index of the cell.
-     * @param column column index of the cell.
-     * @return true if the cell is filled, false otherwise.
-     */
     public boolean isCellFilled(int row, int column) { return grid[row][column]; }
-
-    /**
-     * Checks if a specific cell is empty.
-     * @param row row index of the cell.
-     * @param column column index of the cell.
-     * @return true if the cell is empty, false otherwise.
-     */
     public boolean isCellEmpty(int row, int column) { return !isCellFilled(row, column); }
-
-    /**
-     * Gets the color of a specific cell.
-     * @param row row index of the cell.
-     * @param column column index of the cell.
-     * @return color of the cell.
-     */
     public Color getCellColor(int row, int column) { return gridColor[row][column]; }
 
-    // LOGIC METHODS
+    // --- CORE LOGIC ---
 
     /**
-     * Locks the falling tetromino into the grid and clears any completed lines.
-     * @param t the tetromino to lock.
-     * @return number of lines cleared.
+     * Locks a tetromino into the grid array and immediately checks/clears lines.
+     *
+     * @param t The tetromino to lock.
+     * @return The number of lines cleared by this action (0-4).
      */
     public int lockTetrominoAndClearLines(Tetromino t) {
         boolean[][] tShape = t.getShape();
@@ -113,48 +89,57 @@ public class BoardGrid {
         int tX = t.getX();
         int tY = t.getY();
         int tCellX, tCellY;
-        int[] rowsToClear = new int[4]; // The maximum number of lines a tetromino can clear is 4
+
+        // We use an array to track which rows were affected to optimize the check
+        int[] rowsToClear = new int[4];
         int numberOfRowsToClear = 0;
         int numberOfClearedRows;
 
-        // Iterate through all cells of the tetromino shape
+        // 1. Lock the piece into the boolean/color arrays
         for (int tShapeRow = 0; tShapeRow < tShape.length; tShapeRow++) {
             tCellY = tY + tShapeRow;
 
             for (int tShapeColumn = 0; tShapeColumn < tShape[tShapeRow].length; tShapeColumn++) {
                 tCellX = tX + tShapeColumn;
 
-                // If the shape cell is filled, add it to the board
-                if (tShape[tShapeRow][tShapeColumn])
-                    fillCell(tCellY, tCellX, tColor);
+                if (tShape[tShapeRow][tShapeColumn]) {
+                    // Safety check for bounds, though collision should prevent this
+                    if (tCellY >= 0 && tCellY < getTotalNumberOfRows() && tCellX >= 0 && tCellX < getNumberOfColumns()) {
+                        fillCell(tCellY, tCellX, tColor);
+                    }
+                }
             }
 
-            // If the row is filled, mark it for clearing
+            // Check if this specific row became full
             if (tCellY >= 0 && tCellY < getTotalNumberOfRows() && isRowFull(tCellY)) {
+                // Ensure we don't add duplicate rows if the shape iterates oddly
+                // (Simple tetris shapes scan top-down, so strict ordering usually applies)
                 rowsToClear[numberOfRowsToClear] = tCellY;
                 numberOfRowsToClear++;
             }
         }
 
-        // If there are rows to clear, clear them
+        // 2. Clear lines and shift blocks down
         if (numberOfRowsToClear > 0) {
-            numberOfClearedRows = 1; // Variable to count how many rows have been cleared so far
+            numberOfClearedRows = 1;
 
-            // This loop iterates backwards from the lowest row to clear.
-            // It shifts rows down to fill the cleared spaces.
+            // Iterate backwards from the lowest cleared row.
+            // Any row ABOVE the cleared line needs to shift down by the number of cleared lines below it.
+            // The logic here is optimized to process multiple clears in one pass.
+            // Note: The loop starts from the lowest cleared row index.
             for (int row = rowsToClear[numberOfRowsToClear-1]; row > numberOfRowsToClear; row--) {
+                // Determine how many lines deeply we need to shift based on how many rows were cleared below the current one
                 while (numberOfRowsToClear-1-numberOfClearedRows >= 0 &&
                         row - numberOfClearedRows == rowsToClear[numberOfRowsToClear-1-numberOfClearedRows]) {
                     numberOfClearedRows++;
                 }
 
-                // Optimization: use copy instead of cut when possible
+                // Move row down
                 if (row - numberOfClearedRows > numberOfClearedRows) {
                     copyRow(row - numberOfClearedRows, row);
                 } else {
                     cutRow(row - numberOfClearedRows, row);
                 }
-
             }
         }
 
@@ -162,15 +147,17 @@ public class BoardGrid {
     }
 
     /**
-     * Adds garbage lines to the bottom of the board.
-     * @param numberOfGarbageRows number of garbage rows to add.
-     * @param emptyGarbageColumn the column index that should remain empty in the garbage lines.
-     * @return true if the garbage addition causes a game over (overflow), false otherwise.
+     * Pushes existing blocks up and inserts garbage lines at the bottom.
+     * Used in multiplayer modes.
+     *
+     * @param numberOfGarbageRows Count of rows to add.
+     * @param emptyGarbageColumn  The index of the hole in the garbage lines.
+     * @return {@code true} if blocks were pushed off the top (Game Over), {@code false} otherwise.
      */
     public boolean addGarbage(int numberOfGarbageRows, int emptyGarbageColumn) {
         boolean overflow = false;
 
-        // Check for overflow (if existing blocks are pushed out of bounds)
+        // 1. Check if top rows have blocks (they will be pushed out)
         for (int row = 0; row < numberOfGarbageRows; row++) {
             if (!isRowEmpty(row)) {
                 overflow = true;
@@ -178,12 +165,12 @@ public class BoardGrid {
             }
         }
 
-        // Move all cells up to make space for garbage
+        // 2. Shift everything UP
         for (int row = 0; row < getTotalNumberOfRows() - numberOfGarbageRows; row++) {
-            cutRow(row+numberOfGarbageRows, row);
+            cutRow(row + numberOfGarbageRows, row);
         }
 
-        // Fill the bottom lines with garbage
+        // 3. Fill bottom with garbage
         for (int row = getTotalNumberOfRows() - numberOfGarbageRows; row < getTotalNumberOfRows(); row++) {
             fillRowWithGarbage(row, emptyGarbageColumn);
         }
@@ -192,28 +179,27 @@ public class BoardGrid {
     }
 
     /**
-     * Checks if a tetromino collides with the grid boundaries or existing blocks.
-     * @param t the tetromino to check.
-     * @return true if there is a collision, false otherwise.
+     * Checks if a tetromino occupies any cell that is already filled or out of bounds.
+     *
+     * @param t The tetromino to test.
+     * @return {@code true} if a collision exists.
      */
     public boolean hasCollision(Tetromino t) {
         boolean[][] shape = t.getShape();
         int tCellX;
         int tCellY;
 
-        // Iterate through all cells of the tetromino shape
         for (int tShapeRow = 0; tShapeRow < shape.length; tShapeRow++) {
             for (int tShapeColumn = 0; tShapeColumn < shape[tShapeRow].length; tShapeColumn++) {
-                // If the shape cell is filled, check for collision
                 if (shape[tShapeRow][tShapeColumn]) {
                     tCellX = t.getX() + tShapeColumn;
                     tCellY = t.getY() + tShapeRow;
 
-                    // Check bounds
+                    // 1. Check Boundaries (Walls/Floor)
                     if (tCellX < 0 || tCellX >= getNumberOfColumns() || tCellY < 0 || tCellY >= getTotalNumberOfRows())
                         return true;
 
-                    // Check for collision with existing blocks
+                    // 2. Check Existing Blocks
                     if (grid[tCellY][tCellX])
                         return true;
                 }
@@ -223,9 +209,10 @@ public class BoardGrid {
     }
 
     /**
-     * Calculates the distance from the tetromino to the nearest obstacle below it (floor or blocks).
-     * @param t the tetromino to check.
-     * @return the distance in cells.
+     * Calculates the drop distance for the ghost piece.
+     *
+     * @param t The tetromino to test.
+     * @return The number of cells the piece can drop before hitting something.
      */
     public int distanceToFloor(Tetromino t) {
         Tetromino aux = t.createCopy();
@@ -241,15 +228,16 @@ public class BoardGrid {
     }
 
     /**
-     * Draws the grid, its contents, and the border.
-     * @param g2 the Graphics2D context.
+     * Renders the grid background, lines, and blocks.
+     *
+     * @param g2 The graphics context.
      */
     public void draw(Graphics2D g2) {
-        // Paint background
+        // Draw Background
         g2.setColor(Color.BLACK);
         g2.fillRect(x, y + BOARD_SPAWN_HEIGHT, BOARD_WIDTH, BOARD_HEIGHT);
 
-        // Paint grid lines
+        // Draw Grid Lines (Transparent Gray)
         g2.setColor(new Color(110, 110 , 110, 40));
         for (int y = CELL_SIZE; y < BOARD_HEIGHT; y += CELL_SIZE) {
             g2.drawLine(x, this.y + BOARD_SPAWN_HEIGHT + y, x + BOARD_WIDTH, this.y + BOARD_SPAWN_HEIGHT + y);
@@ -258,130 +246,72 @@ public class BoardGrid {
             g2.drawLine(this.x + x, y + BOARD_SPAWN_HEIGHT, this.x + x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
         }
 
-        // Draw filled cells
+        // Draw Cells
         for (int row = 0; row < getTotalNumberOfRows(); row++) {
             for (int column = 0; column < getNumberOfColumns(); column++) {
+                // Only draw visible rows (skip spawn area usually) or draw everything if requested.
+                // Here we draw starting from y, which includes spawn rows but the viewport likely clips them
+                // or the drawing logic for TetrominoCell needs absolute coordinates.
+                // NOTE: 'y' passed in constructor is usually top of the panel.
                 if (isCellFilled(row, column))
                     TetrominoCell.draw(g2, x + column * CELL_SIZE, y + row * CELL_SIZE, getCellColor(row, column));
             }
         }
 
-        // Draw border
+        // Draw Outer Border
         g2.setColor(new Color(110, 110 , 110));
         g2.drawLine(x, y + BOARD_SPAWN_HEIGHT, x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
         g2.drawLine(x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT, x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
         g2.drawLine(x, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT, x + BOARD_WIDTH, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT);
     }
 
-    // AUXILIARY CELL OPERATIONS
+    // --- PRIVATE UTILS ---
 
-    /**
-     * Fills a specific cell with a color.
-     * @param row row index.
-     * @param column column index.
-     * @param color color to fill.
-     */
     private void fillCell(int row, int column, Color color) {
         grid[row][column] = true;
         gridColor[row][column] = color;
     }
 
-    /**
-     * Empties a specific cell.
-     * @param row row index.
-     * @param column column index.
-     */
     private void emptyCell(int row, int column) {
         grid[row][column] = false;
         gridColor[row][column] = null;
     }
 
-    // AUXILIARY ROW OPERATIONS
-
-    /**
-     * Checks if a row is completely full.
-     * @param row row index.
-     * @return true if full, false otherwise.
-     */
     private boolean isRowFull(int row) {
-        boolean full = true;
-
         for (int column = 0; column < getNumberOfColumns(); column++) {
-            if (isCellEmpty(row, column)) {
-                full = false;
-                break;
-            }
+            if (isCellEmpty(row, column)) return false;
         }
-
-        return full;
+        return true;
     }
 
-    /**
-     * Checks if a row is completely empty.
-     * @param row row index.
-     * @return true if empty, false otherwise.
-     */
     private boolean isRowEmpty(int row) {
-        boolean empty = true;
-
         for (int column = 0; column < getNumberOfColumns(); column++) {
-            if (isCellFilled(row, column)) {
-                empty = false;
-                break;
-            }
+            if (isCellFilled(row, column)) return false;
         }
-
-        return empty;
+        return true;
     }
 
-    /**
-     * Copies the content of one row to another.
-     * @param srcRow source row index.
-     * @param destRow destination row index.
-     */
     private void copyRow(int srcRow, int destRow) {
         for (int column = 0; column < getNumberOfColumns(); column++) {
             if (isCellFilled(srcRow, column)) {
                 fillCell(destRow, column, getCellColor(srcRow, column));
-            }
-            else {
+            } else {
                 emptyCell(destRow, column);
             }
         }
     }
 
-    /**
-     * Moves (cuts) the content of one row to another, emptying the source row.
-     * @param srcRow source row index.
-     * @param destRow destination row index.
-     */
     private void cutRow(int srcRow, int destRow) {
         for (int column = 0; column < getNumberOfColumns(); column++) {
             if (isCellFilled(srcRow, column)) {
                 fillCell(destRow, column, getCellColor(srcRow, column));
                 emptyCell(srcRow, column);
-            }
-            else {
+            } else {
                 emptyCell(destRow, column);
             }
         }
     }
 
-    /**
-     * Empties an entire row.
-     * @param row row index.
-     */
-    private void emptyRow(int row) {
-        for (int column = 0; column < getNumberOfColumns(); column++) {
-            emptyCell(row, column);
-        }
-    }
-
-    /**
-     * Fills a row with garbage blocks, leaving one column empty.
-     * @param row row index.
-     * @param emptyColumn column index to leave empty.
-     */
     private void fillRowWithGarbage(int row, int emptyColumn) {
         for (int column = 0; column < getNumberOfColumns(); column++) {
             if(column == emptyColumn) {

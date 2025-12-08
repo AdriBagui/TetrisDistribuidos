@@ -5,24 +5,55 @@ import client.userInterface.panels.tetris.TetrisPanel;
 import tetris.tetrominoes.Tetromino;
 import tetris.boards.nes.NESConfig;
 
+/**
+ * Manages the downward movement mechanics (Gravity) and locking logic for the active Tetromino.
+ * <p>
+ * This class handles:
+ * <ul>
+ * <li><b>Natural Gravity:</b> The piece falling automatically based on the current level.</li>
+ * <li><b>Soft Drop:</b> Faster falling when the player holds 'Down'.</li>
+ * <li><b>Hard Drop:</b> Instant locking when the player presses 'Up' (Modern Tetris only).</li>
+ * <li><b>Lock Delay:</b> The grace period allowed when a piece touches the ground before it locks in place.</li>
+ * </ul>
+ * </p>
+ */
 public class Gravity {
-    public static final double SOFT_DROP_GRAVITY = (NESConfig.SOFT_DROP_GRAVITY_IN_NES_FPS *TetrisPanel.NES_FPS)/ TetrisPanel.FPS;
+    /**
+     * The speed of soft dropping, normalized from NES speed (1/2G) to current FPS.
+     */
+    public static final double SOFT_DROP_GRAVITY = (NESConfig.SOFT_DROP_GRAVITY_IN_NES_FPS * TetrisPanel.NES_FPS) / TetrisPanel.FPS;
 
     private Tetromino fallingTetromino;
+
+    /** Accumulator for fractional gravity application (since pixels are integers). */
     private double decimalY;
+
     private final BoardGrid grid;
-    private double gravity; // cells per frame
+
+    /** The base gravity speed (cells per frame) determined by the current level. */
+    private double gravity;
+
+    /** The actual gravity currently being applied (may be higher if soft dropping). */
     private double appliedGravity;
+
+    /** The base lock delay in frames. */
     private double lockDelayFrames;
+
+    /** The actual lock delay being applied (reduces during soft drop to prevent infinite stalling). */
     private double appliedLockDelayFrames;
+
+    /** Counter for how many frames the piece has been on the ground. */
     private int delayUsed;
+
+    /** Flag indicating if the piece has officially locked. */
     private boolean isLocked;
 
     /**
-     * Manages the gravity physics for the falling tetromino.
-     * @param grid the board grid to check for collisions.
-     * @param gravity the initial gravity value (cells per frame).
-     * @param lockDelayFrames the number of frames before a tetromino locks when touching the ground.
+     * Constructs a new Gravity physics engine.
+     *
+     * @param grid            The board grid used to check for floor collisions.
+     * @param gravity         The initial gravity value (cells per frame).
+     * @param lockDelayFrames The number of frames a piece waits on the ground before locking.
      */
     public Gravity(BoardGrid grid, double gravity, int lockDelayFrames) {
         this.fallingTetromino = null;
@@ -37,8 +68,14 @@ public class Gravity {
     }
 
     /**
-     * Updates the position of the falling tetromino based on gravity.
-     * Handles the movement accumulation (decimalY) and lock delay.
+     * Updates the gravity physics for the current frame.
+     * <p>
+     * Logic:
+     * 1. If touching the floor, increment the lock delay timer.
+     * 2. If in the air, accumulate gravity into {@code decimalY}.
+     * 3. If {@code decimalY} exceeds 1.0, move the piece down cell-by-cell until blocked or gravity is exhausted.
+     * 4. Update the {@code isLocked} state based on the delay timer.
+     * </p>
      */
     public void update() {
         if (isTouchingFloor()) {
@@ -47,22 +84,26 @@ public class Gravity {
         } else {
             decimalY += appliedGravity;
 
-            while (decimalY > 1 && !isTouchingFloor()) {
+            // Apply accumulated gravity step-by-step
+            while (decimalY >= 1 && !isTouchingFloor()) {
                 fallingTetromino.moveDown();
                 decimalY -= 1;
             }
         }
 
+        // Lock if the delay timer has expired AND we are still touching the floor
         isLocked = (delayUsed >= appliedLockDelayFrames) && isTouchingFloor();
 
+        // Reset applied values for next frame (unless input overrides them again)
         appliedGravity = gravity;
         appliedLockDelayFrames = lockDelayFrames;
     }
 
     /**
-     * Sets the tetromino that is currently affected by gravity.
-     * Resets internal state like decimal position and lock delay.
-     * @param t the new falling tetromino.
+     * Assigns the active tetromino to be controlled by gravity.
+     * Resets the fractional Y position and lock timers.
+     *
+     * @param t The new falling tetromino.
      */
     public void setFallingTetromino(Tetromino t) {
         fallingTetromino = t;
@@ -71,13 +112,15 @@ public class Gravity {
     }
 
     /**
-     * Checks if the falling tetromino should be locked in place.
-     * @return true if the lock delay has expired while touching the floor.
+     * Checks if the falling tetromino has finished its lock delay and should be solidified.
+     *
+     * @return {@code true} if the piece is locked.
      */
     public boolean isLocked() { return isLocked; }
 
     /**
-     * Resets the lock and the lock delay timer. Called when a new Tetromino is spawned on the Board
+     * Resets the lock state and delay timer.
+     * Typically called when a piece spawns or successfully moves/rotates (resetting the floor timer).
      */
     public void resetLock() {
         isLocked = false;
@@ -85,26 +128,42 @@ public class Gravity {
     }
 
     /**
-     * Increases the base gravity value.
-     * @param increment the amount to add to the current gravity.
+     * Permanently increases the base gravity value (usually on level up).
+     * <p>
+     * Also slightly reduces the lock delay to make higher levels more challenging.
+     * </p>
+     *
+     * @param increment The amount to add to the current gravity (cells per frame).
      */
     public void increaseGravity(double increment) {
-        double relativeIncrement = increment/gravity;
+        double relativeIncrement = increment / gravity;
         this.gravity += increment;
-        lockDelayFrames -= lockDelayFrames*(relativeIncrement/30);
+        // Decrease lock delay proportional to speed increase
+        lockDelayFrames -= lockDelayFrames * (relativeIncrement / 30);
     }
 
     /**
-     * Temporarily increases gravity for a soft drop effect.
+     * Temporarily increases gravity for this frame (Soft Drop).
+     * <p>
+     * This method is called by the input handler when the 'Down' key is held.
+     * It also reduces the lock delay slightly to prevent players from stalling infinitely
+     * by tapping soft drop.
+     * </p>
      */
     public void softDrop() {
-        appliedGravity = Math.max(gravity*1.05, SOFT_DROP_GRAVITY); // The 1.05 multiplication is our own addition
-        double relativeIncrement = (appliedGravity-gravity)/gravity;
-        appliedLockDelayFrames = lockDelayFrames*(1 - relativeIncrement/30);
+        // Apply whichever is faster: normal gravity * 1.05 OR the soft drop constant.
+        appliedGravity = Math.max(gravity * 1.05, SOFT_DROP_GRAVITY);
+
+        double relativeIncrement = (appliedGravity - gravity) / gravity;
+        appliedLockDelayFrames = lockDelayFrames * (1 - relativeIncrement / 30);
     }
 
     /**
-     * Instantly moves the tetromino to the bottom and locks it.
+     * Instantly drops the piece to the bottom and forces an immediate lock (Hard Drop).
+     * <p>
+     * This sets gravity to an excessively high value (the height of the board) and sets
+     * lock delay to zero.
+     * </p>
      */
     public void hardDrop() {
         appliedGravity = grid.getTotalNumberOfRows();
@@ -112,14 +171,15 @@ public class Gravity {
     }
 
     /**
-     * Checks if the falling tetromino is directly above a solid surface.
-     * @return true if touching the floor or another block.
+     * Checks if the falling tetromino is directly above a solid surface (block or floor).
+     *
+     * @return {@code true} if moving down 1 cell would cause a collision.
      */
     private boolean isTouchingFloor() {
+        if (fallingTetromino == null) return false;
+
         Tetromino aux = fallingTetromino.createCopy();
-
         aux.moveDown();
-
         return grid.hasCollision(aux);
     }
 }

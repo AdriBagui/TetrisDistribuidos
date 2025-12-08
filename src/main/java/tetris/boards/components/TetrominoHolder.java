@@ -6,17 +6,27 @@ import java.awt.*;
 
 import static client.userInterface.panels.MainPanel.*;
 
+/**
+ * A UI component that manages the "Hold" mechanic.
+ * <p>
+ * This allows a player to store one active piece for later use. The logic enforces
+ * that a swap can only occur once per turn (until a piece is locked).
+ * </p>
+ */
 public class TetrominoHolder {
+    /** Indicates if the player has already used the hold function this turn. */
     private boolean locked;
     private Tetromino heldTetromino;
-    private TetrominoesQueue tetrominoesQueue;
-    private int x, y;
+    private final TetrominoesQueue tetrominoesQueue;
+    private final int x;
+    private final int y;
 
     /**
-     * Creates the component that allows the player to hold/swap a tetromino.
-     * @param x the x coordinate of the holder on the screen.
-     * @param y the y coordinate of the holder on the screen.
-     * @param tetrominoesQueue the queue from which to pull a new piece if the holder is empty.
+     * Creates the Hold box.
+     *
+     * @param x                 X coordinate.
+     * @param y                 Y coordinate.
+     * @param tetrominoesQueue  Reference to the queue (needed if holding when empty).
      */
     public TetrominoHolder(int x, int y, TetrominoesQueue tetrominoesQueue) {
         this.x = x;
@@ -27,27 +37,31 @@ public class TetrominoHolder {
     }
 
     /**
-     * Attempts to swap the currently falling tetromino with the held tetromino.
-     * If no piece is held, the current piece is stored and the next one is pulled from the queue.
-     * This action locks the holder until the new piece is placed.
-     * @param t the currently falling tetromino to put into hold.
-     * @return the tetromino that was previously held, or a new one from the queue if the hold was empty. Returns null if the holder is locked.
+     * Swaps the current falling piece with the held piece.
+     *
+     * @param t The tetromino currently falling on the board.
+     * @return The piece that was previously held (to become the new falling piece).
+     * If the holder was empty, it returns the next piece from the queue.
+     * Returns {@code null} if the holder is currently locked.
      */
     public Tetromino hold(Tetromino t) {
         if (locked) return null;
 
         Tetromino aux;
-
         locked = true;
 
         if (heldTetromino == null) {
+            // First hold of the game: pull from queue
             aux = tetrominoesQueue.getNext();
         } else {
+            // Swap: return the held piece
             aux = heldTetromino;
         }
 
+        // Store the new piece
         heldTetromino = t;
-        heldTetromino.setXY(0.5 * (5-t.getWidth()), 2);
+        // Reset position and rotation for display
+        heldTetromino.setXY(0.5 * (5 - t.getWidth()), 2);
         heldTetromino.setParentXY(x, y);
         heldTetromino.setRotationIndex(0);
 
@@ -55,38 +69,42 @@ public class TetrominoHolder {
     }
 
     /**
-     * Unlocks the holder, allowing the player to swap again.
-     * Usually called when a piece locks onto the board.
+     * Resets the lock state. Should be called when a piece locks onto the board.
      */
     public void unlock() { locked = false; }
 
     /**
-     * Checks if the holder is currently used in this turn.
-     * @return true if the player has already swapped in this turn.
+     * Checks if a hold action is permitted.
+     *
+     * @return {@code true} if locked, {@code false} if available.
      */
     public boolean isLocked() { return locked; }
 
     /**
-     * Renders the holder box and the held piece.
-     * If locked, the held piece is drawn in gray.
-     * @param g2 the Graphics2D context.
+     * Renders the Hold box and the held piece.
+     *
+     * @param g2 The graphics context.
      */
     public void draw(Graphics2D g2) {
+        // Label
         g2.setColor(TEXT_COLOR);
         g2.setFont(DEFAULT_FONT);
         g2.drawString("Hold:", x + CELL_SIZE, y + CELL_SIZE);
 
-
+        // Piece
         if (heldTetromino != null) {
             Color aux = heldTetromino.getColor();
 
-            if(locked) heldTetromino.setColor(Color.GRAY);
+            // Gray out the piece if it can't be used this turn
+            if (isLocked()) heldTetromino.setColor(Color.GRAY);
 
             heldTetromino.draw(g2);
+
+            // Restore color
             heldTetromino.setColor(aux);
         }
 
-        // Draw Border
+        // Border
         g2.setColor(new Color(110, 110 , 110));
         g2.drawRect(x, y, TETROMINO_HOLDER_WIDTH, TETROMINO_HOLDER_HEIGHT);
     }
