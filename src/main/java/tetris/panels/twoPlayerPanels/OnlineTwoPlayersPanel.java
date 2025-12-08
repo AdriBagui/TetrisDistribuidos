@@ -73,10 +73,8 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
 
     @Override
     protected void updateBoards() {
-        System.out.println(boards[0].isAlive());
         if (boards[0].isAlive()) {
             boards[0].update();
-            System.out.println("update");
         }
     }
 
