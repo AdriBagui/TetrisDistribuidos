@@ -15,6 +15,14 @@ import java.util.Map;
 
 import static client.userInterface.panels.MainPanel.*;
 
+/**
+ * The settings screen that allows users to configure key bindings for Player 1 and Player 2.
+ * <p>
+ * This panel dynamically generates a list of buttons for every action defined in {@link InputAction}.
+ * It handles the logic for detecting key presses, resolving conflicts, and saving changes to disk via
+ * {@link KeyBindingsManager}.
+ * </p>
+ */
 public class SettingsPanel extends JPanel {
     private final MainPanel mainPanel;
     private KeyInputHandler keyInputHandler;
@@ -37,6 +45,11 @@ public class SettingsPanel extends JPanel {
     // Record to hold context for each button
     private record BindingContext(InputAction action, boolean isPlayer1, boolean isGlobal) {}
 
+    /**
+     * Constructs the SettingsPanel layout.
+     *
+     * @param mainPanel The main application panel (used for navigation).
+     */
     public SettingsPanel(MainPanel mainPanel) {
         this.mainPanel = mainPanel;
 
@@ -86,10 +99,19 @@ public class SettingsPanel extends JPanel {
         add(footerPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Sets the input handler used to query current bindings and apply new ones.
+     *
+     * @param keyInputHandler The application's input handler.
+     */
     public void setKeyInputHandler(KeyInputHandler keyInputHandler) {
         this.keyInputHandler = keyInputHandler;
     }
 
+    /**
+     * Rebuilds the UI components to reflect the current state of bindings.
+     * Should be called every time the settings panel is opened.
+     */
     public void refresh() {
         if (keyInputHandler == null) return;
 
@@ -124,6 +146,9 @@ public class SettingsPanel extends JPanel {
         contentPanel.repaint();
     }
 
+    /**
+     * Adds the list of control rows for a specific player.
+     */
     private void addControlsSection(boolean isPlayer1, GridBagConstraints gbc) {
         InputAction[] actions = {
                 InputAction.MOVE_LEFT, InputAction.MOVE_RIGHT,
@@ -137,6 +162,9 @@ public class SettingsPanel extends JPanel {
         }
     }
 
+    /**
+     * Adds a single row consisting of a label and a bind button.
+     */
     private void addKeyBindingRow(String labelText, InputAction action, boolean isPlayer1, boolean isGlobal, GridBagConstraints gbc) {
         gbc.gridx = 0;
         gbc.gridwidth = 1;
@@ -160,6 +188,9 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
     }
 
+    /**
+     * Creates a button that, when clicked, listens for the next key press.
+     */
     private JButton createBindButton(InputAction action, boolean isPlayer1, boolean isGlobal) {
         JButton button = new ModernButton("...");
         button.setPreferredSize(new Dimension(140, 30));
@@ -187,6 +218,9 @@ public class SettingsPanel extends JPanel {
         return button;
     }
 
+    /**
+     * Enters "listening mode" for a button, capturing the next key press.
+     */
     private void startListening(JButton button, BindingContext ctx) {
         activeBindButton = button;
         button.setText("Press Key...");
@@ -229,6 +263,9 @@ public class SettingsPanel extends JPanel {
         button.requestFocusInWindow();
     }
 
+    /**
+     * Stops listening for key events on the specified button.
+     */
     private void stopListening(JButton button) {
         if (button == null) return;
 
@@ -241,8 +278,7 @@ public class SettingsPanel extends JPanel {
     }
 
     /**
-     * Called when clicking another button or clicking background.
-     * Reverts the active button to its stored state.
+     * Cancels the currently active binding operation (e.g., if the user clicks away).
      */
     private void cancelActiveBinding() {
         if (activeBindButton != null) {
@@ -254,9 +290,11 @@ public class SettingsPanel extends JPanel {
         }
     }
 
+    /**
+     * Checks if the new key is already used by another action and unbinds it if necessary.
+     */
     private void handleKeyConflict(int keyCode, BindingContext currentCtx) {
         // Iterate over all buttons to see if this key is used elsewhere
-        // If strict uniqueness is required globally (keyboard can only do one thing):
         for (BindingContext otherCtx : buttonRegistry.values()) {
 
             // Skip the action we are currently modifying
@@ -272,6 +310,9 @@ public class SettingsPanel extends JPanel {
         }
     }
 
+    /**
+     * Stores a proposed key change in the pending maps.
+     */
     private void setPendingKey(BindingContext ctx, int keyCode) {
         if (ctx.isGlobal()) {
             pendingGoBackKey = keyCode;
@@ -281,6 +322,9 @@ public class SettingsPanel extends JPanel {
         }
     }
 
+    /**
+     * Helper to get the key code for a context, checking pending changes first.
+     */
     private int getPendingOrActualKey(BindingContext ctx) {
         if (ctx.isGlobal()) {
             if (pendingGoBackKey != -1) return pendingGoBackKey;
@@ -298,10 +342,16 @@ public class SettingsPanel extends JPanel {
         return keyInputHandler.getKeyForAction(ctx.action(), ctx.isPlayer1());
     }
 
+    /**
+     * Refreshes the text of all bind buttons.
+     */
     private void updateAllButtonLabels() {
         buttonRegistry.forEach(this::updateButtonLabel);
     }
 
+    /**
+     * Updates the text of a single button based on its current (pending or actual) key.
+     */
     private void updateButtonLabel(JButton button, BindingContext ctx) {
         int key = getPendingOrActualKey(ctx);
         String text = (key == -1) ? "NONE" : KeyEvent.getKeyText(key);
@@ -339,6 +389,9 @@ public class SettingsPanel extends JPanel {
         gbc.gridy++;
     }
 
+    /**
+     * Commits all pending changes to the KeyInputHandler and saves them to file.
+     */
     private void saveAndExit() {
         cancelActiveBinding(); // Ensure we aren't in listening mode
 

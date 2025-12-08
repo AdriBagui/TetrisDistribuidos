@@ -1,4 +1,4 @@
-package tetris.boards.tetrio;
+package tetris.boards.modernTetris;
 
 import tetris.boards.ReceiverBoard;
 import tetris.boards.components.BoardGrid;
@@ -10,15 +10,15 @@ import java.awt.*;
 
 import static client.userInterface.panels.MainPanel.CELL_SIZE;
 import static client.userInterface.panels.MainPanel.TETROMINO_HOLDER_WIDTH;
-import static tetris.boards.tetrio.TetrioConfig.TETROMINOES_QUEUE_SIZE;
+import static tetris.boards.modernTetris.ModernTetrisConfig.TETROMINOES_QUEUE_SIZE;
 
-public class ReceiverTetrioBoard extends ReceiverBoard {
+public class ReceiverModernTetrisBoard extends ReceiverBoard {
     // TETROMINO HOLDER
     protected final TetrominoHolder tetrominoHolder;
     // GARBAGE SYSTEM
     protected ReceivedGarbageHandler receivedGarbageHandler;
 
-    public ReceiverTetrioBoard(int x, int y, long seed) {
+    public ReceiverModernTetrisBoard(int x, int y, long seed) {
         super(x + TETROMINO_HOLDER_WIDTH, y, BoardGrid.ROWS, BoardGrid.SPAWN_ROWS, BoardGrid.COLUMNS, TETROMINOES_QUEUE_SIZE,
                 TetrominoesGeneratorType.RANDOM_BAG_7_TETROMINOES_GENERATOR, seed);
 

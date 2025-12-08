@@ -5,18 +5,26 @@ import client.userInterface.components.ModernButton;
 import javax.swing.*;
 import java.awt.*;
 
+import static client.userInterface.panels.MainPanel.*;
+
+/**
+ * A custom modal dialog for displaying messages to the user.
+ * <p>
+ * This class serves as a stylistically consistent replacement for the standard {@link JOptionPane}.
+ * It matches the application's dark theme and provides a unified look for errors, warnings,
+ * and information messages.
+ * </p>
+ */
 public class CustomMessageDialog extends JDialog {
 
-    private static final Color BACKGROUND_COLOR = new Color(0, 0, 0, 220);
-    private static final Color TEXT_COLOR = Color.WHITE;
-    private static final Font MESSAGE_FONT = new Font("Segoe UI", Font.PLAIN, 16);
-    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 18);
-    private static final Color ERROR_COLOR = new Color(255, 80, 80);
-    private static final Color WARNING_COLOR = new Color(255, 200, 0);
-    private static final Color INFO_COLOR = new Color(60, 130, 255);
-
     /**
-     * We only use the ShowMessage, so we keep the constructor as private
+     * Private constructor to enforce the use of the static {@link #showMessage} method.
+     * Initializes the dialog's UI components based on the message type.
+     *
+     * @param owner       The {@code JFrame} owner of this dialog, blocking input to it while open.
+     * @param title       The title string to appear at the top of the dialog.
+     * @param message     The body text of the message (supports HTML for formatting).
+     * @param messageType The type of message (e.g., {@link JOptionPane#ERROR_MESSAGE}), which determines the icon and color scheme.
      */
     private CustomMessageDialog(JFrame owner, String title, String message, int messageType) {
         super(owner, title, true);
@@ -42,14 +50,14 @@ public class CustomMessageDialog extends JDialog {
 
         // Dialog title
         JLabel titleLabel = new JLabel(title);
-        titleLabel.setFont(TITLE_FONT);
+        titleLabel.setFont(HEADER_FONT);
         titleLabel.setForeground(TEXT_COLOR);
         headerPanel.add(titleLabel, BorderLayout.CENTER);
         mainPanel.add(headerPanel, BorderLayout.NORTH);
 
         // --- 2. Message ---
         JLabel messageLabel = new JLabel(message); // Permite salto de línea con HTML
-        messageLabel.setFont(MESSAGE_FONT);
+        messageLabel.setFont(DEFAULT_FONT);
         messageLabel.setForeground(TEXT_COLOR);
         messageLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 10, 20));
         mainPanel.add(messageLabel, BorderLayout.CENTER);
@@ -72,28 +80,45 @@ public class CustomMessageDialog extends JDialog {
         getRootPane().setDefaultButton(okButton);
     }
 
+    /**
+     * Determines the border and icon color based on the message severity.
+     *
+     * @param type The message type constant (e.g., {@link JOptionPane#ERROR_MESSAGE}).
+     * @return The {@link Color} associated with that severity.
+     */
     private Color getBorderColor(int type) {
-        switch (type) {
-            case JOptionPane.ERROR_MESSAGE: return ERROR_COLOR;
-            case JOptionPane.WARNING_MESSAGE: return WARNING_COLOR;
-            default: return INFO_COLOR;
-        }
-    }
-
-    private String getIconText(int type) {
-        switch (type) {
-            case JOptionPane.ERROR_MESSAGE: return " \u2718 ";
-            case JOptionPane.WARNING_MESSAGE: return " \u26A0 ";
-            default: return " \u2139 ";
-        }
+        return switch (type) {
+            case JOptionPane.ERROR_MESSAGE -> ERROR_COLOR;
+            case JOptionPane.WARNING_MESSAGE -> WARNING_COLOR;
+            default -> INFO_COLOR;
+        };
     }
 
     /**
-     * Shows a message with the specified options
-     * @param parent Parent of the message
-     * @param message Text used for the message
-     * @param title Dialog title
-     * @param messageType
+     * Returns a Unicode character string representing an icon for the message type.
+     *
+     * @param type The message type constant.
+     * @return A string containing a Unicode symbol (e.g., checkmark, warning sign).
+     */
+    private String getIconText(int type) {
+        return switch (type) {
+            case JOptionPane.ERROR_MESSAGE -> " ✘ ";
+            case JOptionPane.WARNING_MESSAGE -> " ⚠ ";
+            default -> " ℹ ";
+        };
+    }
+
+    /**
+     * Displays a modal custom message dialog.
+     * <p>
+     * This is the primary entry point for using the dialog. It automatically finds the
+     * parent frame to ensure the dialog is centered and blocks interaction correctly.
+     * </p>
+     *
+     * @param parent      The component used to locate the parent window.
+     * @param message     The text content of the message.
+     * @param title       The title of the dialog window.
+     * @param messageType The {@link JOptionPane} constant representing the message type (e.g., ERROR, WARNING, INFORMATION).
      */
     public static void showMessage(Component parent, String message, String title, int messageType) {
         // We look for the main frame

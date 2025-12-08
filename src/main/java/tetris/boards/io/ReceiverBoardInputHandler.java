@@ -1,7 +1,7 @@
 package tetris.boards.io;
 
 import tetris.boards.ReceiverBoard;
-import client.userInterface.panels.tetris.twoPlayerPanels.TwoPlayersPanel;
+import client.userInterface.panels.tetris.twoPlayerPanels.TwoPlayersTetrisPanel;
 
 import java.io.DataInputStream;
 import java.io.EOFException;
@@ -16,17 +16,17 @@ public class ReceiverBoardInputHandler extends Thread {
      */
     protected final DataInputStream boardsInputReceiver;
     protected final ReceiverBoard updatesReceiverBoard;
-    protected final TwoPlayersPanel twoPlayersPanel;
+    protected final TwoPlayersTetrisPanel twoPlayersTetrisPanel;
 
     /**
      * Creates a thread that listens for game updates from a remote source (player 2 or server).
      * @param boardsInputReceiver the input stream to read from.
      * @param updatesReceiverBoard the board to update based on received messages.
      */
-    public ReceiverBoardInputHandler(InputStream boardsInputReceiver, ReceiverBoard updatesReceiverBoard, TwoPlayersPanel twoPlayersPanel) {
+    public ReceiverBoardInputHandler(InputStream boardsInputReceiver, ReceiverBoard updatesReceiverBoard, TwoPlayersTetrisPanel twoPlayersTetrisPanel) {
         this.boardsInputReceiver = new DataInputStream(boardsInputReceiver);
         this.updatesReceiverBoard = updatesReceiverBoard;
-        this.twoPlayersPanel = twoPlayersPanel;
+        this.twoPlayersTetrisPanel = twoPlayersTetrisPanel;
     }
 
     /**
@@ -44,10 +44,10 @@ public class ReceiverBoardInputHandler extends Thread {
             }
         }
         catch (EOFException eofe) {
-            twoPlayersPanel.closeCommunications();
+            twoPlayersTetrisPanel.closeCommunications();
         }
         catch (IOException ioe) {
-            twoPlayersPanel.handleConnectionError();
+            twoPlayersTetrisPanel.handleConnectionError();
         }
     }
 

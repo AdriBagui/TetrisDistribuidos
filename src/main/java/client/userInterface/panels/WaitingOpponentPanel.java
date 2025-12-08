@@ -1,34 +1,30 @@
 package client.userInterface.panels;
 
-import server.Server;
-import client.userInterface.dialogs.CustomMessageDialog;
-import client.userInterface.dialogs.LobbySearchDialog;
-import server.ConnectionMode;
-
 import javax.swing.*;
 import java.awt.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
 
+import static client.userInterface.panels.MainPanel.HEADER_FONT;
+import static client.userInterface.panels.MainPanel.MEDIUM_MESSAGE_FONT;
+import static client.userInterface.panels.MainPanel.TEXT_COLOR;
+
+/**
+ * A panel displayed while the client is negotiating a connection with the server.
+ * <p>
+ * This screen shows a loading spinner and status messages (e.g., "Connecting...",
+ * "Waiting for opponent..."). If the user is hosting a game, it also displays the
+ * generated Room ID.
+ * </p>
+ */
 public class WaitingOpponentPanel extends JPanel {
-    private MainPanel mainPanel;
     JLabel roomIdLabel;
     JLabel waitingLabel;
     private static final Color BACKGROUND_COLOR = new Color(22, 22, 22, 255);
-    private static final Color TEXT_COLOR = Color.WHITE;
-    private static final Font WAITING_FONT = new Font("Segoe UI", Font.BOLD, 18);
-    private static final Font ROOM_ID_FONT = new Font("Segoe UI", Font.BOLD, 20);
-
 
     /**
-     * Creates the waiting screen for someone to connect
-     * @param mainPanel Panel which contains it
+     * Creates the waiting screen UI.
+     *
      */
-    public WaitingOpponentPanel(MainPanel mainPanel) {
-        this.mainPanel = mainPanel;
-
+    public WaitingOpponentPanel() {
         setLayout(new GridBagLayout());
         this.setBackground(BACKGROUND_COLOR);
 
@@ -48,14 +44,14 @@ public class WaitingOpponentPanel extends JPanel {
 
         // Waiting message
         waitingLabel = new JLabel("Connecting to server...");
-        waitingLabel.setFont(WAITING_FONT);
+        waitingLabel.setFont(HEADER_FONT);
         waitingLabel.setForeground(TEXT_COLOR);
 
         gbc.gridy = 1;
         this.add(waitingLabel, gbc);
 
         roomIdLabel = new JLabel();
-        roomIdLabel.setFont(ROOM_ID_FONT);
+        roomIdLabel.setFont(MEDIUM_MESSAGE_FONT);
         roomIdLabel.setForeground(TEXT_COLOR);
         roomIdLabel.setVisible(false);
 
@@ -63,7 +59,25 @@ public class WaitingOpponentPanel extends JPanel {
         this.add(roomIdLabel, gbc);
     }
 
+    /**
+     * Updates the status message displayed to the user.
+     *
+     * @param message The new status text (e.g., "Waiting for an opponent...").
+     */
     public void setMessage(String message) { waitingLabel.setText(message); }
+
+    /**
+     * Sets the Room ID text to be displayed when hosting a lobby.
+     *
+     * @param roomId The unique identifier for the created room.
+     */
     public void setRoomId(int roomId) { roomIdLabel.setText("Room ID: " + roomId); }
+
+    /**
+     * Toggles the visibility of the Room ID label.
+     * Should only be true when the player is hosting a private game.
+     *
+     * @param visible {@code true} to show the ID, {@code false} to hide it.
+     */
     public void setRoomIdVisibility(boolean visible) { roomIdLabel.setVisible(visible); }
 }

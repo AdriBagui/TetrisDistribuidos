@@ -19,6 +19,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+/**
+ * Manages the persistence of key bindings.
+ * <p>
+ * This class is responsible for saving the current key configuration to an XML file
+ * and loading it back when the application starts. It also handles the generation
+ * of the DTD for validation.
+ * </p>
+ */
 public class KeyBindingsManager {
 
     // Define the folder and file paths
@@ -40,7 +48,12 @@ public class KeyBindingsManager {
 
 
     /**
-     * Saves the current bindings from the handler to an XML file.
+     * Saves the current bindings from the provided handler to an XML file.
+     * <p>
+     * It ensures that the configuration directory and DTD file exist before writing.
+     * </p>
+     *
+     * @param handler The {@link KeyInputHandler} containing the current key mappings to be saved.
      */
     public static void saveBindings(KeyInputHandler handler) {
         // Ensure the folder and DTD exist
@@ -103,7 +116,10 @@ public class KeyBindingsManager {
     }
 
     /**
-     * Loads bindings from the XML file with DTD VALIDATION.
+     * Loads bindings from the XML file into the provided handler with DTD VALIDATION.
+     *
+     * @param handler The {@link KeyInputHandler} where the loaded bindings will be applied.
+     * @return {@code true} if the bindings were loaded successfully, {@code false} otherwise (e.g., file not found or parsing error).
      */
     public static boolean loadBindings(KeyInputHandler handler) {
         File xmlFile = new File(FILE_PATH);
@@ -171,11 +187,17 @@ public class KeyBindingsManager {
         }
     }
 
+    /**
+     * Ensures that the configuration directory exists. Creates it if it does not.
+     */
     private static void ensureConfigFolderExists() {
         File folder = new File(CONFIG_FOLDER);
         if (!folder.exists()) folder.mkdirs();
     }
 
+    /**
+     * Ensures that the DTD file exists. Creates it if it does not to allow XML validation.
+     */
     private static void ensureDTDExists() {
         File dtdFile = new File(DTD_FILE_PATH);
         if (!dtdFile.exists()) {
@@ -195,6 +217,14 @@ public class KeyBindingsManager {
         }
     }
 
+    /**
+     * Helper method to add a single binding element to the XML document.
+     *
+     * @param doc        The XML Document.
+     * @param parent     The parent element (e.g., Player1).
+     * @param actionName The name of the action.
+     * @param keyCode    The key code associated with the action.
+     */
     private static void addBindingElement(Document doc, Element parent, String actionName, int keyCode) {
         Element bind = doc.createElement(BINDING_TAG);
         bind.setAttribute(ATTR_ACTION, actionName);
@@ -202,6 +232,13 @@ public class KeyBindingsManager {
         parent.appendChild(bind);
     }
 
+    /**
+     * Helper method to parse bindings from an XML element and apply them to the handler.
+     *
+     * @param parent     The parent XML element containing "Bind" tags.
+     * @param handler    The input handler to update.
+     * @param actionType 0 for Global, 1 for Player 1, 2 for Player 2.
+     */
     private static void loadBindingsFromElement(Element parent, KeyInputHandler handler, int actionType) {
         NodeList bindings = parent.getElementsByTagName(BINDING_TAG);
 

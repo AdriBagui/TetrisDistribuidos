@@ -1,4 +1,4 @@
-package tetris.boards.tetrio;
+package tetris.boards.modernTetris;
 
 import tetris.boards.BoardWithPhysics;
 import tetris.boards.components.BoardGrid;
@@ -12,16 +12,16 @@ import java.util.Random;
 
 import static client.userInterface.panels.MainPanel.CELL_SIZE;
 import static client.userInterface.panels.MainPanel.TETROMINO_HOLDER_WIDTH;
-import static tetris.boards.tetrio.TetrioConfig.*;
+import static tetris.boards.modernTetris.ModernTetrisConfig.*;
 
-public class TetrioBoardWithPhysics extends BoardWithPhysics {
+public class ModernTetrisBoardWithPhysics extends BoardWithPhysics {
     // TETROMINO HOLDER
     protected final TetrominoHolder tetrominoHolder;
     // GARBAGE SYSTEM
     protected Random garbageRandom;
     protected ReceivedGarbageHandler receivedGarbageHandler;
 
-    public TetrioBoardWithPhysics(int x, int y, long seed) {
+    public ModernTetrisBoardWithPhysics(int x, int y, long seed) {
         super(x + TETROMINO_HOLDER_WIDTH, y, BoardGrid.ROWS, BoardGrid.SPAWN_ROWS, BoardGrid.COLUMNS, TETROMINOES_QUEUE_SIZE,
                 TetrominoesGeneratorType.RANDOM_BAG_7_TETROMINOES_GENERATOR, seed, RotationSystemType.SUPER_ROTATION_SYSTEM,
                 INITIAL_GRAVITY, LOCK_DELAY_FRAMES);

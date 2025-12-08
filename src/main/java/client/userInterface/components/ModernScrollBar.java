@@ -6,9 +6,23 @@ import java.awt.*;
 
 import static client.userInterface.panels.MainPanel.BACKGROUND_COLOR;
 
+/**
+ * A custom {@link BasicScrollBarUI} to provide a modern, dark-themed scrollbar.
+ * <p>
+ * This implementation removes the scroll buttons and customizes the track
+ * and thumb painting for a sleek, minimal appearance.
+ * </p>
+ */
 public class ModernScrollBar extends BasicScrollBarUI {
     private final Dimension d = new Dimension();
 
+    /**
+     * Creates the decrease (up/left) button.
+     * Overridden to return a zero-size button, effectively hiding it.
+     *
+     * @param orientation The orientation of the button.
+     * @return A zero-size {@link JButton}.
+     */
     @Override
     protected JButton createDecreaseButton(int orientation) {
         return new JButton() {
@@ -17,6 +31,13 @@ public class ModernScrollBar extends BasicScrollBarUI {
         };
     }
 
+    /**
+     * Creates the increase (down/right) button.
+     * Overridden to return a zero-size button, effectively hiding it.
+     *
+     * @param orientation The orientation of the button.
+     * @return A zero-size {@link JButton}.
+     */
     @Override
     protected JButton createIncreaseButton(int orientation) {
         return new JButton() {
@@ -25,12 +46,27 @@ public class ModernScrollBar extends BasicScrollBarUI {
         };
     }
 
+    /**
+     * Paints the scrollbar track.
+     *
+     * @param g           The {@link Graphics} context.
+     * @param c           The component being painted.
+     * @param trackBounds The boundaries of the track.
+     */
     @Override
     protected void paintTrack(Graphics g, JComponent c, Rectangle trackBounds) {
         g.setColor(BACKGROUND_COLOR);
         g.fillRect(trackBounds.x, trackBounds.y, trackBounds.width, trackBounds.height);
     }
 
+    /**
+     * Paints the scrollbar thumb (the draggable part).
+     * Renders a rounded rectangle with antialiasing.
+     *
+     * @param g           The {@link Graphics} context.
+     * @param c           The component being painted.
+     * @param thumbBounds The boundaries of the thumb.
+     */
     @Override
     protected void paintThumb(Graphics g, JComponent c, Rectangle thumbBounds) {
         Graphics2D g2 = (Graphics2D) g.create();

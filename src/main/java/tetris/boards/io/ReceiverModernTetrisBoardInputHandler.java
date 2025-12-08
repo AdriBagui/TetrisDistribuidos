@@ -1,13 +1,13 @@
 package tetris.boards.io;
 
-import tetris.boards.tetrio.ReceiverTetrioBoard;
-import tetris.boards.tetrio.SenderTetrioBoardWithPhysics;
-import client.userInterface.panels.tetris.twoPlayerPanels.TwoPlayersPanel;
+import tetris.boards.modernTetris.ReceiverModernTetrisBoard;
+import tetris.boards.modernTetris.SenderModernTetrisBoardWithPhysics;
+import client.userInterface.panels.tetris.twoPlayerPanels.TwoPlayersTetrisPanel;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ReceiverTetrioBoardInputHandler extends ReceiverBoardInputHandler {
+public class ReceiverModernTetrisBoardInputHandler extends ReceiverBoardInputHandler {
     /*
      * Protocol Definition:
      * First byte is the Action.
@@ -15,12 +15,12 @@ public class ReceiverTetrioBoardInputHandler extends ReceiverBoardInputHandler {
      * UPDATE_TETROMINO_HOLDER: 0 bytes -> For updatesReceiverBoard
      * UPDATE_GARBAGE_ROWS: + 2 bytes [LINES, EMPTY_COLUMN] -> For updatesReceiverBoard
      */
-    private final SenderTetrioBoardWithPhysics garbageReceiverBoard;
-    private final ReceiverTetrioBoard updatesReceiverTetrioBoard;
+    private final SenderModernTetrisBoardWithPhysics garbageReceiverBoard;
+    private final ReceiverModernTetrisBoard updatesReceiverModernTetrisBoard;
 
-    public ReceiverTetrioBoardInputHandler(InputStream boardsInputReceiver, SenderTetrioBoardWithPhysics garbageReceiverBoard, ReceiverTetrioBoard updatesReceiverTetrioBoard, TwoPlayersPanel twoPlayersPanel) {
-        super(boardsInputReceiver, updatesReceiverTetrioBoard, twoPlayersPanel);
-        this.updatesReceiverTetrioBoard = updatesReceiverTetrioBoard;
+    public ReceiverModernTetrisBoardInputHandler(InputStream boardsInputReceiver, SenderModernTetrisBoardWithPhysics garbageReceiverBoard, ReceiverModernTetrisBoard updatesReceiverModernTetrisBoard, TwoPlayersTetrisPanel twoPlayersTetrisPanel) {
+        super(boardsInputReceiver, updatesReceiverModernTetrisBoard, twoPlayersTetrisPanel);
+        this.updatesReceiverModernTetrisBoard = updatesReceiverModernTetrisBoard;
         this.garbageReceiverBoard = garbageReceiverBoard;
     }
 
@@ -40,14 +40,14 @@ public class ReceiverTetrioBoardInputHandler extends ReceiverBoardInputHandler {
                 break;
             case UPDATE_TETROMINO_HOLDER:
                 // UPDATE_TETROMINO_HOLDER: 0 bytes -> For updatesReceiverBoard (if there is one)
-                if (updatesReceiverTetrioBoard != null) updatesReceiverTetrioBoard.hold();
+                if (updatesReceiverModernTetrisBoard != null) updatesReceiverModernTetrisBoard.hold();
                 break;
             case UPDATE_GARBAGE_ROWS:
                 // UPDATE_GARBAGE_ROWS: + 2 bytes [LINES, EMPTY_COLUMN] -> For updatesReceiverBoard (if there is one)
                 numberOfGarbageRowsToUpdate = boardsInputReceiver.readByte();
                 emptyGarbageColumnToUpdate = boardsInputReceiver.readByte();
-                if (updatesReceiverTetrioBoard != null)
-                    updatesReceiverTetrioBoard.addGarbage(numberOfGarbageRowsToUpdate, emptyGarbageColumnToUpdate);
+                if (updatesReceiverModernTetrisBoard != null)
+                    updatesReceiverModernTetrisBoard.addGarbage(numberOfGarbageRowsToUpdate, emptyGarbageColumnToUpdate);
                 break;
         }
     }

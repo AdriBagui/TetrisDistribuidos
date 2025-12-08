@@ -8,9 +8,21 @@ import java.awt.*;
 
 import static client.userInterface.panels.MainPanel.*;
 
+/**
+ * The initial screen of the application, displaying the game title and navigation options.
+ * <p>
+ * This panel provides access to Single Player, Local Multiplayer, and Online Multiplayer modes,
+ * as well as global settings and exit options.
+ * </p>
+ */
 public class StartMenuPanel extends JPanel {
     private final MainPanel mainPanel;
 
+    /**
+     * Constructs the Start Menu with its layout and buttons.
+     *
+     * @param mainPanel The main controller panel, used to navigate to other screens.
+     */
     public StartMenuPanel(MainPanel mainPanel) {
         super();
         this.mainPanel = mainPanel;
@@ -18,32 +30,31 @@ public class StartMenuPanel extends JPanel {
         setOpaque(false);
 
         // --- LAYOUT SETUP ---
-        // We now have 3 rows:
         // Row 0: "TETRIS DISTRIBUIDOS" (Title)
         // Row 1: "LOCAL" / "ONLINE" (Sub-headers)
         // Row 2: Buttons
+        // Row 3: Global Options
         GridBagLayout gbl_startMenu = new GridBagLayout();
         gbl_startMenu.columnWidths = new int[] {0, 0};
-        gbl_startMenu.rowHeights = new int[] {0, 0, 0}; // 3 Rows
+        gbl_startMenu.rowHeights = new int[] {0, 0, 0};
         gbl_startMenu.columnWeights = new double[]{1.0, 1.0};
-        gbl_startMenu.rowWeights = new double[]{0.8, 0.0, 1.0, 0.2}; // Row 0 gets some space
+        gbl_startMenu.rowWeights = new double[]{0.8, 0.0, 1.0, 0.2};
         setLayout(gbl_startMenu);
 
         // --- 1. MAIN TITLE ---
-        // We use a custom label (defined below) for the shadow effect
         ShadowLabel lblTitle = new ShadowLabel("TETRIS DISTRIBUIDOS");
-        lblTitle.setFont(TITLE_FONT); // Large Font
+        lblTitle.setFont(TITLE_FONT);
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
 
         GridBagConstraints gbc_title = new GridBagConstraints();
         gbc_title.gridwidth = 2; // Span across both columns
-        gbc_title.insets = new Insets(30, 0, 10, 0); // Padding top/bottom
+        gbc_title.insets = new Insets(30, 0, 10, 0);
         gbc_title.fill = GridBagConstraints.HORIZONTAL;
         gbc_title.gridx = 0;
-        gbc_title.gridy = 0; // Top row
+        gbc_title.gridy = 0;
         add(lblTitle, gbc_title);
 
-        // --- 2. SUB-HEADERS (Local / Online) ---
+        // --- 2. SUB-HEADERS ---
 
         JLabel lblLocal = new JLabel("LOCAL");
         lblLocal.setFont(SUBTITLE_FONT);
@@ -54,7 +65,7 @@ public class StartMenuPanel extends JPanel {
         gbc_lblLocal.insets = new Insets(10, 0, 10, 0);
         gbc_lblLocal.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblLocal.gridx = 0;
-        gbc_lblLocal.gridy = 1; // Second row
+        gbc_lblLocal.gridy = 1;
         add(lblLocal, gbc_lblLocal);
 
         JLabel lblOnline = new JLabel("ONLINE");
@@ -66,24 +77,23 @@ public class StartMenuPanel extends JPanel {
         gbc_lblOnline.insets = new Insets(10, 0, 10, 0);
         gbc_lblOnline.fill = GridBagConstraints.HORIZONTAL;
         gbc_lblOnline.gridx = 1;
-        gbc_lblOnline.gridy = 1; // Second row
+        gbc_lblOnline.gridy = 1;
         add(lblOnline, gbc_lblOnline);
 
         // --- 3. BUTTON PANELS ---
 
-        // Pass 'this' as the StartMenuPanel reference
         StartMenuLocalButtonsPanel localButtons = new StartMenuLocalButtonsPanel();
         GridBagConstraints gbc_localButtons = new GridBagConstraints();
         gbc_localButtons.fill = GridBagConstraints.BOTH;
         gbc_localButtons.gridx = 0;
-        gbc_localButtons.gridy = 2; // Third row
+        gbc_localButtons.gridy = 2;
         add(localButtons, gbc_localButtons);
 
         StartMenuOnlineButtonsPanel onlineButtons = new StartMenuOnlineButtonsPanel();
         GridBagConstraints gbc_onlineButtons = new GridBagConstraints();
         gbc_onlineButtons.fill = GridBagConstraints.BOTH;
         gbc_onlineButtons.gridx = 1;
-        gbc_onlineButtons.gridy = 2; // Third row
+        gbc_onlineButtons.gridy = 2;
         add(onlineButtons, gbc_onlineButtons);
 
         // --- 4. GLOBAL OPTIONS (SETTINGS) ---
@@ -104,15 +114,15 @@ public class StartMenuPanel extends JPanel {
         gbc_global.gridwidth = 2; // Span both columns
         gbc_global.fill = GridBagConstraints.HORIZONTAL;
         gbc_global.gridx = 0;
-        gbc_global.gridy = 3; // New Row 3
-        gbc_global.insets = new Insets(20, 0, 20, 0); // Margin top/bottom
+        gbc_global.gridy = 3;
+        gbc_global.insets = new Insets(20, 0, 20, 0);
 
         add(globalOptionsPanel, gbc_global);
     }
 
     /**
      * Internal helper class to create text with a drop-shadow.
-     * This makes the text readable regardless of the background image colors.
+     * This ensures the text remains readable against various background images.
      */
     private static class ShadowLabel extends JLabel {
         public ShadowLabel(String text) {
@@ -141,67 +151,14 @@ public class StartMenuPanel extends JPanel {
         }
     }
 
+    /**
+     * Inner panel organizing the local game mode buttons.
+     */
     private class StartMenuLocalButtonsPanel extends JPanel {
 
         public StartMenuLocalButtonsPanel() {
             super();
-
             setOpaque(false);
-
-            setLayout(new GridBagLayout());
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.gridwidth = GridBagConstraints.REMAINDER; // End row
-            gbc.fill = GridBagConstraints.HORIZONTAL;
-            gbc.insets = new Insets(5, 50, 5, 50); // Reduced top/bottom margin slightly
-            gbc.ipady = 15;
-            gbc.anchor = GridBagConstraints.NORTH; // Anchor components to the top
-            gbc.weighty = 0; // Buttons should not stretch vertically
-
-            // --- BUTTONS ---
-            ModernButton btnSinglePlayerTetrio = new ModernButton("SOLO");
-            btnSinglePlayerTetrio.addActionListener(e -> btnSinglePlayerTetrioHandler());
-            add(btnSinglePlayerTetrio, gbc);
-
-            ModernButton btnTwoPlayersTetrio = new ModernButton("1 VS 1");
-            btnTwoPlayersTetrio.addActionListener(e -> btnTwoPlayersTetrioHandler());
-            add(btnTwoPlayersTetrio, gbc);
-
-            ModernButton btnSinglePlayerNES = new ModernButton("SOLO (NES)");
-            btnSinglePlayerNES.addActionListener(e -> btnSinglePlayerNESHandler());
-            add(btnSinglePlayerNES, gbc);
-
-            ModernButton btnTwoPlayersNES = new ModernButton("   1 VS 1 (NES)   ");
-            btnTwoPlayersNES.addActionListener(e -> btnTwoPlayersNESHandler());
-            add(btnTwoPlayersNES, gbc);
-
-            // --- FILLER COMPONENT ---
-            // This component consumes all remaining vertical space, pushing buttons up
-            GridBagConstraints gbcFiller = new GridBagConstraints();
-            gbcFiller.weighty = 1.0;
-            gbcFiller.gridwidth = GridBagConstraints.REMAINDER;
-            add(Box.createGlue(), gbcFiller);
-        }
-
-        private void btnSinglePlayerTetrioHandler() {
-            mainPanel.startSinglePlayerTetrioGame();
-        }
-        private void btnTwoPlayersTetrioHandler() {
-            mainPanel.startTwoPlayersTetrioGame();
-        }
-        private void btnSinglePlayerNESHandler() {
-            mainPanel.startSinglePlayerNESGame();
-        }
-        private void btnTwoPlayersNESHandler() {
-            mainPanel.startTwoPlayersNESGame();
-        }
-    }
-
-    private class StartMenuOnlineButtonsPanel extends JPanel {
-        public StartMenuOnlineButtonsPanel() {
-            super();
-
-            setOpaque(false);
-
             setLayout(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -212,7 +169,52 @@ public class StartMenuPanel extends JPanel {
             gbc.weighty = 0;
 
             // --- BUTTONS ---
+            ModernButton btnSinglePlayerModernTetris = new ModernButton("SOLO");
+            btnSinglePlayerModernTetris.addActionListener(e -> btnSinglePlayerModernTetrisHandler());
+            add(btnSinglePlayerModernTetris, gbc);
 
+            ModernButton btnTwoPlayersModernTetris = new ModernButton("1 VS 1");
+            btnTwoPlayersModernTetris.addActionListener(e -> btnTwoPlayersModernTetrisHandler());
+            add(btnTwoPlayersModernTetris, gbc);
+
+            ModernButton btnSinglePlayerNES = new ModernButton("SOLO (NES)");
+            btnSinglePlayerNES.addActionListener(e -> btnSinglePlayerNESHandler());
+            add(btnSinglePlayerNES, gbc);
+
+            ModernButton btnTwoPlayersNES = new ModernButton("   1 VS 1 (NES)   ");
+            btnTwoPlayersNES.addActionListener(e -> btnTwoPlayersNESHandler());
+            add(btnTwoPlayersNES, gbc);
+
+            // --- FILLER ---
+            GridBagConstraints gbcFiller = new GridBagConstraints();
+            gbcFiller.weighty = 1.0;
+            gbcFiller.gridwidth = GridBagConstraints.REMAINDER;
+            add(Box.createGlue(), gbcFiller);
+        }
+
+        private void btnSinglePlayerModernTetrisHandler() { mainPanel.startSinglePlayerModernTetrisGame(); }
+        private void btnTwoPlayersModernTetrisHandler() { mainPanel.startTwoPlayersModernTetrisGame(); }
+        private void btnSinglePlayerNESHandler() { mainPanel.startSinglePlayerNESGame(); }
+        private void btnTwoPlayersNESHandler() { mainPanel.startTwoPlayersNESGame(); }
+    }
+
+    /**
+     * Inner panel organizing the online game mode buttons.
+     */
+    private class StartMenuOnlineButtonsPanel extends JPanel {
+        public StartMenuOnlineButtonsPanel() {
+            super();
+            setOpaque(false);
+            setLayout(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridwidth = GridBagConstraints.REMAINDER;
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.insets = new Insets(5, 50, 5, 50);
+            gbc.ipady = 15;
+            gbc.anchor = GridBagConstraints.NORTH;
+            gbc.weighty = 0;
+
+            // --- BUTTONS ---
             ModernButton btnJugarOnline = new ModernButton("QUICK MATCH");
             btnJugarOnline.addActionListener(e -> playOnline());
             add(btnJugarOnline, gbc);
@@ -229,22 +231,16 @@ public class StartMenuPanel extends JPanel {
             btnUnirseASala.addActionListener(e -> playOnlineAsClient());
             add(btnUnirseASala, gbc);
 
-            // --- FILLER COMPONENT ---
+            // --- FILLER ---
             GridBagConstraints gbcFiller = new GridBagConstraints();
             gbcFiller.weighty = 1.0;
             gbcFiller.gridwidth = GridBagConstraints.REMAINDER;
             add(Box.createGlue(), gbcFiller);
         }
 
-        /**
-         * Used for playing a normal quick game online
-         */
         private void playOnline() { mainPanel.connectToOnlineGame(ConnectionMode.MODERN_TETRIS_QUICK_PLAY); }
-
         private void playOnlineNES() { mainPanel.connectToOnlineGame(ConnectionMode.NES_QUICK_PLAY); }
-
         private void playOnlineAsHost() { mainPanel.connectToOnlineGame(ConnectionMode.HOST_GAME); }
-
         private void playOnlineAsClient() { mainPanel.connectToOnlineGame(ConnectionMode.JOIN_GAME); }
     }
 }

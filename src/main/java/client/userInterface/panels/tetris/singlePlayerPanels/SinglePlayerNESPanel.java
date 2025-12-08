@@ -5,11 +5,29 @@ import tetris.boards.nes.NESBoardWithPhysics;
 
 import static client.userInterface.panels.MainPanel.*;
 
-public class SinglePlayerNESPanel extends SinglePlayerPanel {
+/**
+ * A concrete panel implementation for the Single Player NES (Classic) Tetris mode.
+ * <p>
+ * This class configures the game for classic mechanics (classic rotation, no hold piece)
+ * and centers the board within the panel view.
+ * </p>
+ */
+public class SinglePlayerNESPanel extends SinglePlayerTetrisPanel{
+
+    /**
+     * Constructs the NES Tetris panel.
+     *
+     * @param mainPanel The parent container.
+     */
     public SinglePlayerNESPanel(MainPanel mainPanel) {
         super(mainPanel);
     }
 
+    /**
+     * Initializes the single player board with NES-style physics and layout.
+     * Calculates the horizontal position to center the board, considering only the board width and queue
+     * (since NES Tetris typically lacks a hold piece container).
+     */
     @Override
     protected void initializeBoards() {
         keyInputHandler.enableNESControls();

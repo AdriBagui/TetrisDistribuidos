@@ -1,6 +1,6 @@
 package tetris.boards.io;
 
-import client.userInterface.panels.tetris.twoPlayerPanels.TwoPlayersPanel;
+import client.userInterface.panels.tetris.twoPlayerPanels.TwoPlayersTetrisPanel;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.io.OutputStream;
 public class SenderBoardOutputHandler {
     /*
      * Protocol Definition:
-     * Messages: TetrioBoardWithPhysics messages
+     * Messages: ModernTetrisBoardWithPhysics messages
      * - SEND_GARBAGE_ROWS: followed by 2 bytes [LINES, EMPTY_COLUMN]
      * Messages: Updates to representations
      * - UPDATE_FALLING_TETROMINO: followed by 4 bytes [X, Y, ROT, LOCK]
@@ -17,7 +17,7 @@ public class SenderBoardOutputHandler {
      * - UPDATE_GARBAGE_ROWS: followed by 2 bytes [LINES, EMPTY_COLUMN]
      */
 
-    private TwoPlayersPanel twoPlayersPanel;
+    private TwoPlayersTetrisPanel twoPlayersTetrisPanel;
     private DataOutputStream dataOutputStream;
     private boolean connectionLost;
 
@@ -25,8 +25,8 @@ public class SenderBoardOutputHandler {
      * Handles sending encoded game events over an output stream (e.g., network or pipe).
      * @param outputStream the destination stream.
      */
-    public SenderBoardOutputHandler(OutputStream outputStream, TwoPlayersPanel twoPlayersPanel) {
-        this.twoPlayersPanel = twoPlayersPanel;
+    public SenderBoardOutputHandler(OutputStream outputStream, TwoPlayersTetrisPanel twoPlayersTetrisPanel) {
+        this.twoPlayersTetrisPanel = twoPlayersTetrisPanel;
         this.dataOutputStream = new DataOutputStream(outputStream);
         connectionLost = false;
     }
@@ -108,7 +108,7 @@ public class SenderBoardOutputHandler {
         }
         catch (IOException ioe) {
             System.out.println("Tengo esperanza de que el hilo del input ha cerrado el socket :D");
-            twoPlayersPanel.handleConnectionError();
+            twoPlayersTetrisPanel.handleConnectionError();
             System.out.println("Nah, en realidad estoy seguro ;P");
         }
     }

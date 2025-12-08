@@ -1,11 +1,11 @@
-package tetris.boards.tetrio;
+package tetris.boards.modernTetris;
 
 import tetris.boards.io.SenderBoardOutputHandler;
 
-public class SenderTetrioBoardWithPhysics extends TetrioBoardWithPhysics {
+public class SenderModernTetrisBoardWithPhysics extends ModernTetrisBoardWithPhysics {
     protected SenderBoardOutputHandler garbageAndUpdatesOutputHandler;
 
-    public SenderTetrioBoardWithPhysics(int x, int y, long seed, SenderBoardOutputHandler garbageAndUpdatesOutputHandler) {
+    public SenderModernTetrisBoardWithPhysics(int x, int y, long seed, SenderBoardOutputHandler garbageAndUpdatesOutputHandler) {
         super(x, y, seed);
 
         this.garbageAndUpdatesOutputHandler = garbageAndUpdatesOutputHandler;

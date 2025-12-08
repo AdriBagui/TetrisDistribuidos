@@ -5,24 +5,45 @@ import tetris.boards.nes.NESBoardWithPhysics;
 
 import static client.userInterface.panels.MainPanel.*;
 
-public class LocalTwoPlayerNESPanel extends LocalTwoPlayersPanel {
+/**
+ * Manages a local 1v1 NES (Classic) Tetris game.
+ * <p>
+ * This mode is purely score-based. There is no garbage sending or interaction between boards.
+ * The winner is determined by who has the higher score when both players top out.
+ * </p>
+ */
+public class LocalTwoPlayerNESPanel extends LocalTwoPlayersTetrisPanel {
+
+    /**
+     * Constructs a LocalTwoPlayerNESPanel.
+     *
+     * @param mainPanel The parent container.
+     */
     public LocalTwoPlayerNESPanel(MainPanel mainPanel) {
         super(mainPanel);
     }
 
+    /**
+     * No-op implementation as NES mode has no inter-board communication.
+     */
     @Override
     public void closeCommunications() {
         // Does nothing because there are no communications
     }
 
     /**
-     * Called by ReceiverBoardInputHandler and SenderBoardsOutputHandler when IOException occurs.
+     * No-op implementation as NES mode has no connections to manage.
      */
     @Override
     public synchronized void handleConnectionError() { // synchronized so that it doesn't interfere with the normal socket closing
         // Does nothing because there are no connections
     }
 
+    /**
+     * Compares scores to determine the winner.
+     *
+     * @return 1 if Player 1 has a higher score, 2 if Player 2 has a higher score, 0 for a tie.
+     */
     @Override
     protected int checkWinner() {
         int player1Score = boards[0].getScore();
@@ -33,11 +54,17 @@ public class LocalTwoPlayerNESPanel extends LocalTwoPlayersPanel {
         else return 0;
     }
 
+    /**
+     * The game ends only when BOTH players have topped out.
+     */
     @Override
     protected boolean checkGameOver() {
         return (!boards[0].isAlive() && !boards[1].isAlive());
     }
 
+    /**
+     * Initializes two independent {@link NESBoardWithPhysics} instances with the same random seed.
+     */
     @Override
     protected void initializeBoards() {
         keyInputHandler.enablePlayer2Controls();

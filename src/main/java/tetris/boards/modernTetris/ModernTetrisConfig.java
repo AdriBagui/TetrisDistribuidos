@@ -1,8 +1,8 @@
-package tetris.boards.tetrio;
+package tetris.boards.modernTetris;
 
 import client.userInterface.panels.tetris.TetrisPanel;
 
-public class TetrioConfig {
+public class ModernTetrisConfig {
     // TETROMINOES QUEUE CONFIGURATION
     public static final int TETROMINOES_QUEUE_SIZE = 5;
 

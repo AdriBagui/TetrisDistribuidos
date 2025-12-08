@@ -12,19 +12,31 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-// El MainFrame es el frame (la ventana) de la aplicación
+/**
+ * The main application window (JFrame).
+ * <p>
+ * This class initializes the top-level window, loads the application icon, sets up the
+ * main content panel ({@link MainPanel}), and initializes the keyboard input handling system.
+ * It also manages the initial loading and creation of key bindings configuration files.
+ * </p>
+ */
 public class MainFrame extends JFrame {
-    private MainPanel mainPanel;
-    private KeyInputHandler keyInputHandler;
+    private final KeyInputHandler keyInputHandler;
 
+    /**
+     * Constructs the MainFrame, configuring window properties and components.
+     */
     public MainFrame() {
-        // Cambia el título que se ve en la barra de arriba de la ventana
+        // Sets the title shown in the title bar
         setTitle("Tetris Distribuidos");
-        // Cambia el comportamiento de presionar la x de la ventana para que se cierre la aplicación
+
+        // Ensure the application exits when the window is closed
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        // Impide que se pueda modificar el tamaño de la ventana
+
+        // Prevent resizing to maintain layout integrity
         setResizable(false);
 
+        // Load Application Icon
         try {
             BufferedImage icon = ImageIO.read(Objects.requireNonNull(getClass().getResource("/images/icon.png")));
             setIconImage(icon);
@@ -32,15 +44,16 @@ public class MainFrame extends JFrame {
             System.out.println("Could not load application icon.");
         }
 
-        mainPanel = new MainPanel();
+        MainPanel mainPanel = new MainPanel();
         add(mainPanel);
 
-        // Hace que el frame se adecue al tamaño de su contenido
+        // Resize frame to fit the preferred size of the mainPanel
         pack();
 
-        // Centra el frame en el centro de la pantalla
+        // Center the frame on the screen
         setLocationRelativeTo(null);
 
+        // Initialize Input Handler
         keyInputHandler = new KeyInputHandler(mainPanel);
 
         loadBindingsFromFile();
@@ -50,6 +63,10 @@ public class MainFrame extends JFrame {
         addKeyListener(keyInputHandler);
     }
 
+    /**
+     * Attempts to load custom key bindings from the XML configuration file.
+     * If loading fails (e.g., file doesn't exist), it applies default bindings and saves them.
+     */
     private void loadBindingsFromFile() {
         // Try to load from XML
         boolean loaded = KeyBindingsManager.loadBindings(keyInputHandler);
@@ -61,8 +78,17 @@ public class MainFrame extends JFrame {
         }
     }
 
+    /**
+     * Sets the hardcoded default key bindings.
+     * <p>
+     * Player 1 uses WASD + JKL (Action keys).
+     * Player 2 uses Arrow Keys + Numpad.
+     * </p>
+     */
     private void setDefaultBindings() {
         keyInputHandler.bindGoBackToMenuKey(KeyEvent.VK_ENTER);
+
+        // Player 1 Defaults
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_A, InputAction.MOVE_LEFT, true);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_D, InputAction.MOVE_RIGHT, true);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_S, InputAction.SOFT_DROP, true);
@@ -71,6 +97,8 @@ public class MainFrame extends JFrame {
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_K, InputAction.ROTATE_RIGHT, true);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_L, InputAction.FLIP, true);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_SHIFT, InputAction.HOLD, true);
+
+        // Player 2 Defaults
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_LEFT, InputAction.MOVE_LEFT, false);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_RIGHT, InputAction.MOVE_RIGHT, false);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_DOWN, InputAction.SOFT_DROP, false);
@@ -79,7 +107,5 @@ public class MainFrame extends JFrame {
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_NUMPAD2, InputAction.ROTATE_RIGHT, false);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_NUMPAD3, InputAction.FLIP, false);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_CONTROL, InputAction.HOLD, false);
-
-        // TODO: save key bindings
     }
 }

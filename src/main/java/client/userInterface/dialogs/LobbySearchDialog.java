@@ -6,25 +6,27 @@ import client.userInterface.components.ModernButton;
 import javax.swing.*;
 import java.awt.*;
 
+import static client.userInterface.panels.MainPanel.*;
+
+/**
+ * A dialog allowing the user to enter a specific Room ID to join an online lobby.
+ * <p>
+ * This modal dialog captures integer input from the user, validates it, and stores it
+ * for the {@link client.ServerConnector} to use during the connection negotiation.
+ * </p>
+ */
 public class LobbySearchDialog extends JDialog {
-    private MainPanel mainPanel;
     private int roomId = -1;
     private JTextField roomNumberField;
-    private static final Color BACKGROUND_COLOR = new Color(0, 0, 0, 220);
-    private static final Color TEXT_COLOR = Color.WHITE;
-    private static final Font LABEL_FONT = new Font("Segoe UI", Font.BOLD, 16);
-    private static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 20);
-    private final Dimension BIG_BUTTON_SIZE = new Dimension(220, 50);
 
     /**
-     * Creates a RoomDialog to create a room
-     * @param mainPanel {@code JFrame} owner of the dialog
+     * Creates a new LobbySearchDialog.
+     *
+     * @param mainPanel The {@link MainPanel} acting as the owner of this dialog.
      */
     public LobbySearchDialog(MainPanel mainPanel) {
         // Locks the dialog
         super((JFrame) SwingUtilities.getWindowAncestor(mainPanel),"Lobby Search", true);
-
-        this.mainPanel = mainPanel;
 
         setLayout(new BorderLayout());
         setSize(450, 250);
@@ -37,8 +39,9 @@ public class LobbySearchDialog extends JDialog {
     }
 
     /**
-     * Creates the view to enter the room code
-     * @return {@code JPanel} where you enter the room code
+     * Creates the internal view panel containing instructions, the input field, and action buttons.
+     *
+     * @return The constructed {@code JPanel}.
      */
     private JPanel createInputView() {
         JPanel mainPanel = new JPanel();
@@ -53,11 +56,11 @@ public class LobbySearchDialog extends JDialog {
 
         JLabel instructionLabel = new JLabel("Enter the desired Room Number (ID):");
         instructionLabel.setForeground(TEXT_COLOR);
-        instructionLabel.setFont(LABEL_FONT);
+        instructionLabel.setFont(MEDIUM_MESSAGE_FONT);
 
         // Serialized room number field
         roomNumberField = new JTextField(15);
-        roomNumberField.setFont(LABEL_FONT);
+        roomNumberField.setFont(MEDIUM_MESSAGE_FONT);
         roomNumberField.setBackground(new Color(35, 35, 35));
         roomNumberField.setForeground(TEXT_COLOR);
         roomNumberField.setCaretColor(TEXT_COLOR);
@@ -80,9 +83,7 @@ public class LobbySearchDialog extends JDialog {
 
         // Listeners
         createButton.addActionListener(e -> attemptToJoinRoom());
-        cancelButton.addActionListener(e -> {
-            dispose();
-        });
+        cancelButton.addActionListener(e -> dispose());
 
         buttonPanel.add(createButton);
         buttonPanel.add(cancelButton);
@@ -94,7 +95,11 @@ public class LobbySearchDialog extends JDialog {
     }
 
     /**
-     * Attempts to join the room in the TextField
+     * Validates the input from the text field and closes the dialog if successful.
+     * <p>
+     * If the input is not a valid positive integer, an error message is shown
+     * and the dialog remains open.
+     * </p>
      */
     private void attemptToJoinRoom() {
         String text = roomNumberField.getText().trim();
@@ -123,6 +128,11 @@ public class LobbySearchDialog extends JDialog {
         }
     }
 
+    /**
+     * Gets the Room ID entered by the user.
+     *
+     * @return The valid Room ID entered, or -1 if the dialog was cancelled or no valid input was provided.
+     */
     public int getRoomId() {
         return roomId;
     }

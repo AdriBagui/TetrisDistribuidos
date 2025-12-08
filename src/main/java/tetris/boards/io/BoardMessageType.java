@@ -3,7 +3,7 @@ package tetris.boards.io;
 public enum BoardMessageType {
     /*
      * Protocol Definition:
-     * Messages: TetrioBoardWithPhysics messages
+     * Messages: ModernTetrisBoardWithPhysics messages
      * - SEND_GARBAGE_ROWS: followed by 2 bytes [LINES, EMPTY_COLUMN]
      * Messages: Updates to representations
      * - UPDATE_FALLING_TETROMINO: followed by 4 bytes [X, Y, ROT, LOCK]
