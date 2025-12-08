@@ -1,6 +1,6 @@
 package tetris.boards.nes;
 
-import tetris.panels.TetrisPanel;
+import client.userInterface.panels.tetris.TetrisPanel;
 
 public class NESConfig {
     // TETROMINOES QUEUE CONFIGURATION

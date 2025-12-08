@@ -1,6 +1,6 @@
 package tetris.boards.tetrio;
 
-import tetris.panels.TetrisPanel;
+import client.userInterface.panels.tetris.TetrisPanel;
 
 public class TetrioConfig {
     // TETROMINOES QUEUE CONFIGURATION

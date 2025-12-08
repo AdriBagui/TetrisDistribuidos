@@ -16,9 +16,9 @@ The project is divided into logical layers separating the View (UI) from the Mod
 
 * **Main.java**: The entry point. It initializes the MainFrame on the Swing Event Dispatch Thread (EDT).  
 * **MainFrame.java**: The top-level JFrame window.  
-* **MainPanel.java**: Acts as the central controller using a CardLayout. It switches between the Menu, Local Game, and Online Game panels. It also handles the initial TCP ServerSocket and Socket connection setup.
+* **MainPanel.java**: Acts as the central controller using a CardLayout. It switches between the Menu, Local Game, and Online Game client.panels. It also handles the initial TCP ServerSocket and Socket connection setup.
 
-### **menus**
+### **client.userInterface.panels**
 
 * **StartMenuPanel.java**: Simple UI for selecting game modes (Local, Host, Client).
 
@@ -39,7 +39,7 @@ The project is divided into logical layers separating the View (UI) from the Mod
 * **TetrominoesQueue.java**: Manages the "Next Piece" preview using a generator.  
 * **TetrominoHolder.java**: Manages the "Hold" mechanic.
 
-### **tetris.panels (The View/Controller)**
+### **tetris.client.panels (The View/Controller)**
 
 * **TwoPlayerTetrisPanel.java**: Base class for rendering two boards. Contains the **Game Loop** (java.util.Timer).  
 * **LocalTwoPlayerTetrisPanel.java**: Handles input for two players on the same keyboard (WASD vs Arrow Keys).  

@@ -4,7 +4,7 @@ import tetris.tetrominoes.Tetromino;
 
 import java.awt.*;
 
-import static main.MainPanel.*;
+import static client.userInterface.panels.MainPanel.*;
 
 public class TetrominoHolder {
     private boolean locked;
@@ -72,7 +72,8 @@ public class TetrominoHolder {
      * @param g2 the Graphics2D context.
      */
     public void draw(Graphics2D g2) {
-        g2.setColor(new Color(220, 220 , 220));
+        g2.setColor(TEXT_COLOR);
+        g2.setFont(DEFAULT_FONT);
         g2.drawString("Hold:", x + CELL_SIZE, y + CELL_SIZE);
 
 

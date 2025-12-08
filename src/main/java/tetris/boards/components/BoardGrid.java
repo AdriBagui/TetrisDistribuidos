@@ -3,7 +3,7 @@ package tetris.boards.components;
 import tetris.tetrominoes.Tetromino;
 import tetris.tetrominoes.TetrominoCell;
 
-import static main.MainPanel.*;
+import static client.userInterface.panels.MainPanel.*;
 
 import java.awt.*;
 

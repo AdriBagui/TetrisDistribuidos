@@ -18,18 +18,7 @@ public class NESRotationSystem extends RotationSystem {
         aux.rotateRight();
 
         if (tetromino.getType() == TetrominoType.I || tetromino.getType() == TetrominoType.S || tetromino.getType() == TetrominoType.Z) {
-            switch (tetromino.getRotationIndex()) {
-                case 0:
-                    break;
-                case 1:
-                    break;
-                case 2:
-                    aux.moveRight();
-                    break;
-                case 3:
-                    aux.moveDown();
-                    break;
-            }
+            aux.setRotationIndex(aux.getRotationIndex() % 2);
         }
 
         if (!grid.hasCollision(aux)) {
@@ -48,18 +37,7 @@ public class NESRotationSystem extends RotationSystem {
         aux.rotateLeft();
 
         if (tetromino.getType() == TetrominoType.I || tetromino.getType() == TetrominoType.S || tetromino.getType() == TetrominoType.Z) {
-            switch (tetromino.getRotationIndex()) {
-                case 0:
-                    aux.moveRight();
-                    break;
-                case 1:
-                    aux.moveDown();
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-            }
+            aux.setRotationIndex(aux.getRotationIndex() % 2);
         }
 
         if (!grid.hasCollision(aux)) {

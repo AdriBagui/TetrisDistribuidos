@@ -10,7 +10,7 @@ import tetris.tetrominoes.generators.TetrominoesGeneratorType;
 
 import java.awt.*;
 
-import static main.MainPanel.*;
+import static client.userInterface.panels.MainPanel.*;
 
 public abstract class Board {
     // BOARD POSITION IN PANEL
@@ -122,16 +122,14 @@ public abstract class Board {
         // Draws the falling tetromino
         if (fallingTetromino != null) drawFallingTetromino(g2);
 
-        // Draw Level
-        g2.setColor(new Color(220, 220 , 220));
-        g2.setFont(new Font("Segoe UI", Font.BOLD, 24));
-        g2.drawString("Level: " + level, gridX, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
 
+        g2.setColor(TEXT_COLOR);
+        g2.setFont(SUBTITLE_FONT);
+        // Draw Level
+        g2.drawString("Level: " + level, gridX, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
         // Draw Score
-        g2.setColor(new Color(220, 220 , 220));
         g2.drawString("Score: " + score, gridX + 120, y + BOARD_SPAWN_HEIGHT + BOARD_HEIGHT + 50);
 
-        g2.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
         // Draw Next Piece Preview
         tetrominoesQueue.draw(g2);

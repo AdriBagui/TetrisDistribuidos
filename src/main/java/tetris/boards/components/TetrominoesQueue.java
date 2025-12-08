@@ -5,13 +5,13 @@ import tetris.tetrominoes.Tetromino;
 
 import java.awt.*;
 
-import static main.MainPanel.CELL_SIZE;
-import static main.MainPanel.TETROMINOES_QUEUE_WIDTH;
+import static client.userInterface.panels.MainPanel.*;
 
 public class TetrominoesQueue {
-    private Tetromino[] tetrominoesQueue;
-    private TetrominoesGenerator tetrominoesGenerator;
-    private int x, y;
+    private final Tetromino[] tetrominoesQueue;
+    private final TetrominoesGenerator tetrominoesGenerator;
+    private final int x;
+    private final int y;
 
     /**
      * Creates the queue component that displays upcoming tetrominoes.
@@ -47,17 +47,18 @@ public class TetrominoesQueue {
     }
 
     /**
-     * Renders the queue and the border around it.
+     * Renders the queue and the surrounding border.
      * @param g2 the Graphics2D context.
      */
     public void draw(Graphics2D g2) {
         int queueHeight = CELL_SIZE * (tetrominoesQueue.length * 3 + 2);
 
-        g2.setColor(new Color(220, 220, 220));
+        g2.setColor(TEXT_COLOR);
+        g2.setFont(DEFAULT_FONT);
         g2.drawString("Next:", x + CELL_SIZE, y + CELL_SIZE);
 
-        for (int i = 0; i < tetrominoesQueue.length; i++) {
-            tetrominoesQueue[i].draw(g2);
+        for (Tetromino tetromino : tetrominoesQueue) {
+            tetromino.draw(g2);
         }
 
         // Draw Border

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE KeyBindings SYSTEM "keybindings.dtd">
+<KeyBindings>
+    <Global>
+        <Bind action="GO_BACK_TO_START_MENU" keyCode="10"/>
+    </Global>
+    <Player1>
+        <Bind action="MOVE_LEFT" keyCode="65"/>
+        <Bind action="MOVE_RIGHT" keyCode="68"/>
+        <Bind action="SOFT_DROP" keyCode="83"/>
+        <Bind action="HARD_DROP" keyCode="87"/>
+        <Bind action="ROTATE_LEFT" keyCode="74"/>
+        <Bind action="ROTATE_RIGHT" keyCode="75"/>
+        <Bind action="FLIP" keyCode="76"/>
+        <Bind action="HOLD" keyCode="16"/>
+    </Player1>
+    <Player2>
+        <Bind action="MOVE_LEFT" keyCode="37"/>
+        <Bind action="MOVE_RIGHT" keyCode="39"/>
+        <Bind action="SOFT_DROP" keyCode="40"/>
+        <Bind action="HARD_DROP" keyCode="38"/>
+        <Bind action="ROTATE_LEFT" keyCode="97"/>
+        <Bind action="ROTATE_RIGHT" keyCode="98"/>
+        <Bind action="FLIP" keyCode="99"/>
+        <Bind action="HOLD" keyCode="17"/>
+    </Player2>
+</KeyBindings>

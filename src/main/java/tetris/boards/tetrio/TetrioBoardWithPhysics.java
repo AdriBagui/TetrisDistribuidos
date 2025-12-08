@@ -10,8 +10,8 @@ import tetris.tetrominoes.generators.TetrominoesGeneratorType;
 import java.awt.*;
 import java.util.Random;
 
-import static main.MainPanel.CELL_SIZE;
-import static main.MainPanel.TETROMINO_HOLDER_WIDTH;
+import static client.userInterface.panels.MainPanel.CELL_SIZE;
+import static client.userInterface.panels.MainPanel.TETROMINO_HOLDER_WIDTH;
 import static tetris.boards.tetrio.TetrioConfig.*;
 
 public class TetrioBoardWithPhysics extends BoardWithPhysics {

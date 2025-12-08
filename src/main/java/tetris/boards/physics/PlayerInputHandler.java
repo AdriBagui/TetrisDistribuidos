@@ -2,7 +2,7 @@ package tetris.boards.physics;
 
 import tetris.boards.components.BoardGrid;
 import tetris.boards.physics.rotationSystems.RotationSystem;
-import tetris.panels.TetrisPanel;
+import client.userInterface.panels.tetris.TetrisPanel;
 import tetris.tetrominoes.Tetromino;
 
 public class PlayerInputHandler {

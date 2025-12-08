@@ -2,7 +2,7 @@ package tetris.tetrominoes;
 
 import java.awt.*;
 
-import static main.MainPanel.*;
+import static client.userInterface.panels.MainPanel.*;
 
 // ==========================================
 // ABSTRACT CLASS: Tetromino
@@ -203,33 +203,15 @@ public abstract class Tetromino {
     /**
      * Rotates the tetromino to the right.
      */
-    public void rotateRight() {
-        int aux = getRotationIndex() + 1;
-
-        if (aux > 3) { aux = 0; }
-
-        setRotationIndex(aux);
-    }
+    public void rotateRight() { setRotationIndex((getRotationIndex()+1) % 4); }
     /**
      * Rotates the tetromino to the right.
      */
-    public void rotateLeft() {
-        int aux = getRotationIndex() - 1;
-
-        if (aux < 0) { aux = 3; }
-
-        setRotationIndex(aux);
-    }
+    public void rotateLeft() { setRotationIndex((getRotationIndex()+3) % 4); }
     /**
      * Rotates the tetromino two times (180º rotation).
      */
-    public void flip() {
-        int aux = getRotationIndex() + 2;
-
-        if (aux > 3) { aux = aux - 4; }
-
-        setRotationIndex(aux);
-    }
+    public void flip() { setRotationIndex((getRotationIndex()+2) % 4); }
 
     // DRAW (Synchronized because when updating position and rotation simultaneously index of tetromino incoherent states may appear)
     /**

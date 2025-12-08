@@ -1,7 +1,6 @@
 package tetris.boards.tetrio;
 
-import tetris.boards.SenderBoardOutputHandler;
-import tetris.boards.components.BoardGrid;
+import tetris.boards.io.SenderBoardOutputHandler;
 
 public class SenderTetrioBoardWithPhysics extends TetrioBoardWithPhysics {
     protected SenderBoardOutputHandler garbageAndUpdatesOutputHandler;

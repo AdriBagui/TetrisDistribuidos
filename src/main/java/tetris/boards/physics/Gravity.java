@@ -1,7 +1,7 @@
 package tetris.boards.physics;
 
 import tetris.boards.components.BoardGrid;
-import tetris.panels.TetrisPanel;
+import client.userInterface.panels.tetris.TetrisPanel;
 import tetris.tetrominoes.Tetromino;
 import tetris.boards.nes.NESConfig;
 
@@ -53,7 +53,7 @@ public class Gravity {
             }
         }
 
-        isLocked = (delayUsed >= appliedLockDelayFrames);
+        isLocked = (delayUsed >= appliedLockDelayFrames) && isTouchingFloor();
 
         appliedGravity = gravity;
         appliedLockDelayFrames = lockDelayFrames;
