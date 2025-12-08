@@ -9,7 +9,7 @@ import java.awt.*;
 
 public class LobbySearchDialog extends JDialog {
     private MainPanel mainPanel;
-    private int roomId;
+    private int roomId = -1;
     private JTextField roomNumberField;
     private static final Color BACKGROUND_COLOR = new Color(0, 0, 0, 220);
     private static final Color TEXT_COLOR = Color.WHITE;

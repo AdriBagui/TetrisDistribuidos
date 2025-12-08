@@ -150,9 +150,7 @@ public class MainPanel extends JPanel {
     // Muestra el panel de partida online (no sé si empezar las partidas aquí o no, darle una vuelta.
     // Si no empiezo las partidas aquí cambiar el nombre de los métodos a show).
     public void connectToOnlineGame(ConnectionMode gameMode) {
-        if(!gameMode.equals(ConnectionMode.JOIN_GAME_MODE)){ // If we are joining we don't want to change the panel
-            cardLayout.show(this, WAITING_OPPONENT_PANEL);
-        }
+        cardLayout.show(this, WAITING_OPPONENT_PANEL);
         waitingOpponentPanel.connect(gameMode);
     }
 
