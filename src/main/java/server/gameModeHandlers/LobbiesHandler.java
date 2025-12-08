@@ -1,0 +1,87 @@
+package server.gameModeHandlers;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.util.HashMap;
+import java.util.Random;
+
+/**
+ * Manages private game lobbies.
+ * <p>
+ * This class is responsible for creating unique Room IDs, storing the host's socket connection,
+ * and retrieving it when a challenger joins. It guarantees thread safety using synchronization,
+ * as multiple threads (MatchmakingHandlers) may access the lobby map simultaneously.
+ * </p>
+ */
+public class LobbiesHandler {
+    private final HashMap<Integer, Socket> lobbies;
+    private static final int MAX_NUMBER_OF_LOBBIES = 1000;
+
+    /**
+     * Creates a new LobbiesHandler with an empty registry.
+     */
+    public LobbiesHandler(){
+        lobbies = new HashMap<>();
+    }
+
+    /**
+     * Creates a new lobby for the provided host socket.
+     * <p>
+     * Generates a random Room ID (0-999). If the ID is taken or the server is full,
+     * it handles collision resolution or waits.
+     * </p>
+     *
+     * @param host The socket of the player hosting the game.
+     * @return The unique Room ID generated for this lobby.
+     */
+    public synchronized int createLobby(Socket host){
+        Random random = new Random();
+
+        // Spin-wait (or sleep) if the server is at capacity
+        while (lobbies.size() >= MAX_NUMBER_OF_LOBBIES) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                // If interrupted, clean up and exit
+                try { host.close(); }
+                catch (IOException ioe) { System.out.println("Error closing host socket during interruption."); }
+                Thread.currentThread().interrupt(); // Restore interrupt status
+                return -1;
+            }
+        }
+
+        // Generate a unique ID
+        int roomId = random.nextInt(0, MAX_NUMBER_OF_LOBBIES - lobbies.size());
+        // Simple linear probing strategy to find a free slot
+        while(lobbies.containsKey(roomId)) {
+            roomId = (roomId + 1) % MAX_NUMBER_OF_LOBBIES;
+        }
+
+        lobbies.put(roomId, host);
+        return roomId;
+    }
+
+    /**
+     * Retrieves and removes the host socket associated with a Room ID.
+     * <p>
+     * This is called when a second player successfully joins the lobby. The lobby is
+     * removed immediately to prevent others from joining the same session.
+     * </p>
+     *
+     * @param roomId The ID of the room to join.
+     * @return The {@link Socket} of the waiting host, or null if not found.
+     */
+    public synchronized Socket getAndRemoveLobby(int roomId) {
+        Socket aux = lobbies.get(roomId);
+        lobbies.remove(roomId);
+        return aux;
+    }
+
+    /**
+     * Checks if a lobby exists with the given Room ID.
+     *
+     * @param roomId The ID to check.
+     * @return {@code true} if the lobby exists, {@code false} otherwise.
+     */
+    public synchronized boolean containsLobby(int roomId) { return lobbies.containsKey(roomId); }
+}
