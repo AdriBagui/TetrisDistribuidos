@@ -32,10 +32,19 @@ public class GameCommunicationHandler implements Runnable{
             dosC1.flush();
             dosC2.flush();
         } catch (IOException ioe){
-            ioe.printStackTrace();
+            closeQuietly(client1);
+            closeQuietly(client2);
         }
 
         pool.execute(new PlayerCommunicationHandler(client1, client2));
         pool.execute(new PlayerCommunicationHandler(client2, client1));
+
+        pool.shutdown();
+    }
+
+    private void closeQuietly(Socket socket) {
+        try {
+            if (socket != null && !socket.isClosed()) socket.close();
+        } catch (IOException e) { System.out.println("FATAL ERROR while close sockets with clients after failing to send seeds"); } // This should never happen, if it does your computer is broken sry
     }
 }

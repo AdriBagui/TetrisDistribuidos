@@ -100,9 +100,7 @@ public class SenderBoardOutputHandler {
             dataOutputStream.flush();
         }
         catch (IOException ioe) {
-            // Entered if the input socket on the other side is closed
-            // Or if this output socket is closed unexpectedly
-            ioe.printStackTrace();
+            System.out.println("Tengo esperanza de que el otro hilo ha cerrado el socket :D"); // This should never happen, if it does your computer is broken sry
         }
     }
 }

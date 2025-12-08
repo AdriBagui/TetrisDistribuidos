@@ -18,11 +18,15 @@ public class PlayerCommunicationHandler implements Runnable{
      */
     @Override
     public void run() {
+        byte byteRead;
+        DataInputStream dis;
+        DataOutputStream dos;
+
         try {
-            DataInputStream dis = new DataInputStream(sender.getInputStream());
-            DataOutputStream dos = new DataOutputStream(receiver.getOutputStream());
-            byte byteRead;
+            dis = new DataInputStream(sender.getInputStream());
+            dos = new DataOutputStream(receiver.getOutputStream());
             byteRead = dis.readByte();
+
             while (true) { // This finishes when the socket closes because dis.readByte() throws an EOFException
                 dos.write(byteRead);
                 dos.flush();
@@ -34,8 +38,14 @@ public class PlayerCommunicationHandler implements Runnable{
                 sender.shutdownInput();
                 receiver.shutdownOutput();
             }
-            catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown output to opponent boards"); } // This should never happen, if it does your computer is broken sry
+            catch (IOException ioe) { System.out.println("FATAL ERROR while trying to shutdown input from sender and output from receiver"); } // This should never happen, if it does your computer is broken sry
         }
-        catch (IOException ioe) { ioe.printStackTrace(); }
+        catch (IOException ioe) {
+            try { sender.close(); }
+            catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown sender socket when receiver disconnected"); } // This should never happen, if it does your computer is broken sry
+
+            try { receiver.close(); }
+            catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown receiver socket when sender disconnected"); } // This should never happen, if it does your computer is broken sry
+        }
     }
 }

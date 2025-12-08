@@ -20,14 +20,14 @@ public abstract class SinglePlayerPanel extends TetrisPanel {
     @Override
     public void update() {
         if (boards[0].isAlive()) boards[0].update();
-        else gameOver = true;
+        else setGameOver(true);
     }
 
     @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
 
-        if (gameOver) {
+        if (isGameOver()) {
             String gameOverMessage = "GAME OVER";
             int gameOverWidth = 10*CELL_SIZE;
             int endGameWidth = 14*CELL_SIZE;

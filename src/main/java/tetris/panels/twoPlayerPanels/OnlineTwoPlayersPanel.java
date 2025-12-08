@@ -14,6 +14,7 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
     protected ReceiverBoardInputHandler receiverBoardInputHandler;
     protected long seed;
     protected boolean rivalGameOver;
+    protected boolean connectionLost;
 
     public OnlineTwoPlayersPanel(MainPanel mainPanel) {
         super(mainPanel);
@@ -23,6 +24,7 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
         seed = -1;
 
         rivalGameOver = false;
+        connectionLost = false;
     }
 
     public void setSocket(Socket socket) {
@@ -30,25 +32,39 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
     }
     public void setSeed(long seed) { this.seed = seed;}
 
+    /**
+     * Called by ReceiverBoardInputHandler when IOException occurs.
+     */
+    public void handleConnectionError() {
+        if (!isGameOver()) {
+            setConnectionLost(true);
+            try { closeSocket(); }
+            catch (IOException e) {
+                System.out.println("FATAL ERROR while trying to close socket to opponent boards"); // This should never happen, if it does your computer is broken sry
+            }
+        }
+    }
+
     @Override
     public void closeCommunications() {
         try {
-            rivalGameOver = true;
+            setRivalGameOver(true);
             boardsSocket.shutdownInput();
-            if (gameOver) closeSocket();
+            if (isGameOver()) closeSocket();
         }
         catch (IOException e) { System.out.println("FATAL ERROR while trying to close socket to opponent boards"); } // This should never happen, if it does your computer is broken sry
     }
 
     @Override
     public void update() {
-        if (boards[0].isAlive()) boards[0].update();
-
-        if (!boards[0].isAlive() || rivalGameOver) {
-            gameOver = true;
+        boolean gameOverCauseOfRivalWin = isRivalGameOver();
+        boolean gameOverCauseOfRival = (gameOverCauseOfRivalWin || isConnectionLost());
+        if (!gameOverCauseOfRival && boards[0].isAlive()) boards[0].update();
+        else {
+            setGameOver(true);
             try {
                 boardsSocket.shutdownOutput();
-                if (rivalGameOver) closeSocket();
+                if (gameOverCauseOfRivalWin) closeSocket();
             }
             catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown output to opponent boards"); } // This should never happen, if it does your computer is broken sry
         }
@@ -57,10 +73,21 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
     @Override
     protected void resetGame() {
         super.resetGame();
+        setConnectionLost(false);
+        setRivalGameOver(false);
         keyInputHandler.setPlayer1Board((BoardWithPhysics) boards[0]);
     }
 
     protected synchronized void closeSocket() throws IOException {
         boardsSocket.close();
     }
+
+    @Override
+    public synchronized boolean isGameOver() { return super.isGameOver(); }
+    @Override
+    protected synchronized void setGameOver(boolean gameOver) { super.setGameOver(gameOver);}
+    private synchronized boolean isRivalGameOver() { return rivalGameOver; }
+    private synchronized void setRivalGameOver(boolean rivalGameOver) { this.rivalGameOver = rivalGameOver;}
+    private synchronized boolean isConnectionLost() { return connectionLost; }
+    private synchronized void setConnectionLost(boolean connectionLost) { this.connectionLost = connectionLost;}
 }

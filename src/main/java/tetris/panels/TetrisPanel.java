@@ -53,11 +53,13 @@ public abstract class TetrisPanel extends JPanel {
         }
     }
 
+    protected void setGameOver(boolean gameOver) { this.gameOver = gameOver; }
+
     protected void resetGame() {
         keyInputHandler.disableGoBackToStartMenuControls();
         keyInputHandler.setPlayer1Board(null);
         keyInputHandler.setPlayer2Board(null);
-        gameOver = false;
+        setGameOver(false);
         initializeBoards();
     }
 
@@ -74,7 +76,7 @@ public abstract class TetrisPanel extends JPanel {
             update();
             repaint();
 
-            if (gameOver) {
+            if (isGameOver()) {
                 gameLoopTimer.cancel();
                 keyInputHandler.enableGoBackToStartMenuControls();
                 keyInputHandler.disablePlayer2Controls();

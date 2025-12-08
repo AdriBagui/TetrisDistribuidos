@@ -22,7 +22,7 @@ public abstract class TwoPlayersPanel extends TetrisPanel {
     public void draw(Graphics2D g2) {
         super.draw(g2);
 
-        if (gameOver) {
+        if (isGameOver()) {
             String gameOverMessage = "GAME OVER";
             String winner;
             int winnerWidth = 17*CELL_SIZE;

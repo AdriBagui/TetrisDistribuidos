@@ -44,7 +44,7 @@ public class LocalTwoPlayerTetrioPanel extends LocalTwoPlayersPanel {
     public void update() {
         super.update();
 
-        if (gameOver) {
+        if (isGameOver()) {
             try {
                 player1OutputStream.close();
                 player2OutputStream.close();

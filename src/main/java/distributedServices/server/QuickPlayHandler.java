@@ -2,10 +2,10 @@ package distributedServices.server;
 
 import java.net.Socket;
 
-public class QuickSocketHandler {
+public class QuickPlayHandler {
     private Socket quickPlayPlayer;
 
-    public QuickSocketHandler() {
+    public QuickPlayHandler() {
         quickPlayPlayer = null;
     }
 

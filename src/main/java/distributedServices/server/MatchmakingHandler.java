@@ -6,17 +6,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Random;
-import java.util.Vector;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class MatchmakingHandler implements Runnable{
     Socket client;
-    QuickSocketHandler socketHandler;
-    QuickSocketHandler socketHandlerNES;
+    QuickPlayHandler socketHandler;
+    QuickPlayHandler socketHandlerNES;
     LobbiesHandler lobbiesHandler;
 
-    public MatchmakingHandler(Socket client, QuickSocketHandler socketHandler, QuickSocketHandler socketHandlerNES, LobbiesHandler lobbiesHandler){
+    public MatchmakingHandler(Socket client, QuickPlayHandler socketHandler, QuickPlayHandler socketHandlerNES, LobbiesHandler lobbiesHandler){
         this.client = client;
         this.socketHandler = socketHandler;
         this.socketHandlerNES = socketHandlerNES;
@@ -29,9 +26,10 @@ public class MatchmakingHandler implements Runnable{
     @Override
     public void run() {
         ConnectionMode gameModeSelected;
-        
+        DataInputStream dis;
+
         try{
-            DataInputStream dis = new DataInputStream(client.getInputStream());
+            dis = new DataInputStream(client.getInputStream());
             gameModeSelected = ConnectionMode.values()[dis.readInt()];
             switch (gameModeSelected) {
                 case QUICK_MATCH_MODE:
@@ -47,9 +45,8 @@ public class MatchmakingHandler implements Runnable{
                     joinLobbySearch(dis);
                     break;
             }
-
         } catch (IOException ioe){
-            ioe.printStackTrace();
+            closeSocket();
         }
     }
 
@@ -71,26 +68,42 @@ public class MatchmakingHandler implements Runnable{
 
     private void hostGameSearch() {
         int roomId = lobbiesHandler.createLobby(client);
+        DataOutputStream dos;
+
         try{
-            DataOutputStream dos = new DataOutputStream(client.getOutputStream());
+            dos = new DataOutputStream(client.getOutputStream());
             dos.writeInt(roomId);
             dos.flush();
         } catch (IOException ioe){
-            ioe.printStackTrace();
+            // CRITICAL: Remove the lobby so players don't try to join a dead room.
+            lobbiesHandler.getAndRemoveLobby(roomId);
+            closeSocket();
         }
     }
 
     private void joinLobbySearch(DataInputStream dis) {
+        int roomId;
+
         try{
             DataOutputStream dos = new DataOutputStream(client.getOutputStream());
-            int roomId = dis.readInt();
+            roomId = dis.readInt();
+
             if(lobbiesHandler.containsLobby(roomId)){
                 dos.writeBoolean(true);
                 dos.flush();
                 new Thread(new GameCommunicationHandler(client, lobbiesHandler.getAndRemoveLobby(roomId))).start();
-            } else dos.writeBoolean(false);
-        } catch (IOException ioe){
-            ioe.printStackTrace();
+            }
+            else {
+                dos.writeBoolean(false);
+                dos.flush();
+            }
+        } catch (IOException ioe) {
+            closeSocket();
         }
+    }
+
+    private void closeSocket() {
+        try { if (client != null && !client.isClosed()) client.close(); }
+        catch (IOException e) { System.out.println("FATAL ERROR while trying to close client socket"); } // This should never happen, if it does your computer is broken sry
     }
 }

@@ -3,7 +3,6 @@ package distributedServices.server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,8 +17,8 @@ public class Server {
      */
     public static void main(String[] args) {
         ExecutorService pool = Executors.newCachedThreadPool();
-        QuickSocketHandler socketHandler = new QuickSocketHandler();
-        QuickSocketHandler socketHandlerNES = new QuickSocketHandler();
+        QuickPlayHandler socketHandler = new QuickPlayHandler();
+        QuickPlayHandler socketHandlerNES = new QuickPlayHandler();
         LobbiesHandler lobbiesHandler = new LobbiesHandler();
 
         try (ServerSocket server = new ServerSocket(SERVER_PORT);) {
@@ -28,10 +27,10 @@ public class Server {
                     Socket client = server.accept();
                     pool.execute(new MatchmakingHandler(client, socketHandler, socketHandlerNES, lobbiesHandler));
                 }
-                catch (IOException ioe) { ioe.printStackTrace(); }
+                catch (IOException ioe) { System.out.println("FATAL ERROR while trying to accept client socket"); } // This should never happen, if it does your computer is broken sry
             }
         }
-        catch (IOException ioe) { ioe.printStackTrace(); }
+        catch (IOException ioe) { System.out.println("FATAL ERROR while trying to create server socket"); } // This should never happen, if it does your computer is broken sry (tbh is using the server port for another program probably)
         finally {
             pool.shutdown();
             pool.close();

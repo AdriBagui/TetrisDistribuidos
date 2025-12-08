@@ -14,7 +14,7 @@ public abstract class LocalTwoPlayersPanel extends TwoPlayersPanel {
         if (boards[1].isAlive()) boards[1].update();
 
         if (!boards[0].isAlive() || !boards[1].isAlive())
-            gameOver = true;
+            setGameOver(true);
     }
 
     @Override

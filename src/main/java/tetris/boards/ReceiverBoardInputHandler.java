@@ -1,5 +1,6 @@
 package tetris.boards;
 
+import tetris.panels.twoPlayerPanels.OnlineTwoPlayersPanel;
 import tetris.panels.twoPlayerPanels.TwoPlayersPanel;
 
 import java.io.DataInputStream;
@@ -49,9 +50,9 @@ public class ReceiverBoardInputHandler extends Thread {
             twoPlayersPanel.closeCommunications();
         }
         catch (IOException ioe) {
-            // Entered if the output socket on the other side is closed
-            // Or if this input socket is closed
-            ioe.printStackTrace();
+            if (twoPlayersPanel instanceof OnlineTwoPlayersPanel) {
+                ((OnlineTwoPlayersPanel) twoPlayersPanel).handleConnectionError();
+            }
         }
     }
 
