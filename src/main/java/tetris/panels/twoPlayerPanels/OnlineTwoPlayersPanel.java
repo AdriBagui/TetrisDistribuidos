@@ -57,9 +57,12 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
 
     @Override
     public void update() {
+        super.update();
+
         boolean gameOverCauseOfRivalWin = isRivalGameOver();
         boolean gameOverCauseOfRival = (gameOverCauseOfRivalWin || isConnectionLost());
         if (gameOverCauseOfRival || isGameOver()) {
+            setGameOver(true);
             try {
                 boardsSocket.shutdownOutput();
                 if (gameOverCauseOfRivalWin) closeSocket();
@@ -70,7 +73,11 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
 
     @Override
     protected void updateBoards() {
-        if (boards[0].isAlive()) boards[0].update();
+        System.out.println(boards[0].isAlive());
+        if (boards[0].isAlive()) {
+            boards[0].update();
+            System.out.println("update");
+        }
     }
 
     @Override
