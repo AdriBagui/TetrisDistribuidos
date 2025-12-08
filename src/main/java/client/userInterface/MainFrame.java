@@ -12,6 +12,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
+import static server.Server.SERVER_IP;
+import static server.Server.SERVER_PORT;
+
 /**
  * The main application window (JFrame).
  * <p>
@@ -25,8 +28,10 @@ public class MainFrame extends JFrame {
 
     /**
      * Constructs the MainFrame, configuring window properties and components.
+     * @param serverIp the server ip to connect to
+     * @param serverPort the server port to connect to
      */
-    public MainFrame() {
+    public MainFrame(String serverIp, int serverPort) {
         // Sets the title shown in the title bar
         setTitle("Tetris Distribuidos");
 
@@ -44,7 +49,7 @@ public class MainFrame extends JFrame {
             System.out.println("Could not load application icon.");
         }
 
-        MainPanel mainPanel = new MainPanel();
+        MainPanel mainPanel = new MainPanel(serverIp, serverPort);
         add(mainPanel);
 
         // Resize frame to fit the preferred size of the mainPanel
@@ -62,6 +67,8 @@ public class MainFrame extends JFrame {
         setFocusable(true);
         addKeyListener(keyInputHandler);
     }
+
+    public MainFrame() { this(SERVER_IP, SERVER_PORT); }
 
     /**
      * Attempts to load custom key bindings from the XML configuration file.

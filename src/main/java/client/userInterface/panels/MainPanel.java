@@ -93,8 +93,10 @@ public class MainPanel extends JPanel {
     /**
      * Constructs the MainPanel, initializes all sub-panels, sets up the CardLayout,
      * and loads UI resources.
+     * @param serverIp the server ip to connect to
+     * @param serverPort the server port to connect to
      */
-    public MainPanel() {
+    public MainPanel(String serverIp, int serverPort) {
         super();
 
         setBackground(BACKGROUND_COLOR);
@@ -114,7 +116,7 @@ public class MainPanel extends JPanel {
         onlineModernTetrisPanel = new OnlineTwoPlayersModernTetrisPanel(this);
         onlineNESPanel = new OnlineTwoPlayersNESPanel(this);
 
-        serverConnector = new ServerConnector(this, waitingOpponentPanel, SERVER_IP, SERVER_PORT);
+        serverConnector = new ServerConnector(this, waitingOpponentPanel, serverIp, serverPort);
 
         // Add panels to the CardLayout
         add(startMenuPanel, START_MENU_PANEL);
@@ -137,6 +139,8 @@ public class MainPanel extends JPanel {
         // Show start menu by default
         cardLayout.show(this, START_MENU_PANEL);
     }
+
+    public MainPanel() { this(SERVER_IP, SERVER_PORT); }
 
     /**
      * Distributes the KeyInputHandler to all panels that require keyboard interaction.

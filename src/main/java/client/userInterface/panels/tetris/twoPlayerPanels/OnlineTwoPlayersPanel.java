@@ -84,7 +84,6 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
     public synchronized void closeCommunications() { // synchronized so that update and closeCommunications don't close the socket at the same time
         // If the code reaches here means the rival has closed his output
         setRivalGameOver(true);
-        System.out.println("rival finished");
 
         if (isConnectionUp()) {
             try {
@@ -127,7 +126,6 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
             if (isGameOver() && isConnectionUp()) {
                 try {
                     boardsSocket.shutdownOutput();
-                    System.out.println("I finished");
                     if (isRivalGameOver()) closeSocket();
                 }
                 catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown output to opponent boards"); } // This should never happen, if it does your computer is broken sry
