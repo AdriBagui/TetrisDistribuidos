@@ -101,6 +101,12 @@ public class SenderBoardOutputHandler {
         }
         catch (IOException ioe) {
             System.out.println("Tengo esperanza de que el otro hilo ha cerrado el socket :D"); // This should never happen, if it does your computer is broken sry
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                System.out.println("Cabrón no me interrumpas");
+            }
+            System.out.println("Nah, en realidad estoy seguro ;P");
         }
     }
 }
