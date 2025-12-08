@@ -37,17 +37,22 @@ public class Server {
      * in a separate thread.
      * </p>
      *
-     * @param args Command line arguments (not used).
+     * @param args Command line arguments if there is an arg, it will be used as the server port.
      */
     public static void main(String[] args) {
+        int serverPort;
+
+        if (args != null && args.length > 0) serverPort = Integer.parseInt(args[0]);
+        else serverPort = SERVER_PORT;
+
         // Shared resources for matchmaking
         QuickPlayHandler modernTetrisQuickPlayHandler = new QuickPlayHandler();
         QuickPlayHandler nesQuickPlayHandler = new QuickPlayHandler();
         LobbiesHandler lobbiesHandler = new LobbiesHandler();
 
         try (ExecutorService pool = Executors.newCachedThreadPool();
-             ServerSocket server = new ServerSocket(SERVER_PORT)) {
-            System.out.println("Server is running on port " + SERVER_PORT);
+             ServerSocket server = new ServerSocket(serverPort)) {
+            System.out.println("Server is running on port " + serverPort);
 
             while (true) {
                 try {
