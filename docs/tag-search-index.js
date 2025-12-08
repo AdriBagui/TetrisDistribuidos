@@ -1,0 +1,1 @@
+tagSearchIndex = [{"l":"Constant Field Values","h":"","u":"constant-values.html"},{"l":"Protocol Structure:","h":"enum class tetris.boards.io.BoardMessageType","d":"Section","u":"tetris/boards/io/BoardMessageType.html#protocol-structure--heading"},{"l":"Serialized Form","h":"","u":"serialized-form.html"}];updateSearchResults();
