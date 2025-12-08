@@ -1,6 +1,7 @@
 package main;
 
 import tetris.keyMaps.InputAction;
+import tetris.keyMaps.KeyBindingsManager;
 import tetris.keyMaps.KeyInputHandler;
 
 import javax.imageio.ImageIO;
@@ -13,6 +14,7 @@ import java.util.Objects;
 // El MainFrame es el frame (la ventana) de la aplicación
 public class MainFrame extends JFrame {
     private MainPanel mainPanel;
+    private KeyInputHandler keyInputHandler;
 
     public MainFrame() {
         // Cambia el título que se ve en la barra de arriba de la ventana
@@ -38,8 +40,27 @@ public class MainFrame extends JFrame {
         // Centra el frame en el centro de la pantalla
         setLocationRelativeTo(null);
 
-        KeyInputHandler keyInputHandler = new KeyInputHandler(mainPanel);
+        keyInputHandler = new KeyInputHandler(mainPanel);
 
+        loadBindingsFromFile();
+
+        mainPanel.setKeyInputHandler(keyInputHandler);
+        setFocusable(true);
+        addKeyListener(keyInputHandler);
+    }
+
+    private void loadBindingsFromFile() {
+        // Try to load from XML
+        boolean loaded = KeyBindingsManager.loadBindings(keyInputHandler);
+
+        // If file didn't exist or failed to load, set defaults and create the file
+        if (!loaded) {
+            setDefaultBindings();
+            KeyBindingsManager.saveBindings(keyInputHandler);
+        }
+    }
+
+    private void setDefaultBindings() {
         keyInputHandler.bindGoBackToMenuKey(KeyEvent.VK_ENTER);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_A, InputAction.MOVE_LEFT, true);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_D, InputAction.MOVE_RIGHT, true);
@@ -58,8 +79,6 @@ public class MainFrame extends JFrame {
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_NUMPAD3, InputAction.FLIP, false);
         keyInputHandler.bindKeyToPlayerAction(KeyEvent.VK_CONTROL, InputAction.HOLD, false);
 
-        mainPanel.setKeyInputHandler(keyInputHandler);
-        setFocusable(true);
-        addKeyListener(keyInputHandler);
+        // TODO: save key bindings
     }
 }

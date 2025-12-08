@@ -53,6 +53,21 @@ public class LocalTwoPlayerTetrioPanel extends LocalTwoPlayersPanel {
     }
 
     @Override
+    protected int checkWinner() {
+        boolean player1Alive = boards[0].isAlive();
+        boolean player2Alive = boards[1].isAlive();
+
+        if (player1Alive && !player2Alive) return 1;
+        else if (!player1Alive && player2Alive) return 2;
+        else return 0;
+    }
+
+    @Override
+    protected boolean checkGameOver() {
+        return (!boards[0].isAlive() || !boards[1].isAlive());
+    }
+
+    @Override
     protected void initializeBoards() {
         keyInputHandler.enablePlayer2Controls();
         keyInputHandler.enableTetrioControls();

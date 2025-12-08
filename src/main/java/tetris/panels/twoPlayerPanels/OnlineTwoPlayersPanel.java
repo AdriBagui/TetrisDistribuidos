@@ -59,15 +59,18 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersPanel {
     public void update() {
         boolean gameOverCauseOfRivalWin = isRivalGameOver();
         boolean gameOverCauseOfRival = (gameOverCauseOfRivalWin || isConnectionLost());
-        if (!gameOverCauseOfRival && boards[0].isAlive()) boards[0].update();
-        else {
-            setGameOver(true);
+        if (gameOverCauseOfRival || isGameOver()) {
             try {
                 boardsSocket.shutdownOutput();
                 if (gameOverCauseOfRivalWin) closeSocket();
             }
             catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown output to opponent boards"); } // This should never happen, if it does your computer is broken sry
         }
+    }
+
+    @Override
+    protected void updateBoards() {
+        if (boards[0].isAlive()) boards[0].update();
     }
 
     @Override

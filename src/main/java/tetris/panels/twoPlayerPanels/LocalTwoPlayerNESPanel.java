@@ -16,6 +16,21 @@ public class LocalTwoPlayerNESPanel extends LocalTwoPlayersPanel {
     }
 
     @Override
+    protected int checkWinner() {
+        int player1Score = boards[0].getScore();
+        int player2Score = boards[1].getScore();
+
+        if (player1Score > player2Score) return 1;
+        else if (player1Score < player2Score) return 2;
+        else return 0;
+    }
+
+    @Override
+    protected boolean checkGameOver() {
+        return (!boards[0].isAlive() && !boards[1].isAlive());
+    }
+
+    @Override
     protected void initializeBoards() {
         keyInputHandler.enablePlayer2Controls();
         keyInputHandler.enableNESControls();

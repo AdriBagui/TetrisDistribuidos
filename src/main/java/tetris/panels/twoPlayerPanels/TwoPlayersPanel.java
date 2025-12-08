@@ -17,6 +17,7 @@ public abstract class TwoPlayersPanel extends TetrisPanel {
     }
 
     public abstract void closeCommunications();
+    protected abstract int checkWinner();
 
     @Override
     public void draw(Graphics2D g2) {
@@ -31,9 +32,10 @@ public abstract class TwoPlayersPanel extends TetrisPanel {
             int bannerWidth = winnerWidth + 2*FRAME_PADDING;
             int bannerHeight = 5*CELL_SIZE + 2*FRAME_PADDING;
             int bannerY = 7*CELL_SIZE;
+            int winnerId = checkWinner();
 
-            if (boards[0].isAlive()) winner = "The winner is player 1!";
-            else if (boards[1].isAlive()) winner = "The winner is player 2!";
+            if (winnerId == 1) winner = "The winner is player 1!";
+            else if (winnerId == 2) winner = "The winner is player 2!";
             else {
                 winner = "It's a tie!";
                 winnerWidth = 7*CELL_SIZE;

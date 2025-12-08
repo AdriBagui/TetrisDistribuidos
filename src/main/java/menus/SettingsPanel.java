@@ -2,6 +2,7 @@ package menus;
 
 import main.MainPanel;
 import tetris.keyMaps.InputAction;
+import tetris.keyMaps.KeyBindingsManager;
 import tetris.keyMaps.KeyInputHandler;
 
 import javax.swing.*;
@@ -351,6 +352,10 @@ public class SettingsPanel extends JPanel {
         if (pendingGoBackKey != -1) {
             keyInputHandler.bindGoBackToMenuKey(pendingGoBackKey);
         }
+
+        // Save to XML
+        KeyBindingsManager.saveBindings(keyInputHandler);
+
         resetPendingChanges();
         mainPanel.backToStartMenu();
     }

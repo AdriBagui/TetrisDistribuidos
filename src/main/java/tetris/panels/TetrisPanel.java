@@ -6,7 +6,6 @@ import tetris.keyMaps.KeyInputHandler;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -34,7 +33,8 @@ public abstract class TetrisPanel extends JPanel {
         gameOver = false;
     }
 
-    public abstract void update();
+    protected abstract void updateBoards();
+    protected abstract boolean checkGameOver();
     protected abstract void initializeBoards();
 
     public void setKeyInputHandler(KeyInputHandler keyInputHandler) { this.keyInputHandler = keyInputHandler; }
@@ -45,6 +45,14 @@ public abstract class TetrisPanel extends JPanel {
         resetGame();
         gameLoopTimer = new Timer();
         gameLoopTimer.scheduleAtFixedRate(new GameLoop(), 0, MILLISECONDS_PER_FRAME);
+    }
+
+    public void update() {
+        updateBoards();
+
+        if (checkGameOver()) {
+            setGameOver(true);
+        }
     }
 
     public void draw(Graphics2D g2) {

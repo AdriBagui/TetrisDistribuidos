@@ -85,6 +85,12 @@ public abstract class Board {
     public boolean isAlive() { return isAlive; }
 
     /**
+     * Returns the score of the board
+     * @return the score of the board
+     */
+    public int getScore() { return score; }
+
+    /**
      * Main update loop for the board.
      * Handles spawning new pieces, checking collisions, updating physics, and locking pieces.
      */

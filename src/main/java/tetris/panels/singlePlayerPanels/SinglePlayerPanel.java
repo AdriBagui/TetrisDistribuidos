@@ -18,12 +18,6 @@ public abstract class SinglePlayerPanel extends TetrisPanel {
     }
 
     @Override
-    public void update() {
-        if (boards[0].isAlive()) boards[0].update();
-        else setGameOver(true);
-    }
-
-    @Override
     public void draw(Graphics2D g2) {
         super.draw(g2);
 
@@ -48,6 +42,16 @@ public abstract class SinglePlayerPanel extends TetrisPanel {
             g2.setFont(new Font("Arial", Font.PLAIN, 20));
             g2.drawString("Press '" + KeyEvent.getKeyText(keyInputHandler.getGoBackToMenuKey()) + "' to go back to the start menu", (PANEL_WIDTH-endGameWidth)/2, (int) (bannerY + 2.5*FRAME_PADDING));
         }
+    }
+
+    @Override
+    protected void updateBoards() {
+        if (boards[0].isAlive()) boards[0].update();
+    }
+
+    @Override
+    protected boolean checkGameOver() {
+        return (!boards[0].isAlive());
     }
 
     @Override
