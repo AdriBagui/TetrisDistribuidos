@@ -76,15 +76,9 @@ public class SenderModernTetrisBoardWithPhysics extends ModernTetrisBoardWithPhy
 
         // Check if attack garbage should be sent
         switch (clearedLines) {
-            case 2:
-                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 1, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
-                break;
-            case 3:
-                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 2, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
-                break;
-            case 4:
-                garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 4, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
-                break;
+            case 2 -> garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 1, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
+            case 3 -> garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 2, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
+            case 4 -> garbageAndUpdatesOutputHandler.sendAddGarbageMessage((byte) 4, (byte) garbageRandom.nextInt(grid.getNumberOfColumns()));
         }
 
         return clearedLines;
