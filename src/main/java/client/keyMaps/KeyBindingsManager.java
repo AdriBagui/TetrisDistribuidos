@@ -10,6 +10,7 @@ import org.xml.sax.SAXParseException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -123,9 +124,7 @@ public class KeyBindingsManager {
      */
     public static boolean loadBindings(KeyInputHandler handler) {
         File xmlFile = new File(FILE_PATH);
-        if (!xmlFile.exists()) {
-            return false;
-        }
+        if (!xmlFile.exists()) { return false; }
 
         // Ensure DTD exists so validation doesn't fail due to missing file
         ensureConfigFolderExists();
@@ -143,7 +142,7 @@ public class KeyBindingsManager {
             // Set Error Handler to capture validation errors (silent)
             dBuilder.setErrorHandler(new ErrorHandler() {
                 @Override
-                public void warning(SAXParseException exception) { }
+                public void warning(SAXParseException exception) {}
 
                 @Override
                 public void error(SAXParseException exception) throws SAXException {
@@ -182,9 +181,8 @@ public class KeyBindingsManager {
 
             return true;
 
-        } catch (Exception e) {
-            return false;
         }
+        catch (IOException | ParserConfigurationException | SAXException e) { return false; }
     }
 
     /**
@@ -202,7 +200,15 @@ public class KeyBindingsManager {
         File dtdFile = new File(DTD_FILE_PATH);
         if (!dtdFile.exists()) {
             try (FileWriter writer = new FileWriter(dtdFile)) {
-                writer.write("<!ELEMENT KeyBindings (Global, Player1, Player2)\n<!ELEMENT Global (Bind*)>\n<!ELEMENT Player1 (Bind*)>\n<!ELEMENT Player2 (Bind*)>\n<!ELEMENT Bind EMPTY>\n<!ATTLIST Bind\t\naction CDATA #REQUIRED\n\tkeyCode CDATA #REQUIRED\n\t>");
+                writer.write("<!ELEMENT KeyBindings (Global, Player1, Player2)>\n" +
+                        "<!ELEMENT Global (Bind?)>\n" +
+                        "<!ELEMENT Player1 (Bind*)>\n" +
+                        "<!ELEMENT Player2 (Bind*)>\n" +
+                        "<!ELEMENT Bind EMPTY>\n" +
+                        "<!ATTLIST Bind\n" +
+                        "\taction CDATA #REQUIRED\n" +
+                        "\tkeyCode CDATA #REQUIRED\n" +
+                        ">");
             }
             catch (IOException e) { System.out.println("FATAL ERROR while trying to create the DTD"); } // This should never happen, if it does your computer is broken sry
         }
@@ -235,6 +241,7 @@ public class KeyBindingsManager {
 
         for (int i = 0; i < bindings.getLength(); i++) {
             Node node = bindings.item(i);
+
             if (node.getNodeType() == Node.ELEMENT_NODE) {
                 Element elem = (Element) node;
                 String actionName = elem.getAttribute(ATTR_ACTION);
@@ -245,10 +252,15 @@ public class KeyBindingsManager {
                     InputAction action = InputAction.valueOf(actionName);
 
                     if (actionType == 0) {
-                        if (action == InputAction.GO_BACK_TO_START_MENU)
+                        System.out.println(action + " " + keyCode + " " + actionType);
+                        if (action == InputAction.GO_BACK_TO_START_MENU) {
                             handler.bindGoBackToMenuKey(keyCode);
+                        }
                     }
-                    else handler.changeKeyBinding(action, keyCode, actionType == 1);
+                    else {
+                        handler.changeKeyBinding(action, keyCode, actionType == 1);
+                        System.out.println(action + " " + keyCode + " " + (actionType == 1));
+                    }
                 }
                 catch (NumberFormatException ex) { System.out.println("There was a non valid key value in the xml, the binding will be ignored"); }
                 catch (IllegalArgumentException iae) { System.out.println("There was a non valid action value in the xml, the binding will be ignored"); }
