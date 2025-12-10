@@ -19,11 +19,6 @@ import java.util.concurrent.Executors;
  */
 public class Server {
     /**
-     * The IP address binding for the server (localhost for local testing).
-     */
-    public static final String SERVER_IP = "localhost";
-
-    /**
      * The port number on which the server listens for connections.
      */
     public static final int SERVER_PORT = 7777;

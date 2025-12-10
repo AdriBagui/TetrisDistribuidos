@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
 
-import static server.Server.SERVER_IP;
+import static client.ServerConnector.SERVER_IP;
 import static server.Server.SERVER_PORT;
 
 /**
@@ -79,6 +79,7 @@ public class MainPanel extends JPanel {
 
     // Sub-Panels
     private final SettingsPanel settingsPanel;
+    private final WaitingOpponentPanel waitingOpponentPanel;
     private final SinglePlayerModernTetrisPanel singlePlayerModernTetrisPanel;
     private final LocalTwoPlayerModernTetrisPanel localTwoPlayerModernTetrisPanel;
     private final SinglePlayerNESPanel singlePlayerNESPanel;
@@ -109,7 +110,7 @@ public class MainPanel extends JPanel {
         // Preload all panels into memory
         settingsPanel = new SettingsPanel(this);
         StartMenuPanel startMenuPanel = new StartMenuPanel(this);
-        WaitingOpponentPanel waitingOpponentPanel = new WaitingOpponentPanel();
+        waitingOpponentPanel = new WaitingOpponentPanel();
         singlePlayerModernTetrisPanel = new SinglePlayerModernTetrisPanel(this);
         localTwoPlayerModernTetrisPanel = new LocalTwoPlayerModernTetrisPanel(this);
         singlePlayerNESPanel = new SinglePlayerNESPanel(this);
@@ -208,6 +209,7 @@ public class MainPanel extends JPanel {
      * @param gameMode The specific online mode (Quick Play, Host, Join).
      */
     public void connectToOnlineGame(GameMode gameMode) {
+        waitingOpponentPanel.startAnimation();
         cardLayout.show(this, WAITING_OPPONENT_PANEL);
         serverConnector.connect(gameMode);
     }
@@ -220,6 +222,8 @@ public class MainPanel extends JPanel {
      * @param gameMode The game mode being played (Modern or NES).
      */
     public void startOnlineGame(long seed, Socket socket, GameMode gameMode) {
+        waitingOpponentPanel.stopAnimation();
+
         OnlineTwoPlayersPanel onlineTwoPlayersPanel;
 
         String onlineTwoPlayersPanelName = switch (gameMode) {
@@ -243,6 +247,7 @@ public class MainPanel extends JPanel {
      * Returns the view to the Start Menu.
      */
     public void backToStartMenu() {
+        waitingOpponentPanel.stopAnimation();
         cardLayout.show(this, START_MENU_PANEL);
     }
 

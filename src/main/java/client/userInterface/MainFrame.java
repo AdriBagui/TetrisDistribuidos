@@ -12,7 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-import static server.Server.SERVER_IP;
+import static client.ServerConnector.SERVER_IP;
 import static server.Server.SERVER_PORT;
 
 /**

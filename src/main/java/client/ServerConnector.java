@@ -21,6 +21,11 @@ import java.net.Socket;
  * </p>
  */
 public class ServerConnector {
+    /**
+     * The IP address binding for the server (localhost for local testing).
+     */
+    public static final String SERVER_IP = "localhost";
+
     private final MainPanel mainPanel;
     private final WaitingOpponentPanel waitingOpponentPanel;
     private String serverIp;
