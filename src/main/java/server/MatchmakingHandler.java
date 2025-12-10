@@ -20,7 +20,9 @@ import static server.GameMode.*;
  * </p>
  */
 public class MatchmakingHandler implements Runnable {
-    private final Socket player;
+    private Socket player;
+    private DataOutputStream dos;
+    private DataInputStream dis;
     private final QuickPlayHandler modernTetrisQuickPlayHandler;
     private final QuickPlayHandler nesQuickPlayHandler;
     private final LobbiesHandler lobbiesHandler;
@@ -49,8 +51,6 @@ public class MatchmakingHandler implements Runnable {
      */
     @Override
     public void run() {
-        DataInputStream dis;
-        DataOutputStream dos;
         int gameModeSelectedId;
         GameMode gameModeSelected;
 
@@ -71,13 +71,12 @@ public class MatchmakingHandler implements Runnable {
 
             // 2. Route to the specific logic
             switch (gameModeSelected) {
-                case MODERN_TETRIS_QUICK_PLAY, NES_QUICK_PLAY -> quickMatchSearch(gameModeSelected, dos);
-                case HOST_GAME -> hostGame(dos);
-                case JOIN_GAME -> joinGame(dis, dos);
+                case MODERN_TETRIS_QUICK_PLAY, NES_QUICK_PLAY -> quickMatchSearch(gameModeSelected);
+                case HOST_GAME -> hostGame();
+                case JOIN_GAME -> joinGame();
             }
-        } catch (IOException ioe) {
-            closeSocket(player);
         }
+        catch (IOException ioe) { closeSocket(player); }
     }
 
     /**
@@ -89,7 +88,7 @@ public class MatchmakingHandler implements Runnable {
      *
      * @param gameMode The specific Game Mode (Modern or NES) to use.
      */
-    private void quickMatchSearch(GameMode gameMode, DataOutputStream dos) {
+    private void quickMatchSearch(GameMode gameMode) {
         QuickPlayHandler quickPlayHandler;
         Socket opponent;
         DataOutputStream opponentDos;
@@ -127,8 +126,10 @@ public class MatchmakingHandler implements Runnable {
             }
 
             if (opponentIsOnline && playerIsOnline) new GameCommunicationHandler(opponent, player).startCommunicationBetweenPlayers();
-            else if (playerIsOnline) quickMatchSearch(gameMode, dos);
+            else if (playerIsOnline) quickMatchSearch(gameMode);
             else if (opponentIsOnline) {
+                setPlayer(opponent);
+                quickMatchSearch(gameMode);
                 new Thread(new MatchmakingHandler(opponent, modernTetrisQuickPlayHandler, quickPlayHandler, lobbiesHandler)).start();
             }
         }
@@ -140,10 +141,8 @@ public class MatchmakingHandler implements Runnable {
      * Requests a new Room ID from the {@link LobbiesHandler} and sends it back to the client.
      * The client socket is then stored in the lobby map waiting for a joiner.
      * </p>
-     *
-     * @param dos The output stream to send the Room ID to the host.
      */
-    private void hostGame(DataOutputStream dos) {
+    private void hostGame() {
         // This synchronized is because there is a scenario where the lobby with roomId is created, then a player
         // joins the lobby (therefore removes the lobby from the lobbiesHandler), then a third player creates a
         // lobby with the same id and finally this player throws and IOException and removes the third player's
@@ -170,11 +169,8 @@ public class MatchmakingHandler implements Runnable {
      * Reads the Room ID requested by the client. If valid, retrieves the host's socket
      * and starts a {@link GameCommunicationHandler}. Sends a boolean confirmation to the client.
      * </p>
-     *
-     * @param dis The input stream to read the Room ID.
-     * @param dos The output stream to send success/failure confirmation.
      */
-    private void joinGame(DataInputStream dis, DataOutputStream dos) {
+    private void joinGame() {
         int roomId;
         Socket host;
         DataOutputStream hostDos;
@@ -227,13 +223,34 @@ public class MatchmakingHandler implements Runnable {
                     dos.flush();
                 }
             }
-        } catch (IOException ioe) {
-            closeSocket(player);
         }
+        catch (IOException ioe) { closeSocket(player); }
     }
 
+    /**
+     * Starts the communications between players
+     *
+     * @param player1 The socket of the first player (e.g., host or first in queue).
+     * @param player2 The socket of the second player (e.g., joiner or second in queue).
+     */
     private void startGame(Socket player1, Socket player2) {
         new GameCommunicationHandler(player1, player2).startCommunicationBetweenPlayers();
+    }
+
+    /**
+     * Sets the given player as the player to search a game for and updates the streams
+     * (input and output) to be the one's associated with the given player's socket.
+     *
+     * @param player The socket of the player to search a game for
+     */
+    private void setPlayer(Socket player) {
+        this.player = player;
+
+        try {
+            dis = new DataInputStream(player.getInputStream());
+            dos = new DataOutputStream(player.getOutputStream());
+        }
+        catch (IOException ioe) { closeSocket(player); }
     }
 
     /**
