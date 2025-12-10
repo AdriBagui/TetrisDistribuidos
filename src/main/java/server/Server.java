@@ -18,7 +18,6 @@ import java.util.concurrent.Executors;
  * </p>
  */
 public class Server {
-    // public static final String SERVER_IP = "88.13.205.169";
     /**
      * The IP address binding for the server (localhost for local testing).
      */
