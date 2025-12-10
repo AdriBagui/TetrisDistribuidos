@@ -4,7 +4,7 @@ import client.ServerConnector;
 import client.userInterface.panels.tetris.singlePlayerPanels.SinglePlayerModernTetrisPanel;
 import client.userInterface.panels.tetris.singlePlayerPanels.SinglePlayerNESPanel;
 import client.userInterface.panels.tetris.twoPlayerPanels.*;
-import server.ConnectionMode;
+import server.GameMode;
 import tetris.boards.components.BoardGrid;
 import client.keyMaps.KeyInputHandler;
 
@@ -12,7 +12,6 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Objects;
@@ -208,7 +207,7 @@ public class MainPanel extends JPanel {
      *
      * @param gameMode The specific online mode (Quick Play, Host, Join).
      */
-    public void connectToOnlineGame(ConnectionMode gameMode) {
+    public void connectToOnlineGame(GameMode gameMode) {
         cardLayout.show(this, WAITING_OPPONENT_PANEL);
         serverConnector.connect(gameMode);
     }
@@ -220,7 +219,7 @@ public class MainPanel extends JPanel {
      * @param socket   The active socket connection to the server/opponent.
      * @param gameMode The game mode being played (Modern or NES).
      */
-    public void startOnlineGame(long seed, Socket socket, ConnectionMode gameMode) {
+    public void startOnlineGame(long seed, Socket socket, GameMode gameMode) {
         OnlineTwoPlayersPanel onlineTwoPlayersPanel;
 
         String onlineTwoPlayersPanelName = switch (gameMode) {

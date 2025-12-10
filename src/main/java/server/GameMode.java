@@ -1,13 +1,13 @@
 package server;
 
 /**
- * Enumeration representing the different types of game connections a client can request.
+ * Enumeration representing the different types of game modes a client can request.
  * <p>
  * This is used during the initial handshake in {@link MatchmakingHandler} to determine
  * how to route the client (e.g., put them in a queue or create a lobby).
  * </p>
  */
-public enum ConnectionMode {
+public enum GameMode {
     /**
      * Request to find a random opponent for Modern Tetris.
      */

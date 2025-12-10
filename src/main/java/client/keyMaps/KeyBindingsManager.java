@@ -31,7 +31,7 @@ public class KeyBindingsManager {
 
     // Define the folder and file paths
     // We use a relative path that works when running the project from the root folder
-    private static final String CONFIG_FOLDER = "src/main/resources/config/";
+    private static final String CONFIG_FOLDER = "TetrisDistribuidos/";
     private static final String FILE_NAME = "keybindings.xml";
     private static final String FILE_PATH = CONFIG_FOLDER + FILE_NAME;
     private static final String DTD_FILE_NAME = "keybindings.dtd"; // Keeps the DTD reference simple in XML

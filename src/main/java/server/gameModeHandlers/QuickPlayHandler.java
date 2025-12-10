@@ -22,41 +22,20 @@ public class QuickPlayHandler {
     }
 
     /**
-     * Gets the currently waiting player without removing them.
+     * If there is a waiting player returns the waiting player. Otherwise, sets the given player as a waiting player and returns null
      *
-     * @return The waiting {@link Socket}, or {@code null} if queue is empty.
+     * @param player The player to handle (either returning its rival or putting it to wait)
+     * @return If there is a waiting player, it returns its socket, otherwise, it returns null.
      */
-    public synchronized Socket getWaitingPlayer() {
-        return waitingPlayer;
-    }
+    public synchronized Socket handlePlayer(Socket player) {
+        Socket opponent = null;
 
-    /**
-     * Retrieves the currently waiting player and clears the queue (removes them).
-     * This is atomic to ensure only one opponent matches with the waiting player.
-     *
-     * @return The {@link Socket} of the player who was waiting.
-     */
-    public synchronized Socket getAndRemoveWaitingPlayer() {
-        Socket aux = getWaitingPlayer();
-        setWaitingPlayer(null);
-        return aux;
-    }
+        if (waitingPlayer == null) waitingPlayer = player;
+        else {
+            opponent = waitingPlayer;
+            waitingPlayer = null;
+        }
 
-    /**
-     * Sets a player as the current waiting player.
-     *
-     * @param waitingPlayer The socket of the player joining the queue.
-     */
-    public synchronized void setWaitingPlayer(Socket waitingPlayer) {
-        this.waitingPlayer = waitingPlayer;
-    }
-
-    /**
-     * Checks if the queue is empty.
-     *
-     * @return {@code true} if no one is waiting, {@code false} otherwise.
-     */
-    public synchronized boolean noPlayerWaiting() {
-        return waitingPlayer == null;
+        return opponent;
     }
 }

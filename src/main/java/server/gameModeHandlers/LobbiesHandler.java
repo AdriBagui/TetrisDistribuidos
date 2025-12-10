@@ -41,13 +41,7 @@ public class LobbiesHandler {
         while (lobbies.size() >= MAX_NUMBER_OF_LOBBIES) {
             try {
                 Thread.sleep(100);
-            } catch (InterruptedException e) {
-                // If interrupted, clean up and exit
-                try { host.close(); }
-                catch (IOException ioe) { System.out.println("Error closing host socket during interruption."); }
-                Thread.currentThread().interrupt(); // Restore interrupt status
-                return -1;
-            }
+            } catch (InterruptedException e) { System.out.println("FATAL ERROR lobbies handler interrupted."); } // This should never happen, if it does your computer is broken sry
         }
 
         // Generate a unique ID
@@ -72,16 +66,17 @@ public class LobbiesHandler {
      * @return The {@link Socket} of the waiting host, or null if not found.
      */
     public synchronized Socket getAndRemoveLobby(int roomId) {
-        Socket aux = lobbies.get(roomId);
-        lobbies.remove(roomId);
-        return aux;
+        return lobbies.remove(roomId);
     }
 
     /**
-     * Checks if a lobby exists with the given Room ID.
+     * Restores the lobby due to failure when connecting rival by adding the roomId with its host back to the online
+     * lobbies
      *
-     * @param roomId The ID to check.
-     * @return {@code true} if the lobby exists, {@code false} otherwise.
+     * @param roomId The roomId of the lobby to restore
+     * @param host   The host of the lobby to restore
      */
-    public synchronized boolean containsLobby(int roomId) { return lobbies.containsKey(roomId); }
+    public synchronized void restoreLobby(int roomId, Socket host) {
+        lobbies.put(roomId, host);
+    }
 }

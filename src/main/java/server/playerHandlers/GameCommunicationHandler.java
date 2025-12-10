@@ -1,6 +1,7 @@
 package server.playerHandlers;
 
-import java.io.DataOutputStream;
+import server.GameMode;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -11,72 +12,81 @@ import java.util.concurrent.Executors;
  * <p>
  * This class is responsible for:
  * 1. Generating a shared random seed for deterministic gameplay.
- * 2. Sending the seed to both clients.
+ * 2. Sending the seed to both players.
  * 3. Spawning two {@link PlayerCommunicationHandler} threads to relay inputs bi-directionally.
  * </p>
  */
-public class GameCommunicationHandler implements Runnable {
-    private final Socket client1;
-    private final Socket client2;
+public class GameCommunicationHandler{
+    private final Socket player1;
+    private final Socket player2;
+    private boolean communicationFromPlayer1ToPlayer2Down;
+    private boolean communicationFromPlayer2ToPlayer1Down;
 
     /**
-     * Creates a new handler for a match between two clients.
+     * Creates a new handler for a match between two players.
      *
-     * @param client1 The socket of the first player (e.g., host or first in queue).
-     * @param client2 The socket of the second player (e.g., joiner or second in queue).
+     * @param player1 The socket of the first player (e.g., host or first in queue).
+     * @param player2 The socket of the second player (e.g., joiner or second in queue).
      */
-    public GameCommunicationHandler(Socket client1, Socket client2){
-        this.client1 = client1;
-        this.client2 = client2;
+    public GameCommunicationHandler(Socket player1, Socket player2){
+        this.player1 = player1;
+        this.player2 = player2;
+        communicationFromPlayer1ToPlayer2Down = false;
+        communicationFromPlayer2ToPlayer1Down = false;
     }
 
     /**
      * Starts the game initialization process.
      */
-    @Override
-    public void run() {
+    public void startCommunicationBetweenPlayers() {
         // We need 2 threads: Client1 -> Client2 AND Client2 -> Client1
-        ExecutorService pool = Executors.newFixedThreadPool(2);
-
-        try {
-            DataOutputStream dosC1 = new DataOutputStream(client1.getOutputStream());
-            DataOutputStream dosC2 = new DataOutputStream(client2.getOutputStream());
-
-            // Generate a seed based on server time to ensure both clients generate the same pieces
+        try (ExecutorService pool = Executors.newFixedThreadPool(2)) {
+            // Generate a seed based on server time to ensure both players generate the same pieces
             long seed = System.currentTimeMillis();
 
-            // Broadcast seed
-            dosC1.writeLong(seed);
-            dosC2.writeLong(seed);
-            dosC1.flush();
-            dosC2.flush();
+            // Start the input relays
+            pool.execute(new PlayerCommunicationHandler(this, player1, player2, seed));
+            pool.execute(new PlayerCommunicationHandler(this, player2, player1, seed));
 
             System.out.println("Game started. Seed: " + seed);
 
-        } catch (IOException ioe) {
-            System.out.println("Error initializing game. Closing sockets.");
-            closeQuietly(client1);
-            closeQuietly(client2);
             pool.shutdown();
-            return;
         }
-
-        // Start the input relays
-        pool.execute(new PlayerCommunicationHandler(client1, client2));
-        pool.execute(new PlayerCommunicationHandler(client2, client1));
-
-        // Shutdown the pool (it will wait for the threads to finish naturally)
-        pool.shutdown();
     }
 
     /**
-     * Helper to close a socket without throwing checked exceptions.
+     * Stores that the shutDownStarter socket has received a close notification (other end has closed its output)
+     * and that the other end of the other player's socket has been notified that the communication has ended (by closing its output)
+     * And if it detects that both ways communications have finished, it closes the sockets.
+     * (So this method should be called after shutting down the input of the shutDownStarter and the output of the other player's socket)
+     *
+     * @param shutDownStarter  The socket that receives the close notification
      */
-    private void closeQuietly(Socket socket) {
-        try {
-            if (socket != null && !socket.isClosed()) socket.close();
-        } catch (IOException e) {
-            // Log if necessary
+    public synchronized void processUnidirectionalShutdown(Socket shutDownStarter) {
+        if (shutDownStarter.equals(player1)) {
+            communicationFromPlayer1ToPlayer2Down = true;
         }
+        else {
+            communicationFromPlayer2ToPlayer1Down = true;
+        }
+
+        if (communicationFromPlayer1ToPlayer2Down && communicationFromPlayer2ToPlayer1Down) {
+            try {
+                player1.close();
+                player2.close();
+            }
+            catch (IOException e) { System.out.println("FATAL ERROR while trying to close socket after game being finished."); } // This should never happen, if it does your computer is broken sry
+        }
+    }
+
+    public synchronized void processBidirectionalShutdown() {
+        communicationFromPlayer1ToPlayer2Down = true;
+        communicationFromPlayer2ToPlayer1Down = true;
+
+        try {
+            player1.close();
+            player2.close();
+        }
+        catch (IOException e) { System.out.println("FATAL ERROR while trying to close socket after disconnection of one player."); } // This should never happen, if it does your computer is broken sry
     }
 }

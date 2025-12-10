@@ -7,6 +7,7 @@ import tetris.boards.io.ReceiverBoardInputHandler;
 import tetris.boards.nes.ReceiverNESBoard;
 import tetris.boards.nes.SenderNESBoardWithPhysics;
 
+import java.awt.*;
 import java.io.IOException;
 
 import static client.userInterface.panels.MainPanel.*;
@@ -51,9 +52,7 @@ public class OnlineTwoPlayersNESPanel extends OnlineTwoPlayersPanel {
      * @return {@code true} if the game session is effectively over.
      */
     @Override
-    protected synchronized boolean checkGameOver() {
-        return (!boards[0].isAlive() && (!boards[1].isAlive() || !isConnectionUp()));
-    }
+    protected synchronized boolean checkGameOver() { return ((hasLocalLost() && hasOpponentLost()) || !isConnectionUp()); }
 
     /**
      * Initializes the local sender board and the remote receiver board.

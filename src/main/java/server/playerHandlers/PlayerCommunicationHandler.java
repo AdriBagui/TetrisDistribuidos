@@ -12,18 +12,24 @@ import java.net.Socket;
  * </p>
  */
 public class PlayerCommunicationHandler implements Runnable {
+    private final GameCommunicationHandler gameCommunicationHandler;
     private final Socket sender;
     private final Socket receiver;
+    private final long seed;
 
     /**
      * Creates a relay between two sockets.
      *
-     * @param sender   The socket acting as the source of data.
-     * @param receiver The socket acting as the destination of data.
+     * @param gameCommunicationHandler The GameCommunicationHandler that manages the game
+     * @param sender                   The socket acting as the source of data.
+     * @param receiver                 The socket acting as the destination of data.
+     * @param seed                     The seed for random generator of tetrominoes for the game.
      */
-    public PlayerCommunicationHandler(Socket sender, Socket receiver){
+    public PlayerCommunicationHandler(GameCommunicationHandler gameCommunicationHandler, Socket sender, Socket receiver, long seed){
+        this.gameCommunicationHandler = gameCommunicationHandler;
         this.sender = sender;
         this.receiver = receiver;
+        this.seed = seed;
     }
 
     /**
@@ -39,46 +45,33 @@ public class PlayerCommunicationHandler implements Runnable {
             dis = new DataInputStream(sender.getInputStream());
             dos = new DataOutputStream(receiver.getOutputStream());
 
-            // Read first byte to start the loop
-            byteRead = dis.readByte();
+            // Notify succesful connection
+            dos.writeByte(1);
+            dos.flush();
+
+            // Start game by sending the seed
+            dos.writeLong(seed);
+            dos.flush();
 
             while (true) {
+                // Wait for the next byte
+                byteRead = dis.readByte();
+
                 // Forward the byte to the opponent
                 dos.write(byteRead);
                 dos.flush();
-
-                // Wait for the next byte
-                byteRead = dis.readByte();
             }
         }
         catch (EOFException eofe) {
-            // Normal termination: Sender closed the connection (e.g., game over or quit)
-            handleDisconnection();
+            try {
+                sender.shutdownInput();
+                receiver.shutdownOutput();
+                gameCommunicationHandler.processUnidirectionalShutdown(sender);
+            }
+            catch (IOException e) { System.out.println("FATAL ERROR while trying to shutDown unidirectional communication after one player's game being finished."); } // This should never happen, if it does your computer is broken sry
         }
         catch (IOException ioe) {
-            // Abnormal termination: Network error
-            handleDisconnection();
+            gameCommunicationHandler.processBidirectionalShutdown();
         }
-    }
-
-    /**
-     * Closes connections safely when the relay loop ends.
-     * <p>
-     * When one player disconnects, we must ensure the other player's socket is also
-     * closed or notified so their game ends gracefully.
-     * </p>
-     */
-    private void handleDisconnection() {
-        try {
-            if (!sender.isClosed()) sender.shutdownInput();
-        } catch (IOException e) { /* Ignore */ }
-
-        try {
-            if (!receiver.isClosed()) receiver.shutdownOutput();
-        } catch (IOException e) { /* Ignore */ }
-
-        // Optionally close sockets fully if shutdown isn't sufficient for your protocol
-        try { sender.close(); } catch (IOException e) { /* Ignore */ }
-        try { receiver.close(); } catch (IOException e) { /* Ignore */ }
     }
 }

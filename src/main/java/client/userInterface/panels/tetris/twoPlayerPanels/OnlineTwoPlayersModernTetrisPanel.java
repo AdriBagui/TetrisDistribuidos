@@ -35,11 +35,8 @@ public class OnlineTwoPlayersModernTetrisPanel extends OnlineTwoPlayersPanel {
      */
     @Override
     protected int checkWinner() {
-        boolean player1Alive = boards[0].isAlive();
-        boolean player2Alive = boards[1].isAlive();
-
-        if (player1Alive && !player2Alive) return 1;
-        else if (!player1Alive && player2Alive) return 2;
+        if (!hasLocalLost() && hasOpponentLost()) return 1;
+        else if (hasLocalLost() && !hasOpponentLost()) return 2;
         else return 0;
     }
 
@@ -50,9 +47,7 @@ public class OnlineTwoPlayersModernTetrisPanel extends OnlineTwoPlayersPanel {
      * @return {@code true} if either player has topped out.
      */
     @Override
-    protected synchronized boolean checkGameOver() {
-        return (!boards[0].isAlive() || isRivalGameOver());
-    }
+    protected synchronized boolean checkGameOver() { return (hasLocalLost() || hasOpponentLost() || !isConnectionUp()); }
 
     /**
      * Initializes the local sender board and the remote receiver board.

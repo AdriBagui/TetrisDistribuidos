@@ -1,6 +1,6 @@
 package client.userInterface.panels;
 
-import server.ConnectionMode;
+import server.GameMode;
 import client.userInterface.components.ModernButton;
 
 import javax.swing.*;
@@ -238,9 +238,9 @@ public class StartMenuPanel extends JPanel {
             add(Box.createGlue(), gbcFiller);
         }
 
-        private void playOnline() { mainPanel.connectToOnlineGame(ConnectionMode.MODERN_TETRIS_QUICK_PLAY); }
-        private void playOnlineNES() { mainPanel.connectToOnlineGame(ConnectionMode.NES_QUICK_PLAY); }
-        private void playOnlineAsHost() { mainPanel.connectToOnlineGame(ConnectionMode.HOST_GAME); }
-        private void playOnlineAsClient() { mainPanel.connectToOnlineGame(ConnectionMode.JOIN_GAME); }
+        private void playOnline() { mainPanel.connectToOnlineGame(GameMode.MODERN_TETRIS_QUICK_PLAY); }
+        private void playOnlineNES() { mainPanel.connectToOnlineGame(GameMode.NES_QUICK_PLAY); }
+        private void playOnlineAsHost() { mainPanel.connectToOnlineGame(GameMode.HOST_GAME); }
+        private void playOnlineAsClient() { mainPanel.connectToOnlineGame(GameMode.JOIN_GAME); }
     }
 }

@@ -4,7 +4,7 @@ import client.userInterface.dialogs.CustomMessageDialog;
 import client.userInterface.dialogs.LobbySearchDialog;
 import client.userInterface.panels.MainPanel;
 import client.userInterface.panels.WaitingOpponentPanel;
-import server.ConnectionMode;
+import server.GameMode;
 
 import javax.swing.*;
 import java.io.DataInputStream;
@@ -47,19 +47,20 @@ public class ServerConnector {
     /**
      * Initiates a connection to the server in a separate thread.
      * <p>
-     * This method starts the handshake process based on the selected {@link ConnectionMode}.
+     * This method starts the handshake process based on the selected {@link GameMode}.
      * It updates the UI with progress messages ("Connecting...", "Waiting for opponent...")
      * and handles any connection errors.
      * </p>
      *
      * @param gameMode The game mode to initiate (Quick Play, Host, or Join).
      */
-    public void connect(ConnectionMode gameMode){
+    public void connect(GameMode gameMode){
         new Thread(() -> {
             Socket boardsSocket = null;
             DataInputStream dis;
             DataOutputStream dos;
             boolean succesfulNegotiation = true;
+            byte statusByte;
             long seed;
 
             waitingOpponentPanel.setMessage("Connecting to server...");
@@ -79,6 +80,13 @@ public class ServerConnector {
                 }
 
                 if (succesfulNegotiation) {
+                    // Server keeps checking connection online by sending 0s as bytes until a player is found and then
+                    // server sends a 1 as a byte to notify of successful connection.
+                    statusByte = dis.readByte();
+                    while (statusByte != 1) {
+                        statusByte = dis.readByte();
+                    }
+
                     // Server sends the seed when a player is found and this is also the start game signal
                     seed = dis.readLong();
                     mainPanel.startOnlineGame(seed, boardsSocket, gameMode);
@@ -104,7 +112,7 @@ public class ServerConnector {
      * @param gameMode The selected connection mode.
      * @throws IOException If the write fails.
      */
-    private void sendGameModeMessage(DataOutputStream dos, ConnectionMode gameMode) throws IOException {
+    private void sendGameModeMessage(DataOutputStream dos, GameMode gameMode) throws IOException {
         dos.writeInt(gameMode.ordinal());
         dos.flush();
     }
