@@ -44,7 +44,7 @@ public class LobbiesHandler {
 
             if (numberOfLobbies < MAX_NUMBER_OF_LOBBIES) {
                 // Generate a unique ID
-                roomId = random.nextInt(0, MAX_NUMBER_OF_LOBBIES - lobbies.size());
+                roomId = random.nextInt(MAX_NUMBER_OF_LOBBIES - lobbies.size());
                 // Simple linear probing strategy to find a free slot
                 while(lobbies.containsKey(roomId)) {
                     roomId = (roomId + 1) % MAX_NUMBER_OF_LOBBIES;

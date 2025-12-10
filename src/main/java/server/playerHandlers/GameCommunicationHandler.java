@@ -40,18 +40,18 @@ public class GameCommunicationHandler{
      */
     public void startCommunicationBetweenPlayers() {
         // We need 2 threads: Client1 -> Client2 AND Client2 -> Client1
-        try (ExecutorService pool = Executors.newFixedThreadPool(2)) {
-            // Generate a seed based on server time to ensure both players generate the same pieces
-            long seed = System.currentTimeMillis();
+        ExecutorService pool = Executors.newFixedThreadPool(2);
 
-            // Start the input relays
-            pool.execute(new PlayerCommunicationHandler(this, player1, player2, seed));
-            pool.execute(new PlayerCommunicationHandler(this, player2, player1, seed));
+        // Generate a seed based on server time to ensure both players generate the same pieces
+        long seed = System.currentTimeMillis();
 
-            System.out.println("Game started. Seed: " + seed);
+        // Start the input relays
+        pool.execute(new PlayerCommunicationHandler(this, player1, player2, seed));
+        pool.execute(new PlayerCommunicationHandler(this, player2, player1, seed));
 
-            pool.shutdown();
-        }
+        System.out.println("Game started. Seed: " + seed);
+
+        pool.shutdown();
     }
 
     /**

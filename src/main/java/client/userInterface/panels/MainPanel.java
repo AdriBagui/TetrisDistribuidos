@@ -225,17 +225,17 @@ public class MainPanel extends JPanel {
         waitingOpponentPanel.stopAnimation();
 
         OnlineTwoPlayersPanel onlineTwoPlayersPanel;
+        String onlineTwoPlayersPanelName;
 
-        String onlineTwoPlayersPanelName = switch (gameMode) {
-            case MODERN_TETRIS_QUICK_PLAY, HOST_GAME, JOIN_GAME -> {
-                onlineTwoPlayersPanel = onlineModernTetrisPanel;
-                yield ONLINE_MODERN_TETRIS_PANEL;
-            }
-            case NES_QUICK_PLAY -> {
-                onlineTwoPlayersPanel = onlineNESPanel;
-                yield ONLINE_NES_PANEL;
-            }
-        };
+        if(gameMode == GameMode.MODERN_TETRIS_QUICK_PLAY || gameMode == GameMode.HOST_GAME || gameMode == GameMode.JOIN_GAME) {
+            onlineTwoPlayersPanel = onlineModernTetrisPanel;
+            onlineTwoPlayersPanelName = ONLINE_MODERN_TETRIS_PANEL;
+        }
+        else {
+            onlineTwoPlayersPanel = onlineNESPanel;
+            onlineTwoPlayersPanelName = ONLINE_NES_PANEL;
+        }
+
 
         onlineTwoPlayersPanel.setSeed(seed);
         onlineTwoPlayersPanel.setSocket(socket);

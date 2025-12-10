@@ -21,14 +21,35 @@ public class TetrominoFactory {
      * @return A new instance of the requested Tetromino.
      */
     public static Tetromino createTetromino(TetrominoType type, int rotationIndex, int x, int y, int containerX, int containerY) {
-        return switch (type) {
-            case I -> new ITetromino(rotationIndex, x, y, containerX, containerY);
-            case O -> new OTetromino(rotationIndex, x, y, containerX, containerY);
-            case T -> new TTetromino(rotationIndex, x, y, containerX, containerY);
-            case J -> new JTetromino(rotationIndex, x, y, containerX, containerY);
-            case L -> new LTetromino(rotationIndex, x, y, containerX, containerY);
-            case S -> new STetromino(rotationIndex, x, y, containerX, containerY);
-            case Z -> new ZTetromino(rotationIndex, x, y, containerX, containerY);
-        };
+        Tetromino tetromino;
+
+        switch (type) {
+            case I:
+                tetromino = new ITetromino(rotationIndex, x, y, containerX, containerY);
+                break;
+            case O:
+                tetromino = new OTetromino(rotationIndex, x, y, containerX, containerY);
+                break;
+            case T:
+                tetromino = new TTetromino(rotationIndex, x, y, containerX, containerY);
+                break;
+            case J:
+                tetromino = new JTetromino(rotationIndex, x, y, containerX, containerY);
+                break;
+            case L:
+                tetromino = new LTetromino(rotationIndex, x, y, containerX, containerY);
+                break;
+            case S:
+                tetromino = new STetromino(rotationIndex, x, y, containerX, containerY);
+                break;
+            case Z:
+                tetromino = new ZTetromino(rotationIndex, x, y, containerX, containerY);
+                break;
+            default:
+                tetromino = null;
+                break;
+        }
+
+        return tetromino;
     }
 }

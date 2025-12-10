@@ -75,11 +75,11 @@ public abstract class TwoPlayersTetrisPanel extends TetrisPanel {
 
             winnerMessage = checkWinner();
 
-            winnerMessageWidth = switch (winnerMessage) {
-                case "Victory", "Defeat" -> 5 * CELL_SIZE;
-                case "It's a tie!" -> 7 * CELL_SIZE;
-                default -> winnerMessageWidth;
-            };
+            if (winnerMessage.equals("Victory") || winnerMessage.equals("Defeat")) {
+                winnerMessageWidth = 5 * CELL_SIZE;
+            } else if (winnerMessage.equals("It's a tie!")) {
+                winnerMessageWidth = 7 * CELL_SIZE;
+            }
 
             // Draw Background Banner
             g2.setColor(BACKGROUND_COLOR);

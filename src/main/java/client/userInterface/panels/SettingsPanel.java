@@ -42,8 +42,33 @@ public class SettingsPanel extends JPanel {
     private KeyAdapter activeKeyAdapter = null;
     private FocusAdapter activeFocusAdapter = null;
 
-    // Record to hold context for each button
-    private record BindingContext(InputAction action, boolean isPlayer1, boolean isGlobal) {}
+    /**
+     * Java 8 Compatibility: Replaced 'record' with a static inner class.
+     * Represents the context associated with a specific binding button.
+     */
+    private static class BindingContext {
+        private final InputAction action;
+        private final boolean isPlayer1;
+        private final boolean isGlobal;
+
+        public BindingContext(InputAction action, boolean isPlayer1, boolean isGlobal) {
+            this.action = action;
+            this.isPlayer1 = isPlayer1;
+            this.isGlobal = isGlobal;
+        }
+
+        public InputAction getAction() {
+            return action;
+        }
+
+        public boolean isPlayer1() {
+            return isPlayer1;
+        }
+
+        public boolean isGlobal() {
+            return isGlobal;
+        }
+    }
 
     /**
      * Constructs the SettingsPanel layout.
@@ -317,8 +342,9 @@ public class SettingsPanel extends JPanel {
         if (ctx.isGlobal()) {
             pendingGoBackKey = keyCode;
         } else {
-            if (ctx.isPlayer1()) p1PendingChanges.put(ctx.action(), keyCode);
-            else p2PendingChanges.put(ctx.action(), keyCode);
+            // CHANGED: .action() -> .getAction()
+            if (ctx.isPlayer1()) p1PendingChanges.put(ctx.getAction(), keyCode);
+            else p2PendingChanges.put(ctx.getAction(), keyCode);
         }
     }
 
@@ -334,12 +360,14 @@ public class SettingsPanel extends JPanel {
         Map<InputAction, Integer> pendingMap = ctx.isPlayer1() ? p1PendingChanges : p2PendingChanges;
 
         // If we have a pending change (even if it is -1/unbound), return it
-        if (pendingMap.containsKey(ctx.action())) {
-            return pendingMap.get(ctx.action());
+        // CHANGED: .action() -> .getAction()
+        if (pendingMap.containsKey(ctx.getAction())) {
+            return pendingMap.get(ctx.getAction());
         }
 
         // Otherwise return stored config
-        return keyInputHandler.getKeyForAction(ctx.action(), ctx.isPlayer1());
+        // CHANGED: .action() -> .getAction()
+        return keyInputHandler.getKeyForAction(ctx.getAction(), ctx.isPlayer1());
     }
 
     /**

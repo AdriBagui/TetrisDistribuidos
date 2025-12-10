@@ -279,33 +279,35 @@ public class KeyInputHandler extends KeyAdapter {
 
         boolean actionPerformed;
 
-        actionPerformed = switch (action) {
-            case MOVE_LEFT -> {
+        switch (action) {
+            case MOVE_LEFT:
                 if (press) board.moveLeftPressed();
                 else board.moveLeftReleased();
-                yield true;
-            }
-            case MOVE_RIGHT -> {
+                actionPerformed = true;
+                break;
+            case MOVE_RIGHT:
                 if (press) board.moveRightPressed();
                 else board.moveRightReleased();
-                yield true;
-            }
-            case SOFT_DROP -> {
+                actionPerformed = true;
+                break;
+            case SOFT_DROP:
                 if (press) board.softDropPressed();
                 else board.softDropReleased();
-                yield true;
-            }
-            case ROTATE_LEFT -> {
+                actionPerformed = true;
+                break;
+            case ROTATE_LEFT:
                 if (press) board.rotateLeftPressed();
                 else board.rotateLeftReleased();
-                yield true;
-            }
-            case ROTATE_RIGHT -> {
+                actionPerformed = true;
+                break;
+            case ROTATE_RIGHT:
                 if (press) board.rotateRightPressed();
                 else board.rotateRightReleased();
-                yield true;
-            }
-            default -> false;
+                actionPerformed = true;
+                break;
+            default:
+                actionPerformed = false;
+                break;
         };
 
         return actionPerformed;
@@ -322,22 +324,24 @@ public class KeyInputHandler extends KeyAdapter {
     private boolean tryToPerformModernTetrisAction(InputAction action, ModernTetrisBoardWithPhysics board, boolean press) {
         boolean actionPerformed;
 
-        actionPerformed = switch (action) {
-            case HARD_DROP -> {
+        switch (action) {
+            case HARD_DROP:
                 if (press) board.hardDropPressed();
                 else board.hardDropReleased();
-                yield true;
-            }
-            case FLIP -> {
+                actionPerformed = true;
+                break;
+            case FLIP:
                 if (press) board.flipPressed();
                 else board.flipReleased();
-                yield true;
-            }
-            case HOLD -> {
+                actionPerformed = true;
+                break;
+            case HOLD:
                 if (press) board.hold();
-                yield true;
-            }
-            default -> false;
+                actionPerformed = true;
+                break;
+            default:
+                actionPerformed = false;
+                break;
         };
 
         return actionPerformed;

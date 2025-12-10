@@ -87,11 +87,21 @@ public class CustomMessageDialog extends JDialog {
      * @return The {@link Color} associated with that severity.
      */
     private Color getBorderColor(int type) {
-        return switch (type) {
-            case JOptionPane.ERROR_MESSAGE -> ERROR_COLOR;
-            case JOptionPane.WARNING_MESSAGE -> WARNING_COLOR;
-            default -> INFO_COLOR;
-        };
+        Color borderColor;
+
+        switch (type) {
+            case JOptionPane.ERROR_MESSAGE:
+                borderColor =ERROR_COLOR;
+                break;
+            case JOptionPane.WARNING_MESSAGE:
+                borderColor = WARNING_COLOR;
+                break;
+            default:
+                borderColor = INFO_COLOR;
+                break;
+        }
+
+        return borderColor;
     }
 
     /**
@@ -101,11 +111,21 @@ public class CustomMessageDialog extends JDialog {
      * @return A string containing a Unicode symbol (e.g., checkmark, warning sign).
      */
     private String getIconText(int type) {
-        return switch (type) {
-            case JOptionPane.ERROR_MESSAGE -> " ✘ ";
-            case JOptionPane.WARNING_MESSAGE -> " ⚠ ";
-            default -> " ℹ ";
-        };
+        String message;
+
+        switch (type) {
+            case JOptionPane.ERROR_MESSAGE:
+                message = " ✘ ";
+                break;
+            case JOptionPane.WARNING_MESSAGE:
+                message = " ⚠ ";
+                break;
+            default:
+                message = " ℹ ";
+                break;
+        }
+
+        return message;
     }
 
     /**

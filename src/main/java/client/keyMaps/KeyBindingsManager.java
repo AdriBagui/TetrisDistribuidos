@@ -202,16 +202,7 @@ public class KeyBindingsManager {
         File dtdFile = new File(DTD_FILE_PATH);
         if (!dtdFile.exists()) {
             try (FileWriter writer = new FileWriter(dtdFile)) {
-                writer.write("""
-                        <!ELEMENT KeyBindings (Global, Player1, Player2)>
-                        <!ELEMENT Global (Bind*)>
-                        <!ELEMENT Player1 (Bind*)>
-                        <!ELEMENT Player2 (Bind*)>
-                        <!ELEMENT Bind EMPTY>
-                        <!ATTLIST Bind\s
-                            action CDATA #REQUIRED
-                            keyCode CDATA #REQUIRED
-                        >""");
+                writer.write("<!ELEMENT KeyBindings (Global, Player1, Player2)\n<!ELEMENT Global (Bind*)>\n<!ELEMENT Player1 (Bind*)>\n<!ELEMENT Player2 (Bind*)>\n<!ELEMENT Bind EMPTY>\n<!ATTLIST Bind\t\naction CDATA #REQUIRED\n\tkeyCode CDATA #REQUIRED\n\t>");
             }
             catch (IOException e) { System.out.println("FATAL ERROR while trying to create the DTD"); } // This should never happen, if it does your computer is broken sry
         }

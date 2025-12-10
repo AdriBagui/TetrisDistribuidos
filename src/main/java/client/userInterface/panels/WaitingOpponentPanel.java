@@ -118,24 +118,31 @@ public class WaitingOpponentPanel extends JPanel {
         double centerY = (getHeight() / 2.0) - 50;
         double pivotOffsetX, pivotOffsetY;
 
-        pivotOffsetY = switch (currentTetromino.getType()) {
-            case J, L, T -> {
+        switch (currentTetromino.getType()) {
+            case J:
+            case L:
+            case T:
                 pivotOffsetX = 1.5 * CELL_SIZE;
-                yield 1.5 * CELL_SIZE;
-            }
-            case I -> {
+                pivotOffsetY = 1.5 * CELL_SIZE;
+                break;
+            case I:
                 pivotOffsetX = 2 * CELL_SIZE;
-                yield 1.5 * CELL_SIZE;
-            }
-            case Z, S -> {
+                pivotOffsetY = 1.5 * CELL_SIZE;
+                break;
+            case S:
+            case Z:
                 pivotOffsetX = 1.5 * CELL_SIZE;
-                yield CELL_SIZE;
-            }
-            case O -> {
+                pivotOffsetY = CELL_SIZE;
+                break;
+            case O:
                 pivotOffsetX = CELL_SIZE;
-                yield CELL_SIZE;
-            }
-        };
+                pivotOffsetY = CELL_SIZE;
+                break;
+            default:
+                pivotOffsetX = 0;
+                pivotOffsetY = 0;
+                break;
+        }
 
         // --- Transformation Stack ---
         AffineTransform oldTransform = g2.getTransform();

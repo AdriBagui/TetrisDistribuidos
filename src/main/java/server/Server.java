@@ -44,8 +44,9 @@ public class Server {
         QuickPlayHandler nesQuickPlayHandler = new QuickPlayHandler();
         LobbiesHandler lobbiesHandler = new LobbiesHandler();
 
-        try (ExecutorService pool = Executors.newCachedThreadPool();
-             ServerSocket server = new ServerSocket(serverPort)) {
+        ExecutorService pool = Executors.newCachedThreadPool();
+
+        try (ServerSocket server = new ServerSocket(serverPort)) {
             System.out.println("Server is running on port " + serverPort);
 
             while (true) {
@@ -64,6 +65,9 @@ public class Server {
         }
         catch (IOException ioe) {
             System.out.println("FATAL ERROR while trying to create server socket on port " + SERVER_PORT);
+        }
+        finally {
+            pool.shutdown();
         }
     }
 }

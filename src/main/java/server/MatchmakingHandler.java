@@ -71,9 +71,16 @@ public class MatchmakingHandler implements Runnable {
 
             // 2. Route to the specific logic
             switch (gameModeSelected) {
-                case MODERN_TETRIS_QUICK_PLAY, NES_QUICK_PLAY -> quickMatchSearch(gameModeSelected);
-                case HOST_GAME -> hostGame();
-                case JOIN_GAME -> joinGame();
+                case MODERN_TETRIS_QUICK_PLAY:
+                case NES_QUICK_PLAY:
+                    quickMatchSearch(gameModeSelected);
+                    break;
+                case HOST_GAME:
+                    hostGame();
+                    break;
+                case JOIN_GAME:
+                    joinGame();
+                    break;
             }
         }
         catch (IOException ioe) { closeSocket(player); }

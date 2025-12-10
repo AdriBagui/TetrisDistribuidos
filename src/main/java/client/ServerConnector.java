@@ -80,8 +80,8 @@ public class ServerConnector {
                 sendGameModeMessage(dos, gameMode);
 
                 switch (gameMode) {
-                    case HOST_GAME -> hostGameNegotiation(dis);
-                    case JOIN_GAME -> succesfulNegotiation = joinGameNegotiation(dis, dos);
+                    case HOST_GAME: { hostGameNegotiation(dis); }
+                    case JOIN_GAME: { succesfulNegotiation = joinGameNegotiation(dis, dos); }
                 }
 
                 if (succesfulNegotiation) {

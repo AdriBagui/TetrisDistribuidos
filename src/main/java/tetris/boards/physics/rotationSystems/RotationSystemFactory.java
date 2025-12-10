@@ -18,10 +18,20 @@ public class RotationSystemFactory {
      * @return A new instance of the requested {@link RotationSystem}.
      */
     public static RotationSystem createRotationSystem(RotationSystemType type, BoardGrid grid) {
-        return switch (type) {
-            case NES_ROTATION_SYSTEM -> new NESRotationSystem(grid);
-            case SUPER_ROTATION_SYSTEM -> new SuperRotationSystem(grid);
-            case SUPER_ROTATION_SYSTEM_PLUS -> new SuperRotationSystemPlus(grid);
+        RotationSystem rotationSystem = null;
+
+        switch (type) {
+            case NES_ROTATION_SYSTEM:
+                rotationSystem = new NESRotationSystem(grid);
+                break;
+            case SUPER_ROTATION_SYSTEM:
+                new SuperRotationSystem(grid);
+                break;
+            case SUPER_ROTATION_SYSTEM_PLUS:
+                new SuperRotationSystemPlus(grid);
+                break;
         };
+
+        return rotationSystem;
     }
 }
