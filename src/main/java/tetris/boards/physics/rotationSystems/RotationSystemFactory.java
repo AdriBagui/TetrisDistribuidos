@@ -25,10 +25,10 @@ public class RotationSystemFactory {
                 rotationSystem = new NESRotationSystem(grid);
                 break;
             case SUPER_ROTATION_SYSTEM:
-                new SuperRotationSystem(grid);
+                rotationSystem = new SuperRotationSystem(grid);
                 break;
             case SUPER_ROTATION_SYSTEM_PLUS:
-                new SuperRotationSystemPlus(grid);
+                rotationSystem = new SuperRotationSystemPlus(grid);
                 break;
         };
 
