@@ -39,28 +39,30 @@ public class LobbiesHandler {
         int numberOfLobbies;
         int roomId;
 
-        synchronized (this) { numberOfLobbies = lobbies.size(); }
-
-        // Spin-wait (or sleep) if the server is at capacity
-        if (numberOfLobbies >= MAX_NUMBER_OF_LOBBIES) {
-            try {
-                Thread.sleep(100);
-                return createLobby(host);
-            } catch (InterruptedException e) { System.out.println("FATAL ERROR lobbies handler interrupted."); } // This should never happen, if it does your computer is broken sry
-        }
-
         synchronized (this) {
-            // Generate a unique ID
-            roomId = random.nextInt(0, MAX_NUMBER_OF_LOBBIES - lobbies.size());
-            // Simple linear probing strategy to find a free slot
-            while(lobbies.containsKey(roomId)) {
-                roomId = (roomId + 1) % MAX_NUMBER_OF_LOBBIES;
-            }
+            numberOfLobbies = lobbies.size();
 
-            lobbies.put(roomId, host);
+            if (numberOfLobbies < MAX_NUMBER_OF_LOBBIES) {
+                // Generate a unique ID
+                roomId = random.nextInt(0, MAX_NUMBER_OF_LOBBIES - lobbies.size());
+                // Simple linear probing strategy to find a free slot
+                while(lobbies.containsKey(roomId)) {
+                    roomId = (roomId + 1) % MAX_NUMBER_OF_LOBBIES;
+                }
+
+                lobbies.put(roomId, host);
+
+                return roomId;
+            }
         }
 
-        return roomId;
+        try {
+            Thread.sleep(100);
+            return createLobby(host);
+        } catch (InterruptedException e) {
+            System.out.println("FATAL ERROR lobbies handler interrupted.");
+            return -1;
+        } // This should never happen, if it does your computer is broken sry
     }
 
     /**
