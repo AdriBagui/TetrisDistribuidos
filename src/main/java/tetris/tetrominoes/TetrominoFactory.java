@@ -21,7 +21,7 @@ public class TetrominoFactory {
      * @return A new instance of the requested Tetromino.
      */
     public static Tetromino createTetromino(TetrominoType type, int rotationIndex, int x, int y, int containerX, int containerY) {
-        Tetromino tetromino;
+        Tetromino tetromino = null;
 
         switch (type) {
             case I:
@@ -44,9 +44,6 @@ public class TetrominoFactory {
                 break;
             case Z:
                 tetromino = new ZTetromino(rotationIndex, x, y, containerX, containerY);
-                break;
-            default:
-                tetromino = null;
                 break;
         }
 

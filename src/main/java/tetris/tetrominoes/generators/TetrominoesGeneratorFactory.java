@@ -24,7 +24,7 @@ public class TetrominoesGeneratorFactory {
                 tetrominoesGenerator = new NESTetrominoesGenerator(seed);
                 break;
             case RANDOM_BAG_7_TETROMINOES_GENERATOR:
-                new RandomBag7TetrominoesGenerator(seed);
+                tetrominoesGenerator = new RandomBag7TetrominoesGenerator(seed);
                 break;
         }
 
