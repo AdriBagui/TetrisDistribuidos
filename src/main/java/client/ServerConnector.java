@@ -68,11 +68,11 @@ public class ServerConnector {
             byte statusByte;
             long seed;
 
+            waitingOpponentPanel.setRoomIdVisibility(false);
             waitingOpponentPanel.setMessage("Connecting to server...");
 
             try {
                 boardsSocket = new Socket(serverIp, serverPort);
-                waitingOpponentPanel.setMessage("Waiting for an opponent...");
 
                 dis = new DataInputStream(boardsSocket.getInputStream());
                 dos = new DataOutputStream(boardsSocket.getOutputStream());
@@ -80,10 +80,16 @@ public class ServerConnector {
                 sendGameModeMessage(dos, gameMode);
 
                 switch (gameMode) {
+                    case MODERN_TETRIS_QUICK_PLAY:
+                    case NES_QUICK_PLAY:
+                        waitingOpponentPanel.setMessage("Waiting for an opponent...");
+                        break;
                     case HOST_GAME:
                         hostGameNegotiation(dis);
+                        waitingOpponentPanel.setMessage("Waiting for an opponent to join the room...");
                         break;
                     case JOIN_GAME:
+                        waitingOpponentPanel.setMessage("Waiting for a valid room ID...");
                         succesfulNegotiation = joinGameNegotiation(dis, dos);
                         break;
                 }
@@ -91,9 +97,8 @@ public class ServerConnector {
                 if (succesfulNegotiation) {
                     // Server keeps checking connection online by sending 0s as bytes until a player is found and then
                     // server sends a 1 as a byte to notify of successful connection.
-                    statusByte = dis.readByte();
-                    while (statusByte != 1) {
-                        statusByte = dis.readByte();
+                    while ((statusByte = dis.readByte()) != 1) {
+                        dos.writeByte(0);
                     }
 
                     // Server sends the seed when a player is found and this is also the start game signal

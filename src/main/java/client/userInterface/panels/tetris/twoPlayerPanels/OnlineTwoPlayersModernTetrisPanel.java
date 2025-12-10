@@ -35,8 +35,9 @@ public class OnlineTwoPlayersModernTetrisPanel extends OnlineTwoPlayersPanel {
      */
     @Override
     protected String checkWinner() {
-        if (!hasLocalLost() && hasOpponentLost()) return "Victory";
-        else if (hasLocalLost() && !hasOpponentLost()) return "Defeat";
+        if (!isConnectionUp()) return "Connection to opponent lost";
+        else if (!hasLocalLost() && !boards[1].isAlive()) return "Victory";
+        else if (hasLocalLost() && boards[1].isAlive()) return "Defeat";
         else return "It's a tie!";
     }
 
@@ -47,7 +48,7 @@ public class OnlineTwoPlayersModernTetrisPanel extends OnlineTwoPlayersPanel {
      * @return {@code true} if either player has topped out.
      */
     @Override
-    protected synchronized boolean checkGameOver() { return (hasLocalLost() || hasOpponentLost() || !isConnectionUp()); }
+    protected synchronized boolean hasLocalGameFinished() { return (hasLocalLost() || hasOpponentClosedOutput()); }
 
     /**
      * Initializes the local sender board and the remote receiver board.

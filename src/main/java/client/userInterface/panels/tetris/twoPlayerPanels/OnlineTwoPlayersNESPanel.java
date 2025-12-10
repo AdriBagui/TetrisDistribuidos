@@ -7,7 +7,6 @@ import tetris.boards.io.ReceiverBoardInputHandler;
 import tetris.boards.nes.ReceiverNESBoard;
 import tetris.boards.nes.SenderNESBoardWithPhysics;
 
-import java.awt.*;
 import java.io.IOException;
 
 import static client.userInterface.panels.MainPanel.*;
@@ -40,7 +39,8 @@ public class OnlineTwoPlayersNESPanel extends OnlineTwoPlayersPanel {
         int player1Score = boards[0].getScore();
         int player2Score = boards[1].getScore();
 
-        if (player1Score > player2Score) return "Victory";
+        if (!isConnectionUp()) return "Connection to opponent lost";
+        else if (player1Score > player2Score) return "Victory";
         else if (player1Score < player2Score) return "Defeat";
         else return "It's a tie!";
     }
@@ -52,7 +52,7 @@ public class OnlineTwoPlayersNESPanel extends OnlineTwoPlayersPanel {
      * @return {@code true} if the game session is effectively over.
      */
     @Override
-    protected synchronized boolean checkGameOver() { return ((hasLocalLost() && hasOpponentLost()) || !isConnectionUp()); }
+    protected synchronized boolean hasLocalGameFinished() { return (hasLocalLost() && hasOpponentClosedOutput()); }
 
     /**
      * Initializes the local sender board and the remote receiver board.

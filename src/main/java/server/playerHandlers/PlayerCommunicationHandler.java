@@ -45,7 +45,7 @@ public class PlayerCommunicationHandler implements Runnable {
             dis = new DataInputStream(sender.getInputStream());
             dos = new DataOutputStream(receiver.getOutputStream());
 
-            // Notify succesful connection
+            // Notify successful connection
             dos.writeByte(1);
             dos.flush();
 

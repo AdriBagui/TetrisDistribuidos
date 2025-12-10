@@ -65,15 +65,18 @@ public class GameCommunicationHandler{
     public synchronized void processUnidirectionalShutdown(Socket shutDownStarter) {
         if (shutDownStarter.equals(player1)) {
             communicationFromPlayer1ToPlayer2Down = true;
+            System.out.println("Closed connection from player 1 to player 2");
         }
         else {
             communicationFromPlayer2ToPlayer1Down = true;
+            System.out.println("Closed connection from player 2 to player 1");
         }
 
         if (communicationFromPlayer1ToPlayer2Down && communicationFromPlayer2ToPlayer1Down) {
             try {
                 player1.close();
                 player2.close();
+                System.out.println("Closed connection completely");
             }
             catch (IOException e) { System.out.println("FATAL ERROR while trying to close socket after game being finished."); } // This should never happen, if it does your computer is broken sry
         }
@@ -86,6 +89,7 @@ public class GameCommunicationHandler{
         try {
             player1.close();
             player2.close();
+            System.out.println("Closed connection bidirectionally");
         }
         catch (IOException e) { System.out.println("FATAL ERROR while trying to close socket after disconnection of one player."); } // This should never happen, if it does your computer is broken sry
     }

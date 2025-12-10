@@ -99,6 +99,7 @@ public class MatchmakingHandler implements Runnable {
         QuickPlayHandler quickPlayHandler;
         Socket opponent;
         DataOutputStream opponentDos;
+        DataInputStream opponentDis;
         boolean opponentIsOnline;
         boolean playerIsOnline = true;
 
@@ -114,8 +115,11 @@ public class MatchmakingHandler implements Runnable {
             // Check if player 1 is still online
             try {
                 opponentDos = new DataOutputStream(opponent.getOutputStream());
+                opponentDis = new DataInputStream(opponent.getInputStream());
+
                 opponentDos.writeByte(0);
                 opponentDos.flush();
+                opponentDis.readByte();
             }
             catch (IOException ioe) {
                 opponentIsOnline = false;
@@ -126,6 +130,7 @@ public class MatchmakingHandler implements Runnable {
             try {
                 dos.writeByte(0);
                 dos.flush();
+                dis.readByte();
             }
             catch (IOException ioe) {
                 playerIsOnline = false;
@@ -181,6 +186,7 @@ public class MatchmakingHandler implements Runnable {
         int roomId;
         Socket host;
         DataOutputStream hostDos;
+        DataInputStream hostDis;
         boolean hostIsOnline;
 
         try {
@@ -196,8 +202,11 @@ public class MatchmakingHandler implements Runnable {
                     // Check if room host is still online
                     try {
                         hostDos = new DataOutputStream(host.getOutputStream());
+                        hostDis = new DataInputStream(host.getInputStream());
+
                         hostDos.writeByte(0);
                         hostDos.flush();
+                        hostDis.readByte();
                     }
                     catch (IOException ioe) {
                         hostIsOnline = false;

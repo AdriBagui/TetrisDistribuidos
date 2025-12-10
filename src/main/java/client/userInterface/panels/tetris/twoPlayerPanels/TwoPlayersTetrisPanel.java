@@ -63,13 +63,13 @@ public abstract class TwoPlayersTetrisPanel extends TetrisPanel {
             String gameOverMessage = "GAME OVER";
             int gameOverMessageWidth = 9*CELL_SIZE;
             String winnerMessage;
-            int winnerMessageWidth = 13*CELL_SIZE;
+            int winnerMessageWidth;
             String backToMenuMessage = "Press '" + KeyEvent.getKeyText(keyInputHandler.getGoBackToMenuKey()) + "' to go back to the start menu";
             int backToMenuMessageWith = 14*CELL_SIZE;
 
-            int  bannerWidth = backToMenuMessageWith + 2*FRAME_PADDING;
+            int bannerWidth;
             int bannerHeight = 5*CELL_SIZE + 2*FRAME_PADDING;
-            int bannerX = (PANEL_WIDTH-bannerWidth)/2;
+            int bannerX;
             int bannerY = 7*CELL_SIZE;
 
 
@@ -79,7 +79,14 @@ public abstract class TwoPlayersTetrisPanel extends TetrisPanel {
                 winnerMessageWidth = 5 * CELL_SIZE;
             } else if (winnerMessage.equals("It's a tie!")) {
                 winnerMessageWidth = 7 * CELL_SIZE;
+            } else if (winnerMessage.equals("Connection to opponent lost")) {
+                winnerMessageWidth = (int) 21.5 * CELL_SIZE;
+            } else {
+                winnerMessageWidth = 13*CELL_SIZE;
             }
+
+            bannerWidth = Math.max(backToMenuMessageWith, winnerMessageWidth) + 2*FRAME_PADDING;
+            bannerX = (PANEL_WIDTH-bannerWidth)/2;
 
             // Draw Background Banner
             g2.setColor(BACKGROUND_COLOR);

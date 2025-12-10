@@ -252,14 +252,12 @@ public class KeyBindingsManager {
                     InputAction action = InputAction.valueOf(actionName);
 
                     if (actionType == 0) {
-                        System.out.println(action + " " + keyCode + " " + actionType);
                         if (action == InputAction.GO_BACK_TO_START_MENU) {
                             handler.bindGoBackToMenuKey(keyCode);
                         }
                     }
                     else {
                         handler.changeKeyBinding(action, keyCode, actionType == 1);
-                        System.out.println(action + " " + keyCode + " " + (actionType == 1));
                     }
                 }
                 catch (NumberFormatException ex) { System.out.println("There was a non valid key value in the xml, the binding will be ignored"); }

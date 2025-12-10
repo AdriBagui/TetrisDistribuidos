@@ -5,17 +5,8 @@ import tetris.boards.BoardWithPhysics;
 import tetris.boards.io.ReceiverBoardInputHandler;
 import tetris.boards.io.SenderBoardOutputHandler;
 
-import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.Socket;
-
-import static client.userInterface.panels.MainPanel.*;
-import static client.userInterface.panels.MainPanel.FRAME_PADDING;
-import static client.userInterface.panels.MainPanel.GAME_OVER_FONT;
-import static client.userInterface.panels.MainPanel.MEDIUM_MESSAGE_FONT;
-import static client.userInterface.panels.MainPanel.PANEL_WIDTH;
-import static client.userInterface.panels.MainPanel.TEXT_COLOR;
 
 /**
  * An abstract base class for all online multiplayer Tetris game modes.
@@ -47,14 +38,8 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
     /** Flag indicating if the local player has topped out (Game Over). */
     protected boolean localLost;
 
-    /** Flag indicating if the remote player has topped out (Game Over). */
-    protected boolean opponentLost;
-
-    /** Flag indicating if the input is still up. */
-    protected boolean outputDown;
-
-    /** Flag indicating if the output is still up. */
-    protected boolean inputDown;
+    /** Flag indicating if the remote player has closed its output (because the game is over for him, either by topping out or by winning the game). */
+    protected boolean opponentClosedOutput;
 
     /** Flag indicating if the network connection has been unexpectedly dropped. */
     protected boolean connectionLost;
@@ -72,11 +57,20 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
         seed = -1;
 
         localLost = false;
-        opponentLost = false;
-        outputDown = false;
-        inputDown = false;
+        opponentClosedOutput = false;
         connectionLost = false;
     }
+
+    /**
+     * Returns whether the game should is finished according to game rules (that is, for modern tetris one of the players
+     * has lost and for NES tetris both players have lost). In online games is distinct from game over because in online
+     * games the local player doesn't have all the information to know the winner until the opponent finishes, so the game
+     * is not over until both players finish. However, the local player should indicate when his game finishes somehow without
+     * setting is game as game over, this is what this method is for.
+     *
+     * @return a boolean indicating if the game should close
+     */
+    protected abstract boolean hasLocalGameFinished();
 
     /**
      * Sets the socket used for communication.
@@ -104,15 +98,18 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
     @Override
     public synchronized void closeCommunications() { // synchronized so that update and closeCommunications don't close the socket at the same time
         // If the code reaches here means the rival has closed his output
-        setOpponentLost(true);
+        setOpponentClosedOutput(true);
 
         if (isConnectionUp()) {
             try {
-                if (!inputDown) {
-                    boardsSocket.shutdownInput();
-                    inputDown = true;
+                boardsSocket.shutdownInput();
+
+                // In modern tetris the game will be over and if local has lost the output will be down, if opponent has lost the output will be up
+                // In NES tetris the game won't be over unless the local has lost (in that case the output will be down)
+                if (hasLocalGameFinished()) {
+                    if (!hasLocalLost()) boardsSocket.shutdownOutput();
+                    boardsSocket.close();
                 }
-                if (hasLocalLost()) closeSocket();
             }
             catch (IOException e) { System.out.println("FATAL ERROR while trying to close socket to opponent boards"); } // This should never happen, if it does your computer is broken sry
         }
@@ -124,11 +121,11 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
      */
     @Override
     public synchronized void handleConnectionError() { // synchronized so that it doesn't interfere with the normal socket closing
-        if (isConnectionUp() && (!isGameOver())) {
+        if (isConnectionUp() && (!checkGameOver())) {
             setConnectionLost(true);
             senderBoardOutputHandler.notifyConnectionLost();
 
-            try { closeSocket(); }
+            try { boardsSocket.close(); }
             catch (IOException e) {
                 System.out.println("FATAL ERROR while trying to close socket to opponent boards"); // This should never happen, if it does your computer is broken sry
             }
@@ -149,46 +146,11 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
         synchronized (this) { // synchronized so that closeCommunications and update don't close the socket at the same time
             if (hasLocalLost() && isConnectionUp()) {
                 try {
-                    if (!outputDown) {
-                        boardsSocket.shutdownOutput();
-                        outputDown = true;
-                    }
-                    if (hasOpponentLost()) closeSocket();
+                    boardsSocket.shutdownOutput();
+                    if (hasOpponentClosedOutput()) boardsSocket.close();
                 }
                 catch (IOException e) { System.out.println("FATAL ERROR while trying to shutdown output to opponent boards"); } // This should never happen, if it does your computer is broken sry
             }
-        }
-    }
-
-    @Override
-    public void draw(Graphics2D g2) {
-        super.draw(g2);
-
-        if (!isConnectionUp()) {
-            String gameOverMessage = "GAME OVER";
-            String message = "Connection to opponent lost";
-            int messageWidth = (int) 21.5*CELL_SIZE;
-            int gameOverWidth = 10*CELL_SIZE;
-            int endGameWidth = 14*CELL_SIZE;
-            int bannerWidth = messageWidth + 2*FRAME_PADDING;
-            int bannerHeight = 5*CELL_SIZE + 2*FRAME_PADDING;
-            int bannerY = 7*CELL_SIZE;
-
-            // Draw Background Banner
-            g2.setColor(BACKGROUND_COLOR);
-            g2.fillRect((PANEL_WIDTH-bannerWidth)/2, bannerY, bannerWidth, bannerHeight);
-            g2.setColor(TEXT_COLOR);
-            g2.drawRect((PANEL_WIDTH-bannerWidth)/2, bannerY, bannerWidth, bannerHeight);
-
-            // Draw Texts
-            g2.setColor(TEXT_COLOR);
-            g2.setFont(GAME_OVER_FONT);
-            g2.drawString(gameOverMessage, (PANEL_WIDTH-gameOverWidth)/2, (int) (bannerY + 1.5*FRAME_PADDING));
-            g2.drawString(message, (PANEL_WIDTH-messageWidth)/2, (int) (bannerY + 2.5*FRAME_PADDING));
-
-            g2.setColor(Color.LIGHT_GRAY);
-            g2.setFont(MEDIUM_MESSAGE_FONT);
-            g2.drawString("Press '" + KeyEvent.getKeyText(keyInputHandler.getGoBackToMenuKey()) + "' to go back to the start menu", (PANEL_WIDTH-endGameWidth)/2, (int) (bannerY + 3.5*FRAME_PADDING));
         }
     }
 
@@ -208,11 +170,11 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
      * In online play, the local game loop primarily cares if the <i>rival</i> is over to determine global state,
      * or if the local player is over.
      *
-     * @return {@code true} if the rival has finished.
+     * @return {@code true} if the localhost and rival have finished or if the connection is no longer up.
      */
     @Override
     protected synchronized boolean checkGameOver() {
-        return hasOpponentLost();
+        return (hasLocalGameFinished() && hasOpponentClosedOutput()) || !isConnectionUp();
     }
 
     /**
@@ -222,20 +184,9 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
     protected void resetGame() {
         super.resetGame();
         setLocalLost(false);
-        setOpponentLost(false);
-        outputDown = false;
-        inputDown = false;
+        setOpponentClosedOutput(false);
         setConnectionLost(false);
         keyInputHandler.setPlayer1Board((BoardWithPhysics) boards[0]);
-    }
-
-    /**
-     * Closes the underlying socket.
-     *
-     * @throws IOException If an I/O error occurs when closing this socket.
-     */
-    protected synchronized void closeSocket() throws IOException {
-        boardsSocket.close();
     }
 
     @Override
@@ -246,8 +197,8 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
     protected synchronized boolean hasLocalLost() { return localLost; }
     protected synchronized void setLocalLost(boolean localLost) { this.localLost = localLost; }
 
-    protected synchronized boolean hasOpponentLost() { return opponentLost; }
-    protected synchronized void setOpponentLost(boolean opponentLost) { this.opponentLost = opponentLost; }
+    protected synchronized boolean hasOpponentClosedOutput() { return opponentClosedOutput; }
+    protected synchronized void setOpponentClosedOutput(boolean opponentClosedOutput) { this.opponentClosedOutput = opponentClosedOutput; }
 
     protected synchronized boolean isConnectionUp() { return !connectionLost; }
     protected synchronized void setConnectionLost(boolean connectionLost) { this.connectionLost = connectionLost; }

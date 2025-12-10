@@ -336,8 +336,11 @@ public class KeyInputHandler extends KeyAdapter {
                 actionPerformed = true;
                 break;
             case HOLD:
-                if (press) board.hold();
-                actionPerformed = true;
+                if (press) {
+                    board.hold();
+                    actionPerformed = true;
+                }
+                else actionPerformed = false;
                 break;
             default:
                 actionPerformed = false;
