@@ -166,15 +166,13 @@ public abstract class OnlineTwoPlayersPanel extends TwoPlayersTetrisPanel {
 
         if (!isConnectionUp()) {
             String gameOverMessage = "GAME OVER";
-            String message;
-            int messageWidth = 17*CELL_SIZE;
+            String message = "Connection to opponent lost";
+            int messageWidth = (int) 21.5*CELL_SIZE;
             int gameOverWidth = 10*CELL_SIZE;
             int endGameWidth = 14*CELL_SIZE;
             int bannerWidth = messageWidth + 2*FRAME_PADDING;
             int bannerHeight = 5*CELL_SIZE + 2*FRAME_PADDING;
             int bannerY = 7*CELL_SIZE;
-
-            message = "Server connection lost";
 
             // Draw Background Banner
             g2.setColor(BACKGROUND_COLOR);

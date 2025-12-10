@@ -105,16 +105,16 @@ public class LocalTwoPlayerModernTetrisPanel extends LocalTwoPlayersTetrisPanel 
     /**
      * Checks who won based on survival.
      *
-     * @return 1 if Player 1 is alive, 2 if Player 2 is alive, 0 otherwise.
+     * @return "Player 1 has won!" if Player 1 is alive, "Player 2 has won!" if Player 2 is alive, "It's a tie!" otherwise.
      */
     @Override
-    protected int checkWinner() {
+    protected String checkWinner() {
         boolean player1Alive = boards[0].isAlive();
         boolean player2Alive = boards[1].isAlive();
 
-        if (player1Alive && !player2Alive) return 1;
-        else if (!player1Alive && player2Alive) return 2;
-        else return 0;
+        if (player1Alive && !player2Alive) return "Player 1 has won!";
+        else if (!player1Alive && player2Alive) return "Player 2 has won!";
+        else return "It's a tie!";
     }
 
     /**

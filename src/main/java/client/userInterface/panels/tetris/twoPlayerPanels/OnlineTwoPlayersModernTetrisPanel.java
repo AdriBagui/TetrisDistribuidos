@@ -31,13 +31,13 @@ public class OnlineTwoPlayersModernTetrisPanel extends OnlineTwoPlayersPanel {
     /**
      * Determines the winner based on who is still alive.
      *
-     * @return 1 if Player 1 (Local) is alive, 2 if Player 2 (Remote) is alive, 0 otherwise.
+     * @return Victory if Player 1 (Local) is alive, Defeat if Player 2 (Remote) is alive, It's a tie! otherwise.
      */
     @Override
-    protected int checkWinner() {
-        if (!hasLocalLost() && hasOpponentLost()) return 1;
-        else if (hasLocalLost() && !hasOpponentLost()) return 2;
-        else return 0;
+    protected String checkWinner() {
+        if (!hasLocalLost() && hasOpponentLost()) return "Victory";
+        else if (hasLocalLost() && !hasOpponentLost()) return "Defeat";
+        else return "It's a tie!";
     }
 
     /**

@@ -33,16 +33,16 @@ public class OnlineTwoPlayersNESPanel extends OnlineTwoPlayersPanel {
     /**
      * Determines the winner based on the score.
      *
-     * @return 1 if Player 1 (Local) has a higher score, 2 if Player 2 (Remote) has a higher score.
+     * @return Victory if Player 1 (Local) has a higher score, Defeat if Player 2 (Remote) has a higher score. "It's a tie!" otherwise.
      */
     @Override
-    protected int checkWinner() {
+    protected String checkWinner() {
         int player1Score = boards[0].getScore();
         int player2Score = boards[1].getScore();
 
-        if (player1Score > player2Score) return 1;
-        else if (player1Score < player2Score) return 2;
-        else return 0;
+        if (player1Score > player2Score) return "Victory";
+        else if (player1Score < player2Score) return "Defeat";
+        else return "It's a tie!";
     }
 
     /**

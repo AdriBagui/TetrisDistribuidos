@@ -43,7 +43,7 @@ public abstract class SinglePlayerTetrisPanel extends TetrisPanel {
 
         if (isGameOver()) {
             String gameOverMessage = "GAME OVER";
-            int gameOverWidth = 10*CELL_SIZE;
+            int gameOverWidth = 9*CELL_SIZE;
             int endGameWidth = 14*CELL_SIZE;
             int bannerWidth = gameOverWidth + 4*FRAME_PADDING;
             int bannerHeight = 3*CELL_SIZE + 2*FRAME_PADDING;

@@ -46,9 +46,9 @@ public abstract class TwoPlayersTetrisPanel extends TetrisPanel {
     /**
      * Determines the winner of the match based on the current game state.
      *
-     * @return 1 if Player 1 wins, 2 if Player 2 wins, or 0 for a tie/no winner yet.
+     * @return the string to with the winner message to be shown.
      */
-    protected abstract int checkWinner();
+    protected abstract String checkWinner();
 
     /**
      * Renders the game boards and the "Game Over / Winner" overlay.
@@ -61,37 +61,41 @@ public abstract class TwoPlayersTetrisPanel extends TetrisPanel {
 
         if (isGameOver()) {
             String gameOverMessage = "GAME OVER";
-            String winner;
-            int winnerWidth = 17*CELL_SIZE;
-            int gameOverWidth = 10*CELL_SIZE;
-            int endGameWidth = 14*CELL_SIZE;
-            int bannerWidth = winnerWidth + 2*FRAME_PADDING;
-            int bannerHeight = 5*CELL_SIZE + 2*FRAME_PADDING;
-            int bannerY = 7*CELL_SIZE;
-            int winnerId = checkWinner();
+            int gameOverMessageWidth = 9*CELL_SIZE;
+            String winnerMessage;
+            int winnerMessageWidth = 13*CELL_SIZE;
+            String backToMenuMessage = "Press '" + KeyEvent.getKeyText(keyInputHandler.getGoBackToMenuKey()) + "' to go back to the start menu";
+            int backToMenuMessageWith = 14*CELL_SIZE;
 
-            if (winnerId == 1) winner = "The winner is player 1!";
-            else if (winnerId == 2) winner = "The winner is player 2!";
-            else {
-                winner = "It's a tie!";
-                winnerWidth = 7*CELL_SIZE;
-            }
+            int  bannerWidth = backToMenuMessageWith + 2*FRAME_PADDING;
+            int bannerHeight = 5*CELL_SIZE + 2*FRAME_PADDING;
+            int bannerX = (PANEL_WIDTH-bannerWidth)/2;
+            int bannerY = 7*CELL_SIZE;
+
+
+            winnerMessage = checkWinner();
+
+            winnerMessageWidth = switch (winnerMessage) {
+                case "Victory", "Defeat" -> 5 * CELL_SIZE;
+                case "It's a tie!" -> 7 * CELL_SIZE;
+                default -> winnerMessageWidth;
+            };
 
             // Draw Background Banner
             g2.setColor(BACKGROUND_COLOR);
-            g2.fillRect((PANEL_WIDTH-bannerWidth)/2, bannerY, bannerWidth, bannerHeight);
+            g2.fillRect(bannerX, bannerY, bannerWidth, bannerHeight);
             g2.setColor(TEXT_COLOR);
-            g2.drawRect((PANEL_WIDTH-bannerWidth)/2, bannerY, bannerWidth, bannerHeight);
+            g2.drawRect(bannerX, bannerY, bannerWidth, bannerHeight);
 
             // Draw Texts
             g2.setColor(TEXT_COLOR);
             g2.setFont(GAME_OVER_FONT);
-            g2.drawString(gameOverMessage, (PANEL_WIDTH-gameOverWidth)/2, (int) (bannerY + 1.5*FRAME_PADDING));
-            g2.drawString(winner, (PANEL_WIDTH-winnerWidth)/2, (int) (bannerY + 2.5*FRAME_PADDING));
+            g2.drawString(gameOverMessage, (PANEL_WIDTH-gameOverMessageWidth)/2, (int) (bannerY + 1.5*FRAME_PADDING));
+            g2.drawString(winnerMessage, (PANEL_WIDTH-winnerMessageWidth)/2, (int) (bannerY + 2.5*FRAME_PADDING));
 
             g2.setColor(Color.LIGHT_GRAY);
             g2.setFont(MEDIUM_MESSAGE_FONT);
-            g2.drawString("Press '" + KeyEvent.getKeyText(keyInputHandler.getGoBackToMenuKey()) + "' to go back to the start menu", (PANEL_WIDTH-endGameWidth)/2, (int) (bannerY + 3.5*FRAME_PADDING));
+            g2.drawString(backToMenuMessage, (PANEL_WIDTH-backToMenuMessageWith)/2, (int) (bannerY + 3.5*FRAME_PADDING));
         }
     }
 }
