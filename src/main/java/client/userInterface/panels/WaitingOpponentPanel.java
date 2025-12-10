@@ -16,8 +16,8 @@ import static client.userInterface.panels.MainPanel.*;
 /**
  * A panel displayed while the client is negotiating a connection with the server.
  * <p>
- * This screen shows a rotating random Tetromino and status messages.
- * The Tetromino is selected once per session and rotates around its visual center.
+ * This screen shows a rotating random Tetromino.
+ * J and L pieces rotate around their long bar; others rotate around their visual center.
  * </p>
  */
 public class WaitingOpponentPanel extends JPanel {
@@ -25,7 +25,7 @@ public class WaitingOpponentPanel extends JPanel {
     private final JLabel waitingLabel;
 
     // Animation state
-    private Timer animationTimer;
+    private final Timer animationTimer;
     private Tetromino currentTetromino;
     private double currentAngle = 0;
     private final Random random = new Random();
@@ -36,7 +36,7 @@ public class WaitingOpponentPanel extends JPanel {
 
     public WaitingOpponentPanel() {
         setLayout(new GridBagLayout());
-        setBackground(BACKGROUND_COLOR); //
+        setBackground(BACKGROUND_COLOR);
 
         // --- Labels Setup ---
         GridBagConstraints gbc = new GridBagConstraints();
@@ -49,7 +49,7 @@ public class WaitingOpponentPanel extends JPanel {
 
         // Waiting message
         waitingLabel = new JLabel("Connecting to server...", SwingConstants.CENTER);
-        waitingLabel.setFont(HEADER_FONT); //
+        waitingLabel.setFont(HEADER_FONT);
         waitingLabel.setForeground(TEXT_COLOR);
 
         gbc.gridy = 0;
@@ -57,7 +57,7 @@ public class WaitingOpponentPanel extends JPanel {
 
         // Room ID Label
         roomIdLabel = new JLabel("", SwingConstants.CENTER);
-        roomIdLabel.setFont(MEDIUM_MESSAGE_FONT); //
+        roomIdLabel.setFont(MEDIUM_MESSAGE_FONT);
         roomIdLabel.setForeground(TEXT_COLOR);
         roomIdLabel.setVisible(false);
 
@@ -65,10 +65,9 @@ public class WaitingOpponentPanel extends JPanel {
         gbc.insets = new Insets(10, 0, 10, 0);
         add(roomIdLabel, gbc);
 
-        // Initialize timer but do not start it yet
+        // Initialize timer (starts only when panel is shown via mainPanel)
         animationTimer = new Timer(ANIMATION_DELAY_MS, e -> {
             currentAngle += ROTATION_SPEED;
-            // Wrap angle to keep numbers small, though not strictly necessary
             if (currentAngle >= Math.PI * 2) {
                 currentAngle -= Math.PI * 2;
             }
@@ -78,20 +77,19 @@ public class WaitingOpponentPanel extends JPanel {
 
     /**
      * Starts the loading animation.
-     * Should be called when the panel becomes visible.
+     * Called by MainPanel when switching to this view.
      */
     public void startAnimation() {
         if (animationTimer.isRunning()) return;
 
-        // Pick a new random tetromino for this specific waiting session
         pickRandomTetromino();
         currentAngle = 0;
         animationTimer.start();
     }
 
     /**
-     * Stops the loading animation to save resources.
-     * Should be called when the panel is hidden (game starts or back to menu).
+     * Stops the loading animation.
+     * Called by MainPanel when leaving this view.
      */
     public void stopAnimation() {
         if (animationTimer.isRunning()) {
@@ -102,7 +100,7 @@ public class WaitingOpponentPanel extends JPanel {
     private void pickRandomTetromino() {
         TetrominoType[] types = TetrominoType.values();
         TetrominoType randomType = types[random.nextInt(types.length)];
-        // Create dummy tetromino at 0,0 to get shape/color data
+        // Create dummy tetromino at 0,0 (Rotation 0)
         currentTetromino = TetrominoFactory.createTetromino(randomType, 0, 0, 0, 0, 0);
     }
 
@@ -115,38 +113,50 @@ public class WaitingOpponentPanel extends JPanel {
         Graphics2D g2 = (Graphics2D) g;
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // --- 1. Calculate the "Visual Center" ---
-        // This ensures S, Z, and I rotate around their visible mass, not the grid corner.
-        Rectangle2D visibleBounds = getVisibleBounds(currentTetromino);
-
+        // --- Calculate offsets ---
         double centerX = getWidth() / 2.0;
-        double centerY = (getHeight() / 2.0) - 50; // Shift up slightly
+        double centerY = (getHeight() / 2.0) - 50;
+        double pivotOffsetX, pivotOffsetY;
 
-        // --- 2. Apply Transformations ---
+        pivotOffsetY = switch (currentTetromino.getType()) {
+            case J, L, T -> {
+                pivotOffsetX = 1.5 * CELL_SIZE;
+                yield 1.5 * CELL_SIZE;
+            }
+            case I -> {
+                pivotOffsetX = 2 * CELL_SIZE;
+                yield 1.5 * CELL_SIZE;
+            }
+            case Z, S -> {
+                pivotOffsetX = 1.5 * CELL_SIZE;
+                yield CELL_SIZE;
+            }
+            case O -> {
+                pivotOffsetX = CELL_SIZE;
+                yield CELL_SIZE;
+            }
+        };
+
+        // --- Transformation Stack ---
         AffineTransform oldTransform = g2.getTransform();
 
-        // Move origin to the panel's visual center
+        // 1. Move origin to panel center
         g2.translate(centerX, centerY);
 
-        // Rotate the canvas
+        // 2. Rotate
         g2.rotate(currentAngle);
 
-        // Offset so the Tetromino's *visual center* aligns with the origin
-        // visibleBounds.getX() handles empty columns on the left
-        // visibleBounds.getWidth() / 2.0 finds the midpoint of the block mass
-        double offsetX = (visibleBounds.getX() + visibleBounds.getWidth() / 2.0);
-        double offsetY = (visibleBounds.getY() + visibleBounds.getHeight() / 2.0);
+        // 3. Shift back so the pivot point aligns with the origin
+        g2.translate(-pivotOffsetX, -pivotOffsetY);
 
-        g2.translate(-offsetX, -offsetY);
-
-        // --- 3. Draw ---
+        // --- Draw ---
         boolean[][] shape = currentTetromino.getShape();
         Color c = currentTetromino.getColor();
 
         for (int r = 0; r < shape.length; r++) {
             for (int col = 0; col < shape[r].length; col++) {
                 if (shape[r][col]) {
-                    TetrominoCell.drawClassicCell(g2, col * CELL_SIZE, r * CELL_SIZE, c); //
+                    TetrominoCell.drawClassicCell(g2, col * CELL_SIZE, r * CELL_SIZE, c);
                 }
             }
         }
@@ -155,8 +165,7 @@ public class WaitingOpponentPanel extends JPanel {
     }
 
     /**
-     * Calculates the bounding box of the actual filled blocks in pixels.
-     * Essential for centering S, Z, and I pieces correctly.
+     * Calculates the bounding box of the actual filled blocks.
      */
     private Rectangle2D getVisibleBounds(Tetromino t) {
         boolean[][] shape = t.getShape();
@@ -164,7 +173,6 @@ public class WaitingOpponentPanel extends JPanel {
         int maxCol = Integer.MIN_VALUE;
         int minRow = Integer.MAX_VALUE;
         int maxRow = Integer.MIN_VALUE;
-
         boolean found = false;
 
         for (int r = 0; r < shape.length; r++) {
@@ -181,26 +189,16 @@ public class WaitingOpponentPanel extends JPanel {
 
         if (!found) return new Rectangle2D.Double(0, 0, 0, 0);
 
-        // Calculate pixel dimensions relative to the shape's 0,0 origin
-        double x = minCol * CELL_SIZE;
-        double y = minRow * CELL_SIZE;
-        double w = (maxCol - minCol + 1) * CELL_SIZE;
-        double h = (maxRow - minRow + 1) * CELL_SIZE;
-
-        return new Rectangle2D.Double(x, y, w, h);
+        return new Rectangle2D.Double(
+                minCol * CELL_SIZE,
+                minRow * CELL_SIZE,
+                (maxCol - minCol + 1) * CELL_SIZE,
+                (maxRow - minRow + 1) * CELL_SIZE
+        );
     }
 
     // --- Message Updates ---
-
-    public void setMessage(String message) {
-        waitingLabel.setText(message);
-    }
-
-    public void setRoomId(int roomId) {
-        roomIdLabel.setText("Room ID: " + roomId);
-    }
-
-    public void setRoomIdVisibility(boolean visible) {
-        roomIdLabel.setVisible(visible);
-    }
+    public void setMessage(String message) { waitingLabel.setText(message); }
+    public void setRoomId(int roomId) { roomIdLabel.setText("Room ID: " + roomId); }
+    public void setRoomIdVisibility(boolean visible) { roomIdLabel.setVisible(visible); }
 }
